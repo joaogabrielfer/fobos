@@ -90,6 +90,15 @@ impl<'a> Lexer<'a> {
                 }
                 _ => Ok(self.new_token(TokenKind::Minus, "-")),
             },
+            Some('/') => match self.source.peek() {
+                Some('/') => {
+                    while let Some(c) = self.advance()
+                        && c != '\n'
+                    {}
+                    Ok(self.new_token(TokenKind::NewLine, "\\n"))
+                }
+                _ => Ok(self.new_token(TokenKind::Slash, "/")),
+            },
             Some('=') => match self.source.peek() {
                 Some('=') => {
                     self.advance();
@@ -139,19 +148,29 @@ impl<'a> Lexer<'a> {
                     self.advance();
                 }
 
+                if let Some(c) = self.source.peek()
+                    && matches!(c, 'a'..='z' |'A'..='Z' | '_' | '.')
+                {
+                    let end_idx = self.pos.idx + 1;
+                    let num_str = &self.raw_src[start_idx..end_idx];
+                    return Err(self.error(LexerErrorKind::InvalidNumber(num_str.to_string())));
+                }
+
                 let end_idx = self.pos.idx;
                 let num_str = &self.raw_src[start_idx..end_idx];
                 if num_str.contains(".") {
                     match num_str.parse::<f64>() {
                         Ok(num) => Ok(self.new_token(TokenKind::Float(num), num_str)),
                         Err(_) => {
-                            Err(self.error(LexerErrorKind::InvalidFloat(num_str.to_string())))
+                            Err(self.error(LexerErrorKind::InvalidNumber(num_str.to_string())))
                         }
                     }
                 } else {
                     match num_str.parse::<i64>() {
                         Ok(num) => Ok(self.new_token(TokenKind::Int(num), num_str)),
-                        Err(_) => Err(self.error(LexerErrorKind::InvalidInt(num_str.to_string()))),
+                        Err(_) => {
+                            Err(self.error(LexerErrorKind::InvalidNumber(num_str.to_string())))
+                        }
                     }
                 }
             }
@@ -283,7 +302,7 @@ pub enum TokenKind<'a> {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Token<'a> {
-    kind: TokenKind<'a>,
+    pub kind: TokenKind<'a>,
     origin: &'a str,
     pos: SrcPos,
 }
@@ -302,10 +321,8 @@ pub enum LexerErrorKind {
     UnknownChar(char),
     #[error("Unrecognized Token '{0}'")]
     UnknownToken(String),
-    #[error("Invalid floating point number '{0}'")]
-    InvalidFloat(String),
-    #[error("Invalid integer '{0}'")]
-    InvalidInt(String),
+    #[error("Invalid number '{0}'")]
+    InvalidNumber(String),
     #[error("Unterminated String")]
     UnterminatedString,
 }
@@ -429,6 +446,7 @@ mod tests {
             let file_path = PathBuf::new();
             let mut lexer = Lexer::new(&file_path, input);
 
+            // TODO: test error cases too instead of crashing out here
             let tokens = lexer.tokenize().expect("Lexing failed unexpectedly");
             // println!("{tokens:#?}");
             // println!();

@@ -35,11 +35,11 @@ fn run() -> anyhow::Result<()> {
             // let lexer = Lexer::new(content.as_str());
         }
         Commands::Tokens { path } => {
-            println!("{path:?}");
             let content = read_to_string(path)?;
             let tokens = Lexer::new(path, content.as_str()).tokenize()?;
+            // println!("{tokens:#?}");
             for tk in tokens {
-                println!("TOKEN: {tk:#?}");
+                println!("{:?}", tk.kind)
             }
         }
     }

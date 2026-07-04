@@ -1,14 +1,14 @@
-fun add(a: Int, b: Int) -> Int =
+fun add(a: Int, b: Int): Int =
 	return a + b
 end
 
-fun mult(a: Int, b: Int) -> Int =
+fun mult(a: Int, b: Int): Int =
 	return a * b
 end
 
 //higher order functions
-fun [A, B] map(arr: Arr<B>, fn: (A) -> B) -> Arr<B> =
-	mut new_array: Arr<B>
+fun [A, B] map(arr: Arr<A>, fn: A -> B): Arr<B> =
+	var new_array: Arr<B>
 	for item in arr do
 		let mapped := fn(item)
 		new_array.push(mapped)
@@ -16,7 +16,17 @@ fun [A, B] map(arr: Arr<B>, fn: (A) -> B) -> Arr<B> =
 	return new_array
 end
 
-fun main() =
+//joins 2 arrays with a mapping function
+fun [A, B, C] join(arr_a: Arr<A>, arr_b: Arr<B>, fn: (A, B) -> C): Arr<C> =
+	var new_array: Arr<C>
+	for (a, b) in (arr_a, arr_b) do
+		let mapped := fn(a, b)
+		new_array.push(mapped)
+	end
+	return new_array
+end
+
+fun main() :=
 	var a := 10    //mutable variable
 	let b := 5     //immutable variable
 	a = add(a, b)
