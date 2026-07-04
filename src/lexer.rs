@@ -411,6 +411,18 @@ mod tests {
                     TokenKind::Eof,
                 ],
             ),
+            (
+                r#"10 15.4 let var "foo bar" "18""#,
+                vec![
+                    TokenKind::Int(10),
+                    TokenKind::Float(15.4),
+                    TokenKind::Let,
+                    TokenKind::Var,
+                    TokenKind::String("foo bar"),
+                    TokenKind::String("18"),
+                    TokenKind::Eof,
+                ],
+            ),
         ];
 
         for (input, expected_kinds) in test_cases {
