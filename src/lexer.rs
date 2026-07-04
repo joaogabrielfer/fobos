@@ -140,6 +140,8 @@ impl<'a> Lexer<'a> {
                     "in" => Ok(self.new_token(TokenKind::In, "in")),
                     "do" => Ok(self.new_token(TokenKind::Do, "do")),
                     "match" => Ok(self.new_token(TokenKind::Match, "match")),
+                    "if" => Ok(self.new_token(TokenKind::If, "if")),
+                    "else" => Ok(self.new_token(TokenKind::Else, "else")),
                     _ => Ok(self.new_token(TokenKind::Ident(s), s)),
                 }
             }
@@ -295,6 +297,8 @@ pub enum TokenKind<'a> {
     In,
     Do,
     Match,
+    If,
+    Else,
 
     NewLine,
     Eof,
