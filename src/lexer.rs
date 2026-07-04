@@ -329,7 +329,36 @@ pub enum LexerErrorKind {
 
 #[cfg(test)]
 mod tests {
+    use std::{
+        ffi::OsStr,
+        fs::{read_dir, read_to_string},
+    };
+
     use super::*;
+
+    #[test]
+    fn validate_expected_tokens() {
+        let cargo_dir = env!("CARGO_MANIFEST_DIR");
+        let entries = read_dir(format!("{cargo_dir}/tests")).unwrap();
+
+        for entry in entries {
+            let current_file_path = entry.unwrap().path();
+
+            if current_file_path.is_file()
+                && current_file_path.extension() != Some(OsStr::new("expected"))
+            {
+                let content = read_to_string(&current_file_path).unwrap();
+                let tokens = Lexer::new(&current_file_path, &content).tokenize().unwrap();
+                let tokens_str = format!("{tokens:#?}");
+
+                let mut expected_file_path = current_file_path.clone();
+                expected_file_path.as_mut_os_string().push(".expected");
+
+                let expected_tokens = read_to_string(expected_file_path).unwrap();
+                assert_eq!(tokens_str, expected_tokens);
+            }
+        }
+    }
 
     #[test]
     fn test_successful_tokenization() {
