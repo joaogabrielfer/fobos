@@ -1,0 +1,40 @@
+fun add(a: Int, b: Int) -> Int =
+	return a + b
+end
+
+fun mult(a: Int, b: Int) -> Int =
+	return a * b
+end
+
+//higher order functions
+fun [A, B] map(arr: Arr<B>, fn: (A) -> B) -> Arr<B> =
+	mut new_array: Arr<B>
+	for item in arr do
+		let mapped := fn(item)
+		new_array.push(mapped)
+	end
+	return new_array
+end
+
+fun main() =
+	var a := 10    //mutable variable
+	let b := 5     //immutable variable
+	a = add(a, b)
+
+	for i in range(5) do //for loops
+		println(a)
+	end
+
+	let (c, d) := (a, b).add().mult(2)     //the same as mult(add(a, b), 2)
+	let (c, d) := ((a, b).add(), 2).mult() //going far with this sytnax
+
+	let str := "foobar"
+	match str in
+		"foo" + rest => do
+			let rest = rest.to_upper()
+			println("starts with foo and ends with: {rest}")
+		end
+		"foobar" => println("it is foobar")
+		other => println("i dont know what this is: {}", other)
+	end
+end

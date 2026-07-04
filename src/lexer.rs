@@ -1,0 +1,387 @@
+use std::{iter::Peekable, str::Chars};
+use thiserror::Error;
+
+#[derive(Debug, Clone)]
+pub struct Lexer<'a> {
+    raw_src: &'a str,
+    source: Peekable<Chars<'a>>,
+    pos: SrcPos,
+}
+
+impl<'a> Lexer<'a> {
+    pub fn new(source: &'a str) -> Self {
+        Self {
+            raw_src: source,
+            source: source.chars().peekable(),
+            pos: SrcPos {
+                line: 1,
+                col: 1,
+                idx: 0,
+            },
+        }
+    }
+
+    fn advance(&mut self) -> Option<char> {
+        let result = self.source.next();
+        match result {
+            Some('\n') => {
+                self.pos.line += 1;
+                self.pos.col = 1;
+                self.pos.idx += '\n'.len_utf8();
+                result
+            }
+            Some(ch) => {
+                self.pos.col += 1;
+                self.pos.idx += ch.len_utf8();
+                result
+            }
+            None => None,
+        }
+    }
+
+    fn skip_whitespace(&mut self) {
+        while let Some(c) = self.source.peek() {
+            if c.is_whitespace() && *c != '\n' {
+                self.pos.col += c.len_utf8();
+                self.pos.idx += c.len_utf8();
+                self.source.next();
+            } else {
+                break;
+            }
+        }
+    }
+
+    fn next_token(&mut self) -> Result<Token<'a>, LexerError> {
+        self.skip_whitespace();
+        let start_idx = self.pos.idx;
+        match self.advance() {
+            Some('(') => Ok(self.new_token(TokenKind::LParen, "(")),
+            Some(')') => Ok(self.new_token(TokenKind::RParen, ")")),
+            Some('{') => Ok(self.new_token(TokenKind::LCurly, "{")),
+            Some('}') => Ok(self.new_token(TokenKind::RCurly, "}")),
+            Some('[') => Ok(self.new_token(TokenKind::LBrace, "[")),
+            Some(']') => Ok(self.new_token(TokenKind::RBrace, "]")),
+            Some(':') => Ok(self.new_token(TokenKind::Colon, ":")),
+            Some(',') => Ok(self.new_token(TokenKind::Comma, ",")),
+            Some('.') => Ok(self.new_token(TokenKind::Dot, ".")),
+            Some('+') => Ok(self.new_token(TokenKind::Plus, "+")),
+            Some('*') => Ok(self.new_token(TokenKind::Star, "*")),
+            Some('\n') => Ok(self.new_token(TokenKind::NewLine, "\n")),
+            Some('>') => match self.source.peek() {
+                Some('=') => {
+                    self.advance();
+                    Ok(self.new_token(TokenKind::GreaterEquals, ">="))
+                }
+                _ => Ok(self.new_token(TokenKind::RAngle, ">")),
+            },
+            Some('<') => match self.source.peek() {
+                Some('=') => {
+                    self.advance();
+                    Ok(self.new_token(TokenKind::LessEquals, "<="))
+                }
+                _ => Ok(self.new_token(TokenKind::LAngle, "<")),
+            },
+            Some('-') => match self.source.peek() {
+                Some('>') => {
+                    self.advance();
+                    Ok(self.new_token(TokenKind::RArrow, "->"))
+                }
+                _ => Ok(self.new_token(TokenKind::Minus, "-")),
+            },
+            Some('=') => match self.source.peek() {
+                Some('=') => {
+                    self.advance();
+                    Ok(self.new_token(TokenKind::EqualsEquals, "=="))
+                }
+                Some('>') => {
+                    self.advance();
+                    Ok(self.new_token(TokenKind::FatArrow, "=>"))
+                }
+                _ => Ok(self.new_token(TokenKind::Equals, "=")),
+            },
+            Some('!') => match self.source.peek() {
+                Some('=') => {
+                    self.advance();
+                    Ok(self.new_token(TokenKind::BangEquals, "!="))
+                }
+                _ => Ok(self.new_token(TokenKind::Bang, "!")),
+            },
+            Some('a'..='z') | Some('A'..='Z') | Some('_') => {
+                while let Some('a'..='z') | Some('A'..='Z') | Some('_') | Some('0'..='9') =
+                    self.source.peek()
+                {
+                    self.advance();
+                }
+
+                let end_idx = self.pos.idx;
+
+                let s = &self.raw_src[start_idx..end_idx];
+                match s {
+                    "true" => Ok(self.new_token(TokenKind::Bool(true), "true")),
+                    "false" => Ok(self.new_token(TokenKind::Bool(false), "false")),
+                    "fun" => Ok(self.new_token(TokenKind::Fun, "fun")),
+                    "return" => Ok(self.new_token(TokenKind::Return, "return")),
+                    "end" => Ok(self.new_token(TokenKind::End, "end")),
+                    "var" => Ok(self.new_token(TokenKind::Var, "var")),
+                    "let" => Ok(self.new_token(TokenKind::Let, "let")),
+                    "for" => Ok(self.new_token(TokenKind::For, "for")),
+                    "while" => Ok(self.new_token(TokenKind::While, "while")),
+                    "in" => Ok(self.new_token(TokenKind::In, "in")),
+                    "do" => Ok(self.new_token(TokenKind::Do, "do")),
+                    "match" => Ok(self.new_token(TokenKind::Match, "match")),
+                    _ => Ok(self.new_token(TokenKind::Ident(s), s)),
+                }
+            }
+            Some(other) => Err(self.error(LexerErrorKind::UnknownChar(other))),
+            None => Ok(self.new_token(TokenKind::Eof, "EOF")),
+        }
+    }
+
+    fn error(&self, kind: LexerErrorKind) -> LexerError {
+        LexerError {
+            kind,
+            pos: self.pos,
+        }
+    }
+
+    fn new_token(&self, kind: TokenKind<'a>, origin: &'a str) -> Token<'a> {
+        Token {
+            origin,
+            kind,
+            pos: self.pos,
+        }
+    }
+
+    pub fn tokenize(&mut self) -> Result<Vec<Token<'a>>, LexerError> {
+        let mut tokens = vec![];
+        loop {
+            let tk = self.next_token()?;
+            if tk.kind == TokenKind::Eof {
+                tokens.push(tk);
+                break;
+            }
+            tokens.push(tk);
+        }
+        Ok(tokens)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SrcPos {
+    pub line: usize,
+    pub col: usize,
+    pub idx: usize,
+}
+
+impl std::fmt::Display for SrcPos {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}:{}", self.line, self.col)
+    }
+}
+
+impl SrcPos {
+    pub fn new(line: usize, col: usize, idx: usize) -> Self {
+        Self { line, col, idx }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum TokenKind<'a> {
+    LParen, // )
+    RParen, // (
+    LBrace, // ]
+    RBrace, // [
+    LAngle, // <
+    RAngle, // >
+    LCurly, // }
+    RCurly, // {
+
+    Colon,    // :
+    Comma,    // ,
+    Dot,      // .
+    RArrow,   // ->
+    FatArrow, // =>
+
+    Equals, // =
+    Plus,   // +
+    Minus,  // -
+    Slash,  // /
+    Star,   // *
+    Bang,   // !
+
+    BangEquals,    // !=
+    EqualsEquals,  // ==
+    GreaterEquals, // <=
+    LessEquals,    // >=
+
+    Ident(&'a str),
+    String(&'a str),
+    Int(i64),
+    Float(f64),
+    Bool(bool),
+
+    Fun,
+    Return,
+    End,
+    Var,
+    Let,
+    For,
+    While,
+    In,
+    Do,
+    Match,
+
+    NewLine,
+    Eof,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Token<'a> {
+    kind: TokenKind<'a>,
+    origin: &'a str,
+    pos: SrcPos,
+}
+
+#[derive(Error, Debug)]
+#[error("{pos}: ERROR: {kind}")]
+pub struct LexerError {
+    pub kind: LexerErrorKind,
+    pub pos: SrcPos,
+}
+
+#[derive(Error, Debug)]
+pub enum LexerErrorKind {
+    #[error("Unrecognized char '{0}'")]
+    UnknownChar(char),
+    #[error("Unrecognized Token '{0}'")]
+    UnknownToken(String),
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_successful_tokenization() {
+        // Define a tuple of (input_string, expected_token_kinds)
+        let test_cases = vec![
+            (
+                "{}[]<>>()",
+                vec![
+                    TokenKind::LCurly,
+                    TokenKind::RCurly,
+                    TokenKind::LBrace,
+                    TokenKind::RBrace,
+                    TokenKind::LAngle,
+                    TokenKind::RAngle,
+                    TokenKind::RAngle,
+                    TokenKind::LParen,
+                    TokenKind::RParen,
+                    TokenKind::Eof,
+                ],
+            ),
+            (
+                "+-*:.,",
+                vec![
+                    TokenKind::Plus,
+                    TokenKind::Minus,
+                    TokenKind::Star,
+                    TokenKind::Colon,
+                    TokenKind::Dot,
+                    TokenKind::Comma,
+                    TokenKind::Eof,
+                ],
+            ),
+            (
+                "!= == <= >= -> > >= = =>",
+                vec![
+                    TokenKind::BangEquals,
+                    TokenKind::EqualsEquals,
+                    TokenKind::LessEquals,
+                    TokenKind::GreaterEquals,
+                    TokenKind::RArrow,
+                    TokenKind::RAngle,
+                    TokenKind::GreaterEquals,
+                    TokenKind::Equals,
+                    TokenKind::FatArrow,
+                    TokenKind::Eof,
+                ],
+            ),
+            (
+                r#"let bar
+                let baz
+                var bar :=
+                while true do
+                    self.foo()
+                end"#,
+                vec![
+                    TokenKind::Let,
+                    TokenKind::Ident("bar"),
+                    TokenKind::NewLine,
+                    TokenKind::Let,
+                    TokenKind::Ident("baz"),
+                    TokenKind::NewLine,
+                    TokenKind::Var,
+                    TokenKind::Ident("bar"),
+                    TokenKind::Colon,
+                    TokenKind::Equals,
+                    TokenKind::NewLine,
+                    TokenKind::While,
+                    TokenKind::Bool(true),
+                    TokenKind::Do,
+                    TokenKind::NewLine,
+                    TokenKind::Ident("self"),
+                    TokenKind::Dot,
+                    TokenKind::Ident("foo"),
+                    TokenKind::LParen,
+                    TokenKind::RParen,
+                    TokenKind::NewLine,
+                    TokenKind::End,
+                    TokenKind::Eof,
+                ],
+            ),
+            // (
+            //     r#"let foo := 10
+            //     var bar: String = "bar""#,
+            //     vec![
+            //         TokenKind::Let,
+            //         TokenKind::Ident("foo"),
+            //         TokenKind::Colon,
+            //         TokenKind::Equals,
+            //         TokenKind::Int(10),
+            //         TokenKind::NewLine,
+            //         TokenKind::Var,
+            //         TokenKind::Ident("bar"),
+            //         TokenKind::Colon,
+            //         TokenKind::Ident("String"),
+            //         TokenKind::Equals,
+            //         TokenKind::Eof,
+            //     ],
+            // ),
+        ];
+
+        for (input, expected_kinds) in test_cases {
+            let mut lexer = Lexer::new(input);
+
+            let tokens = lexer.tokenize().expect("Lexing failed unexpectedly");
+            println!("{tokens:#?}");
+            println!();
+            println!();
+
+            assert_eq!(
+                tokens.len(),
+                expected_kinds.len(),
+                "Token count mismatch for input: '{}'",
+                input
+            );
+
+            for (token, expected_kind) in tokens.iter().zip(expected_kinds.iter()) {
+                assert_eq!(
+                    &token.kind, expected_kind,
+                    "Expected token kind {:?}, got {:?} in input: '{}'",
+                    expected_kind, token.kind, input
+                );
+            }
+        }
+    }
+}
