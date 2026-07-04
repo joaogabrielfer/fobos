@@ -1,3 +1,4 @@
+use crate::source::{Span, SrcPos};
 use std::{iter::Peekable, path::PathBuf, str::Chars};
 use thiserror::Error;
 
@@ -7,6 +8,85 @@ pub struct Lexer<'a> {
     raw_src: &'a str,
     source: Peekable<Chars<'a>>,
     pos: SrcPos,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Token<'a> {
+    pub kind: TokenKind<'a>,
+    origin: &'a str,
+    span: Span,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum TokenKind<'a> {
+    LParen, // )
+    RParen, // (
+    LBrace, // ]
+    RBrace, // [
+    LAngle, // <
+    RAngle, // >
+    LCurly, // }
+    RCurly, // {
+
+    Colon,    // :
+    Comma,    // ,
+    Dot,      // .
+    RArrow,   // ->
+    FatArrow, // =>
+
+    Equals, // =
+    Plus,   // +
+    Minus,  // -
+    Slash,  // /
+    Star,   // *
+    Bang,   // !
+
+    BangEquals,    // !=
+    EqualsEquals,  // ==
+    GreaterEquals, // <=
+    LessEquals,    // >=
+
+    Ident(&'a str),
+    String(&'a str),
+    Int(i64),
+    Float(f64),
+    Bool(bool),
+
+    Fun,
+    Return,
+    End,
+    Var,
+    Let,
+    For,
+    While,
+    In,
+    Do,
+    Match,
+    If,
+    Else,
+
+    NewLine,
+    Eof,
+}
+
+#[derive(Error, Debug)]
+#[error("{file_path}:{pos}: ERROR: {kind}")]
+pub struct LexerError {
+    pub kind: LexerErrorKind,
+    pub file_path: PathBuf,
+    pub pos: SrcPos,
+}
+
+#[derive(Error, Debug)]
+pub enum LexerErrorKind {
+    #[error("Unrecognized char '{0}'")]
+    UnknownChar(char),
+    #[error("Unrecognized Token '{0}'")]
+    UnknownToken(String),
+    #[error("Invalid number '{0}'")]
+    InvalidNumber(String),
+    #[error("Unterminated String")]
+    UnterminatedString,
 }
 
 impl<'a> Lexer<'a> {
@@ -212,10 +292,18 @@ impl<'a> Lexer<'a> {
     }
 
     fn new_token(&self, kind: TokenKind<'a>, origin: &'a str) -> Token<'a> {
+        let offset = origin.len();
         Token {
             origin,
             kind,
-            pos: self.pos,
+            span: Span::new(
+                self.pos,
+                SrcPos {
+                    line: self.pos.line,
+                    col: self.pos.col + offset,
+                    idx: self.pos.idx + offset,
+                },
+            ),
         }
     }
 
@@ -231,104 +319,6 @@ impl<'a> Lexer<'a> {
         }
         Ok(tokens)
     }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct SrcPos {
-    pub line: usize,
-    pub col: usize,
-    pub idx: usize,
-}
-
-impl std::fmt::Display for SrcPos {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}:{}", self.line, self.col)
-    }
-}
-
-impl SrcPos {
-    pub fn new(line: usize, col: usize, idx: usize) -> Self {
-        Self { line, col, idx }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum TokenKind<'a> {
-    LParen, // )
-    RParen, // (
-    LBrace, // ]
-    RBrace, // [
-    LAngle, // <
-    RAngle, // >
-    LCurly, // }
-    RCurly, // {
-
-    Colon,    // :
-    Comma,    // ,
-    Dot,      // .
-    RArrow,   // ->
-    FatArrow, // =>
-
-    Equals, // =
-    Plus,   // +
-    Minus,  // -
-    Slash,  // /
-    Star,   // *
-    Bang,   // !
-
-    BangEquals,    // !=
-    EqualsEquals,  // ==
-    GreaterEquals, // <=
-    LessEquals,    // >=
-
-    Ident(&'a str),
-    String(&'a str),
-    Int(i64),
-    Float(f64),
-    Bool(bool),
-
-    Fun,
-    Return,
-    End,
-    Var,
-    Let,
-    For,
-    While,
-    In,
-    Do,
-    Match,
-    If,
-    Else,
-
-    NewLine,
-    Eof,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct Token<'a> {
-    pub kind: TokenKind<'a>,
-    origin: &'a str,
-    pos: SrcPos,
-}
-
-#[derive(Error, Debug)]
-#[error("{file_path}:{pos}: ERROR: {kind}")]
-pub struct LexerError {
-    pub kind: LexerErrorKind,
-    pub file_path: PathBuf,
-    pub pos: SrcPos,
-}
-
-#[derive(Error, Debug)]
-pub enum LexerErrorKind {
-    #[error("Unrecognized char '{0}'")]
-    UnknownChar(char),
-    #[error("Unrecognized Token '{0}'")]
-    UnknownToken(String),
-    #[error("Invalid number '{0}'")]
-    InvalidNumber(String),
-    #[error("Unterminated String")]
-    UnterminatedString,
 }
 
 #[cfg(test)]
