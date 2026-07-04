@@ -1,21 +1,23 @@
-use std::{iter::Peekable, str::Chars};
+use std::{iter::Peekable, path::PathBuf, str::Chars};
 use thiserror::Error;
 
 #[derive(Debug, Clone)]
 pub struct Lexer<'a> {
+    file_path: &'a PathBuf,
     raw_src: &'a str,
     source: Peekable<Chars<'a>>,
     pos: SrcPos,
 }
 
 impl<'a> Lexer<'a> {
-    pub fn new(source: &'a str) -> Self {
+    pub fn new(file_path: &'a PathBuf, source: &'a str) -> Self {
         Self {
+            file_path,
             raw_src: source,
             source: source.chars().peekable(),
             pos: SrcPos {
                 line: 1,
-                col: 1,
+                col: 0,
                 idx: 0,
             },
         }
@@ -132,6 +134,49 @@ impl<'a> Lexer<'a> {
                     _ => Ok(self.new_token(TokenKind::Ident(s), s)),
                 }
             }
+            Some('0'..='9') => {
+                while let Some('0'..='9') | Some('.') = self.source.peek() {
+                    self.advance();
+                }
+
+                let end_idx = self.pos.idx;
+                let num_str = &self.raw_src[start_idx..end_idx];
+                if num_str.contains(".") {
+                    match num_str.parse::<f64>() {
+                        Ok(num) => Ok(self.new_token(TokenKind::Float(num), num_str)),
+                        Err(_) => {
+                            Err(self.error(LexerErrorKind::InvalidFloat(num_str.to_string())))
+                        }
+                    }
+                } else {
+                    match num_str.parse::<i64>() {
+                        Ok(num) => Ok(self.new_token(TokenKind::Int(num), num_str)),
+                        Err(_) => Err(self.error(LexerErrorKind::InvalidInt(num_str.to_string()))),
+                    }
+                }
+            }
+            Some('"') => {
+                while let Some(c) = self.source.peek() {
+                    if *c == '"' {
+                        break;
+                    }
+
+                    self.advance();
+                }
+
+                match self.source.peek() {
+                    Some('"') => {
+                        let end_idx = self.pos.idx;
+
+                        self.advance(); // consume closing quote
+
+                        let s = &self.raw_src[start_idx + 1..end_idx];
+                        let origin = &self.raw_src[start_idx..end_idx + 1];
+                        Ok(self.new_token(TokenKind::String(s), origin))
+                    }
+                    _ => Err(self.error(LexerErrorKind::UnterminatedString)),
+                }
+            }
             Some(other) => Err(self.error(LexerErrorKind::UnknownChar(other))),
             None => Ok(self.new_token(TokenKind::Eof, "EOF")),
         }
@@ -140,6 +185,7 @@ impl<'a> Lexer<'a> {
     fn error(&self, kind: LexerErrorKind) -> LexerError {
         LexerError {
             kind,
+            file_path: self.file_path.clone(),
             pos: self.pos,
         }
     }
@@ -243,9 +289,10 @@ pub struct Token<'a> {
 }
 
 #[derive(Error, Debug)]
-#[error("{pos}: ERROR: {kind}")]
+#[error("{file_path}:{pos}: ERROR: {kind}")]
 pub struct LexerError {
     pub kind: LexerErrorKind,
+    pub file_path: PathBuf,
     pub pos: SrcPos,
 }
 
@@ -255,6 +302,12 @@ pub enum LexerErrorKind {
     UnknownChar(char),
     #[error("Unrecognized Token '{0}'")]
     UnknownToken(String),
+    #[error("Invalid floating point number '{0}'")]
+    InvalidFloat(String),
+    #[error("Invalid integer '{0}'")]
+    InvalidInt(String),
+    #[error("Unterminated String")]
+    UnterminatedString,
 }
 
 #[cfg(test)]
@@ -263,7 +316,6 @@ mod tests {
 
     #[test]
     fn test_successful_tokenization() {
-        // Define a tuple of (input_string, expected_token_kinds)
         let test_cases = vec![
             (
                 "{}[]<>>()",
@@ -340,33 +392,35 @@ mod tests {
                     TokenKind::Eof,
                 ],
             ),
-            // (
-            //     r#"let foo := 10
-            //     var bar: String = "bar""#,
-            //     vec![
-            //         TokenKind::Let,
-            //         TokenKind::Ident("foo"),
-            //         TokenKind::Colon,
-            //         TokenKind::Equals,
-            //         TokenKind::Int(10),
-            //         TokenKind::NewLine,
-            //         TokenKind::Var,
-            //         TokenKind::Ident("bar"),
-            //         TokenKind::Colon,
-            //         TokenKind::Ident("String"),
-            //         TokenKind::Equals,
-            //         TokenKind::Eof,
-            //     ],
-            // ),
+            (
+                r#"let foo := 10
+                var bar: String = "bar""#,
+                vec![
+                    TokenKind::Let,
+                    TokenKind::Ident("foo"),
+                    TokenKind::Colon,
+                    TokenKind::Equals,
+                    TokenKind::Int(10),
+                    TokenKind::NewLine,
+                    TokenKind::Var,
+                    TokenKind::Ident("bar"),
+                    TokenKind::Colon,
+                    TokenKind::Ident("String"),
+                    TokenKind::Equals,
+                    TokenKind::String("bar"),
+                    TokenKind::Eof,
+                ],
+            ),
         ];
 
         for (input, expected_kinds) in test_cases {
-            let mut lexer = Lexer::new(input);
+            let file_path = PathBuf::new();
+            let mut lexer = Lexer::new(&file_path, input);
 
             let tokens = lexer.tokenize().expect("Lexing failed unexpectedly");
-            println!("{tokens:#?}");
-            println!();
-            println!();
+            // println!("{tokens:#?}");
+            // println!();
+            // println!();
 
             assert_eq!(
                 tokens.len(),

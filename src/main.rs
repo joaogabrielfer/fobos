@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use std::{fs::read_to_string, path::PathBuf};
+use std::{fs::read_to_string, path::PathBuf, process::exit};
 
 use blorp::lexer::Lexer;
 
@@ -16,19 +16,30 @@ enum Commands {
     Tokens { path: PathBuf },
 }
 
-fn main() -> anyhow::Result<()> {
+fn main() {
+    match run() {
+        Ok(_) => {}
+        Err(e) => {
+            eprintln!("{e}");
+            exit(1);
+        }
+    }
+}
+
+fn run() -> anyhow::Result<()> {
     let cli = Cli::parse();
 
     match &cli.command {
-        Commands::Run { path } => {
+        Commands::Run { path: _path } => {
             // let content = read_to_string(path)?;
             // let lexer = Lexer::new(content.as_str());
         }
         Commands::Tokens { path } => {
+            println!("{path:?}");
             let content = read_to_string(path)?;
-            let tokens = Lexer::new(content.as_str()).tokenize()?;
+            let tokens = Lexer::new(path, content.as_str()).tokenize()?;
             for tk in tokens {
-                println!("TOKEN: {tk:?}");
+                println!("TOKEN: {tk:#?}");
             }
         }
     }
