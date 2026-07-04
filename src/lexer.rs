@@ -13,20 +13,20 @@ pub struct Lexer<'a> {
 #[derive(Debug, Clone, PartialEq)]
 pub struct Token<'a> {
     pub kind: TokenKind<'a>,
-    origin: &'a str,
-    span: Span,
+    pub origin: &'a str,
+    pub span: Span,
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum TokenKind<'a> {
-    LParen, // )
-    RParen, // (
-    LBrace, // ]
-    RBrace, // [
+    LParen, // (
+    RParen, // )
+    LBrace, // [
+    RBrace, // ]
     LAngle, // <
     RAngle, // >
-    LCurly, // }
-    RCurly, // {
+    LCurly, // {
+    RCurly, // }
 
     Colon,    // :
     Comma,    // ,
@@ -67,6 +67,169 @@ pub enum TokenKind<'a> {
 
     NewLine,
     Eof,
+}
+
+impl<'a> TokenKind<'a> {
+    pub fn tag(&self) -> TokenTag {
+        match self {
+            TokenKind::LParen => TokenTag::LParen,
+            TokenKind::RParen => TokenTag::RParen,
+            TokenKind::LBrace => TokenTag::LBrace,
+            TokenKind::RBrace => TokenTag::RBrace,
+            TokenKind::LAngle => TokenTag::LAngle,
+            TokenKind::RAngle => TokenTag::RAngle,
+            TokenKind::LCurly => TokenTag::LCurly,
+            TokenKind::RCurly => TokenTag::RCurly,
+
+            TokenKind::Colon => TokenTag::Colon,
+            TokenKind::Comma => TokenTag::Comma,
+            TokenKind::Dot => TokenTag::Dot,
+            TokenKind::RArrow => TokenTag::RArrow,
+            TokenKind::FatArrow => TokenTag::FatArrow,
+
+            TokenKind::Equals => TokenTag::Equals,
+            TokenKind::Plus => TokenTag::Plus,
+            TokenKind::Minus => TokenTag::Minus,
+            TokenKind::Slash => TokenTag::Slash,
+            TokenKind::Star => TokenTag::Star,
+            TokenKind::Bang => TokenTag::Bang,
+
+            TokenKind::BangEquals => TokenTag::BangEquals,
+            TokenKind::EqualsEquals => TokenTag::EqualsEquals,
+            TokenKind::GreaterEquals => TokenTag::GreaterEquals,
+            TokenKind::LessEquals => TokenTag::LessEquals,
+
+            TokenKind::Ident(_) => TokenTag::Ident,
+            TokenKind::String(_) => TokenTag::String,
+            TokenKind::Int(_) => TokenTag::Int,
+            TokenKind::Float(_) => TokenTag::Float,
+            TokenKind::Bool(_) => TokenTag::Bool,
+
+            TokenKind::Fun => TokenTag::Fun,
+            TokenKind::Return => TokenTag::Return,
+            TokenKind::End => TokenTag::End,
+            TokenKind::Var => TokenTag::Var,
+            TokenKind::Let => TokenTag::Let,
+            TokenKind::For => TokenTag::For,
+            TokenKind::While => TokenTag::While,
+            TokenKind::In => TokenTag::In,
+            TokenKind::Do => TokenTag::Do,
+            TokenKind::Match => TokenTag::Match,
+            TokenKind::If => TokenTag::If,
+            TokenKind::Else => TokenTag::Else,
+
+            TokenKind::NewLine => TokenTag::NewLine,
+            TokenKind::Eof => TokenTag::Eof,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TokenTag {
+    LParen,
+    RParen,
+    LBrace,
+    RBrace,
+    LAngle,
+    RAngle,
+    LCurly,
+    RCurly,
+
+    Colon,
+    Comma,
+    Dot,
+    RArrow,
+    FatArrow,
+
+    Equals,
+    Plus,
+    Minus,
+    Slash,
+    Star,
+    Bang,
+
+    BangEquals,
+    EqualsEquals,
+    GreaterEquals,
+    LessEquals,
+
+    Ident,
+    String,
+    Int,
+    Float,
+    Bool,
+
+    Fun,
+    Return,
+    End,
+    Var,
+    Let,
+    For,
+    While,
+    In,
+    Do,
+    Match,
+    If,
+    Else,
+
+    NewLine,
+    Eof,
+}
+
+impl std::fmt::Display for TokenTag {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let str = match self {
+            TokenTag::LParen => "(",
+            TokenTag::RParen => ")",
+            TokenTag::LBrace => "[",
+            TokenTag::RBrace => "]",
+            TokenTag::LAngle => "<",
+            TokenTag::RAngle => ">",
+            TokenTag::LCurly => "{",
+            TokenTag::RCurly => "}",
+
+            TokenTag::Colon => ":",
+            TokenTag::Comma => ",",
+            TokenTag::Dot => ".",
+            TokenTag::RArrow => "->",
+            TokenTag::FatArrow => "=>",
+
+            TokenTag::Equals => "=",
+            TokenTag::Plus => "+",
+            TokenTag::Minus => "-",
+            TokenTag::Slash => "/",
+            TokenTag::Star => "*",
+            TokenTag::Bang => "!",
+
+            TokenTag::BangEquals => "!=",
+            TokenTag::EqualsEquals => "==",
+            TokenTag::GreaterEquals => ">=",
+            TokenTag::LessEquals => "<=",
+
+            TokenTag::Ident => "identifier",
+            TokenTag::String => "string",
+            TokenTag::Int => "integer",
+            TokenTag::Float => "float",
+            TokenTag::Bool => "boolean",
+
+            TokenTag::Fun => "fun",
+            TokenTag::Return => "return",
+            TokenTag::End => "end",
+            TokenTag::Var => "var",
+            TokenTag::Let => "let",
+            TokenTag::For => "for",
+            TokenTag::While => "while",
+            TokenTag::In => "in",
+            TokenTag::Do => "do",
+            TokenTag::Match => "match",
+            TokenTag::If => "if",
+            TokenTag::Else => "else",
+
+            TokenTag::NewLine => "newline",
+            TokenTag::Eof => "EOF",
+        };
+        write!(f, "{str}")
+    }
 }
 
 #[derive(Error, Debug)]

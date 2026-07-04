@@ -8,7 +8,7 @@ use std::{
 };
 use thiserror::Error;
 
-use blorp::lexer::Lexer;
+use blorp::{lexer::Lexer, parser};
 
 #[derive(Parser)]
 #[command(name = "blorp")]
@@ -26,6 +26,9 @@ enum Commands {
         path: PathBuf,
         #[arg(short = 'k', long = "kinds", default_value_t = false)]
         only_kinds: bool,
+    },
+    Ast {
+        path: PathBuf,
     },
     GenerateExpected,
 }
@@ -60,6 +63,13 @@ fn run() -> anyhow::Result<()> {
             } else {
                 println!("{tokens:#?}");
             }
+            Ok(())
+        }
+        Commands::Ast { path } => {
+            let content = read_to_string(path)?;
+            let tokens = Lexer::new(path, &content).tokenize()?;
+            let ast = parser::Parser::new(tokens, path).parse_program()?;
+            println!("{ast:#?}");
             Ok(())
         }
         Commands::GenerateExpected => {
