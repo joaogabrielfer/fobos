@@ -127,6 +127,38 @@ Ok(
                     ),
                 },
             },
+            Bind {
+                mutable: false,
+                name: "w",
+                type_annotation: Some(
+                    Named(
+                        "Int",
+                    ),
+                ),
+                value: Binary {
+                    lhs: Unary {
+                        op: Negate,
+                        operan: Int(
+                            10,
+                        ),
+                    },
+                    op: Mul,
+                    rhs: Int(
+                        2,
+                    ),
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "f",
+                type_annotation: None,
+                value: Unary {
+                    op: Not,
+                    operan: Bool(
+                        true,
+                    ),
+                },
+            },
         ],
     },
 )

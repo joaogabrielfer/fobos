@@ -36,6 +36,11 @@ pub enum Expr {
     Bool(bool),
     Ident(String),
 
+    Unary {
+        op: UnaryOp,
+        operan: Box<Expr>,
+    },
+
     Binary {
         lhs: Box<Expr>,
         op: BinaryOp,
@@ -60,6 +65,12 @@ pub enum BinaryOp {
     GreaterEq,
     Less,
     LessEq,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum UnaryOp {
+    Negate,
+    Not,
 }
 
 #[derive(Debug, Clone)]
@@ -156,7 +167,7 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_binary_expr(&mut self, min_level: u8) -> Result<Expr, Box<ParserError>> {
-        let mut lhs = self.parse_postfix_expr()?;
+        let mut lhs = self.parse_unary_expr()?;
 
         while let Some((op, level)) = self.current_tag().precedence_level()
             && level >= min_level
@@ -171,6 +182,30 @@ impl<'a> Parser<'a> {
         }
 
         Ok(lhs)
+    }
+
+    fn parse_unary_expr(&mut self) -> Result<Expr, Box<ParserError>> {
+        if self.check(TokenTag::Bang) {
+            self.advance();
+
+            let expr = self.parse_unary_expr()?;
+            return Ok(Expr::Unary {
+                op: UnaryOp::Not,
+                operan: Box::new(expr),
+            });
+        }
+
+        if self.check(TokenTag::Minus) {
+            self.advance();
+
+            let expr = self.parse_unary_expr()?;
+            return Ok(Expr::Unary {
+                op: UnaryOp::Negate,
+                operan: Box::new(expr),
+            });
+        }
+
+        self.parse_postfix_expr()
     }
 
     fn parse_postfix_expr(&mut self) -> Result<Expr, Box<ParserError>> {
