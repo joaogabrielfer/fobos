@@ -51,8 +51,8 @@ pub fn dump_expected() -> anyhow::Result<()> {
             let parser_file_path = create_expected_by_ext(&current_file_path, ".ast")?;
             write(&parser_file_path, ast_str)?;
 
-            println!("Writing expected tokens to: {}", token_file_path.display());
-            println!("Writing expected tokens to: {}", parser_file_path.display());
+            println!("Writing to: {}", token_file_path.display());
+            println!("Writing to: {}", parser_file_path.display());
         }
     }
     Ok(())

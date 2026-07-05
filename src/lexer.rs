@@ -260,8 +260,8 @@ impl<'a> Lexer<'a> {
             source: source.chars().peekable(),
             pos: SrcPos {
                 line: 1,
-                col: 0,
-                idx: 0,
+                col: 1,
+                idx: 1,
             },
         }
     }
@@ -471,7 +471,11 @@ impl<'a> Lexer<'a> {
                     col: self.pos.col - offset,
                     idx: self.pos.idx - offset,
                 },
-                self.pos,
+                SrcPos {
+                    line: self.pos.line,
+                    col: self.pos.col - 1,
+                    idx: self.pos.idx - 1,
+                },
             ),
         }
     }

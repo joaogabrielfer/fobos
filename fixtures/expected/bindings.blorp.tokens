@@ -6,13 +6,13 @@ Ok(
             span: Span {
                 start: SrcPos {
                     line: 1,
-                    col: 0,
+                    col: 1,
                     idx: 0,
                 },
                 end: SrcPos {
                     line: 1,
                     col: 3,
-                    idx: 3,
+                    idx: 2,
                 },
             },
         },
@@ -24,13 +24,13 @@ Ok(
             span: Span {
                 start: SrcPos {
                     line: 1,
-                    col: 4,
+                    col: 5,
                     idx: 4,
                 },
                 end: SrcPos {
                     line: 1,
                     col: 7,
-                    idx: 7,
+                    idx: 6,
                 },
             },
         },
@@ -40,13 +40,13 @@ Ok(
             span: Span {
                 start: SrcPos {
                     line: 1,
-                    col: 8,
+                    col: 9,
                     idx: 8,
                 },
                 end: SrcPos {
                     line: 1,
                     col: 9,
-                    idx: 9,
+                    idx: 8,
                 },
             },
         },
@@ -56,13 +56,13 @@ Ok(
             span: Span {
                 start: SrcPos {
                     line: 1,
-                    col: 9,
+                    col: 10,
                     idx: 9,
                 },
                 end: SrcPos {
                     line: 1,
                     col: 10,
-                    idx: 10,
+                    idx: 9,
                 },
             },
         },
@@ -74,13 +74,13 @@ Ok(
             span: Span {
                 start: SrcPos {
                     line: 1,
-                    col: 11,
+                    col: 12,
                     idx: 11,
                 },
                 end: SrcPos {
                     line: 1,
                     col: 13,
-                    idx: 13,
+                    idx: 12,
                 },
             },
         },
@@ -95,8 +95,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 2,
-                    col: 1,
-                    idx: 14,
+                    col: 0,
+                    idx: 13,
                 },
             },
         },
@@ -111,8 +111,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 2,
-                    col: 4,
-                    idx: 17,
+                    col: 3,
+                    idx: 16,
                 },
             },
         },
@@ -129,8 +129,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 2,
-                    col: 8,
-                    idx: 21,
+                    col: 7,
+                    idx: 20,
                 },
             },
         },
@@ -145,8 +145,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 2,
-                    col: 9,
-                    idx: 22,
+                    col: 8,
+                    idx: 21,
                 },
             },
         },
@@ -163,8 +163,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 2,
-                    col: 16,
-                    idx: 29,
+                    col: 15,
+                    idx: 28,
                 },
             },
         },
@@ -179,8 +179,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 2,
-                    col: 18,
-                    idx: 31,
+                    col: 17,
+                    idx: 30,
                 },
             },
         },
@@ -197,8 +197,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 2,
-                    col: 24,
-                    idx: 37,
+                    col: 23,
+                    idx: 36,
                 },
             },
         },
@@ -213,8 +213,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 3,
-                    col: 1,
-                    idx: 38,
+                    col: 0,
+                    idx: 37,
                 },
             },
         },
@@ -229,8 +229,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 3,
-                    col: 4,
-                    idx: 41,
+                    col: 3,
+                    idx: 40,
                 },
             },
         },
@@ -247,8 +247,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 3,
-                    col: 8,
-                    idx: 45,
+                    col: 7,
+                    idx: 44,
                 },
             },
         },
@@ -263,8 +263,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 3,
-                    col: 10,
-                    idx: 47,
+                    col: 9,
+                    idx: 46,
                 },
             },
         },
@@ -279,8 +279,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 3,
-                    col: 11,
-                    idx: 48,
+                    col: 10,
+                    idx: 47,
                 },
             },
         },
@@ -297,8 +297,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 3,
-                    col: 16,
-                    idx: 53,
+                    col: 15,
+                    idx: 52,
                 },
             },
         },
@@ -313,8 +313,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 4,
-                    col: 1,
-                    idx: 54,
+                    col: 0,
+                    idx: 53,
                 },
             },
         },
@@ -329,8 +329,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 4,
-                    col: 1,
-                    idx: 54,
+                    col: 0,
+                    idx: 53,
                 },
             },
         },
