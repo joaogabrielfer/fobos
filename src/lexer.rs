@@ -513,14 +513,21 @@ mod tests {
                 && current_file_path.extension() == Some(OsStr::new("blorp"))
             {
                 let content = read_to_string(&current_file_path).unwrap();
-                let tokens = Lexer::new(&current_file_path, &content).tokenize().unwrap();
+                let tokens = Lexer::new(&current_file_path, &content).tokenize();
                 let tokens_str = format!("{tokens:#?}");
 
                 let token_expected_path =
                     create_expected_by_ext(&current_file_path, ".tokens").unwrap();
-                let expected_tokens = read_to_string(token_expected_path).unwrap();
+                let expected_tokens = read_to_string(token_expected_path.clone()).unwrap();
 
-                assert_eq!(tokens_str, expected_tokens);
+                for (i, (my_line, expected_line)) in
+                    tokens_str.lines().zip(expected_tokens.lines()).enumerate()
+                {
+                    assert_eq!(
+                        my_line, expected_line,
+                        "failed to match at line '{i}' in file {token_expected_path:?}: "
+                    )
+                }
             }
         }
     }

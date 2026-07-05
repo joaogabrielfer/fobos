@@ -1,32 +1,34 @@
-Program {
-    statements: [
-        Bind {
-            mutable: false,
-            name: "foo",
-            type_annotation: None,
-            value: Int(
-                10,
-            ),
-        },
-        Bind {
-            mutable: true,
-            name: "bar",
-            type_annotation: Some(
-                Named(
-                    "String",
+Ok(
+    Program {
+        statements: [
+            Bind {
+                mutable: false,
+                name: "foo",
+                type_annotation: None,
+                value: Int(
+                    10,
                 ),
-            ),
-            value: String(
-                "baz",
-            ),
-        },
-        Bind {
-            mutable: false,
-            name: "baz",
-            type_annotation: None,
-            value: Bool(
-                true,
-            ),
-        },
-    ],
-}
+            },
+            Bind {
+                mutable: true,
+                name: "bar",
+                type_annotation: Some(
+                    Named(
+                        "String",
+                    ),
+                ),
+                value: String(
+                    "baz",
+                ),
+            },
+            Bind {
+                mutable: false,
+                name: "baz",
+                type_annotation: None,
+                value: Bool(
+                    true,
+                ),
+            },
+        ],
+    },
+)

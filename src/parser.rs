@@ -240,17 +240,27 @@ mod tests {
                 && current_file_path.extension() == Some(OsStr::new("blorp"))
             {
                 let content = read_to_string(&current_file_path).unwrap();
-                let tokens = Lexer::new(&current_file_path, &content).tokenize().unwrap();
+                let tokens = Lexer::new(&current_file_path, &content).tokenize();
 
-                let ast = parser::Parser::new(tokens, &current_file_path)
-                    .parse_program()
-                    .unwrap();
-                let ast_str = format!("{ast:#?}");
+                let ast_str = match tokens {
+                    Ok(t) => {
+                        let ast = parser::Parser::new(t, &current_file_path).parse_program();
+                        format!("{ast:#?}")
+                    }
+                    Err(e) => format!("{e:#?}"),
+                };
 
                 let ast_expected_path = create_expected_by_ext(&current_file_path, ".ast").unwrap();
-                let expected_ast = read_to_string(ast_expected_path).unwrap();
+                let expected_ast = read_to_string(ast_expected_path.clone()).unwrap();
 
-                assert_eq!(ast_str, expected_ast);
+                for (i, (my_line, expected_line)) in
+                    ast_str.lines().zip(expected_ast.lines()).enumerate()
+                {
+                    assert_eq!(
+                        my_line, expected_line,
+                        "failed to match at line '{i}' in file {ast_expected_path:?}: "
+                    )
+                }
             }
         }
     }

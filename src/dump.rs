@@ -12,8 +12,8 @@ use std::fs::read_to_string;
 pub fn dump_expected() -> anyhow::Result<()> {
     let cargo_dir = env!("CARGO_MANIFEST_DIR");
 
-    let entries = read_dir(format!("{cargo_dir}/tests"))
-        .with_context(|| format!("Failed to open directory '{cargo_dir}/tests/'"))?;
+    let entries = read_dir(format!("{cargo_dir}/fixtures/"))
+        .with_context(|| format!("Failed to open directory '{cargo_dir}/fixtures/'"))?;
 
     for entry in entries {
         let file = entry.with_context(|| "Failed to read directory entry")?;
@@ -25,27 +25,31 @@ pub fn dump_expected() -> anyhow::Result<()> {
                 format!("Failed to read file '{}'", current_file_path.display())
             })?;
 
-            let tokens = match Lexer::new(&current_file_path, &content).tokenize() {
-                Ok(t) => t,
+            let tokens = Lexer::new(&current_file_path, &content).tokenize();
+            let ast_str = match &tokens {
+                Ok(t) => {
+                    let ast = parser::Parser::new(t.clone(), &current_file_path).parse_program();
+                    if let Err(e) = &ast {
+                        eprintln!(
+                            "Error while trying to dump into files: {e}\nWriting the error to the file:"
+                        );
+                    }
+                    format!("{ast:#?}")
+                }
                 Err(e) => {
-                    eprintln!("{e}");
-                    vec![]
+                    eprintln!(
+                        "Error while trying to dump into files: {e}\nWriting the error to the file."
+                    );
+                    format!("{e:#?}")
                 }
             };
-            let ast = match parser::Parser::new(tokens.clone(), &current_file_path).parse_program()
-            {
-                Ok(ast) => ast,
-                Err(e) => {
-                    eprintln!("{e}");
-                    Program { statements: vec![] }
-                }
-            };
+            let tokens_str = format!("{tokens:#?}");
 
             let token_file_path = create_expected_by_ext(&current_file_path, ".tokens")?;
-            write(&token_file_path, format!("{tokens:#?}"))?;
+            write(&token_file_path, tokens_str)?;
 
             let parser_file_path = create_expected_by_ext(&current_file_path, ".ast")?;
-            write(&parser_file_path, format!("{ast:#?}"))?;
+            write(&parser_file_path, ast_str)?;
 
             println!("Writing expected tokens to: {}", token_file_path.display());
             println!("Writing expected tokens to: {}", parser_file_path.display());

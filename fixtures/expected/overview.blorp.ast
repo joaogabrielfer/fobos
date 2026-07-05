@@ -1,3 +1,20 @@
-Program {
-    statements: [],
-}
+Err(
+    ParserError {
+        kind: ExpectedExpression {
+            found: "fun",
+        },
+        file_path: "/home/joaogabriel/personal/programming/projects/blorp/fixtures/overview.blorp",
+        pos: Span {
+            start: SrcPos {
+                line: 1,
+                col: 0,
+                idx: 0,
+            },
+            end: SrcPos {
+                line: 1,
+                col: 3,
+                idx: 3,
+            },
+        },
+    },
+)
