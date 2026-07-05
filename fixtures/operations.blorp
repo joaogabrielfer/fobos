@@ -1,0 +1,6 @@
+let foo: Int = 1 + 1
+let bar := 1 + 2 * 3
+let baz := 5 + 2 * 4 / 2
+let x := a == b
+let y: Bool = a + b == c
+let z: Int = (10.3 + 2) * 3

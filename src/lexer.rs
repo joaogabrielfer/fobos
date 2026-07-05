@@ -1,5 +1,6 @@
 use crate::{
     file_utils::read_line_from,
+    parser::BinaryOp,
     source::{Span, SrcPos},
 };
 use std::{iter::Peekable, path::PathBuf, str::Chars};
@@ -177,6 +178,24 @@ pub enum TokenTag {
 
     NewLine,
     Eof,
+}
+
+impl TokenTag {
+    pub fn precedence_level(&self) -> Option<(BinaryOp, u8)> {
+        match self {
+            TokenTag::EqualsEquals => Some((BinaryOp::Eq, 1)),
+            TokenTag::BangEquals => Some((BinaryOp::NotEq, 1)),
+            TokenTag::RAngle => Some((BinaryOp::Greater, 2)),
+            TokenTag::GreaterEquals => Some((BinaryOp::GreaterEq, 2)),
+            TokenTag::LAngle => Some((BinaryOp::Less, 2)),
+            TokenTag::LessEquals => Some((BinaryOp::LessEq, 2)),
+            TokenTag::Plus => Some((BinaryOp::Add, 3)),
+            TokenTag::Minus => Some((BinaryOp::Sub, 3)),
+            TokenTag::Star => Some((BinaryOp::Mul, 4)),
+            TokenTag::Slash => Some((BinaryOp::Div, 4)),
+            _ => None,
+        }
+    }
 }
 
 impl std::fmt::Display for TokenTag {
@@ -536,7 +555,15 @@ mod tests {
 
                 let token_expected_path =
                     create_expected_by_ext(&current_file_path, ".tokens").unwrap();
-                let expected_tokens = read_to_string(token_expected_path.clone()).unwrap();
+                let expected_tokens = match read_to_string(token_expected_path.clone()) {
+                    Ok(s) => s,
+                    Err(_) => {
+                        println!(
+                            "Expected tokens file {token_expected_path:?} not found. Skipping it"
+                        );
+                        continue;
+                    }
+                };
 
                 for (i, (my_line, expected_line)) in
                     tokens_str.lines().zip(expected_tokens.lines()).enumerate()

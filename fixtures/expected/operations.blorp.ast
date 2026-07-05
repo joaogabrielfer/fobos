@@ -1,0 +1,132 @@
+Ok(
+    Program {
+        statements: [
+            Bind {
+                mutable: false,
+                name: "foo",
+                type_annotation: Some(
+                    Named(
+                        "Int",
+                    ),
+                ),
+                value: Binary {
+                    lhs: Int(
+                        1,
+                    ),
+                    op: Add,
+                    rhs: Int(
+                        1,
+                    ),
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "bar",
+                type_annotation: None,
+                value: Binary {
+                    lhs: Int(
+                        1,
+                    ),
+                    op: Add,
+                    rhs: Binary {
+                        lhs: Int(
+                            2,
+                        ),
+                        op: Mul,
+                        rhs: Int(
+                            3,
+                        ),
+                    },
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "baz",
+                type_annotation: None,
+                value: Binary {
+                    lhs: Int(
+                        5,
+                    ),
+                    op: Add,
+                    rhs: Binary {
+                        lhs: Binary {
+                            lhs: Int(
+                                2,
+                            ),
+                            op: Mul,
+                            rhs: Int(
+                                4,
+                            ),
+                        },
+                        op: Div,
+                        rhs: Int(
+                            2,
+                        ),
+                    },
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "x",
+                type_annotation: None,
+                value: Binary {
+                    lhs: Ident(
+                        "a",
+                    ),
+                    op: Eq,
+                    rhs: Ident(
+                        "b",
+                    ),
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "y",
+                type_annotation: Some(
+                    Named(
+                        "Bool",
+                    ),
+                ),
+                value: Binary {
+                    lhs: Binary {
+                        lhs: Ident(
+                            "a",
+                        ),
+                        op: Add,
+                        rhs: Ident(
+                            "b",
+                        ),
+                    },
+                    op: Eq,
+                    rhs: Ident(
+                        "c",
+                    ),
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "z",
+                type_annotation: Some(
+                    Named(
+                        "Int",
+                    ),
+                ),
+                value: Binary {
+                    lhs: Binary {
+                        lhs: Float(
+                            10.3,
+                        ),
+                        op: Add,
+                        rhs: Int(
+                            2,
+                        ),
+                    },
+                    op: Mul,
+                    rhs: Int(
+                        3,
+                    ),
+                },
+            },
+        ],
+    },
+)

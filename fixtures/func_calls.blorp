@@ -1,0 +1,10 @@
+let x := add()
+let x := add(1)
+let x := add(1, 2)
+let x := add(1 + 2, 3 * 4)
+let x := double(add(1, 2))
+let x := add(1, 2) * 3
+let x := add_curried(1)(2)
+
+let x := foo.len()
+let x := len(foo)

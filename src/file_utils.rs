@@ -63,7 +63,7 @@ pub fn read_line_from(file_path: &Path, span: Span) -> (usize, usize, String) {
     result.push('\n');
 
     result.push('|');
-    for _ in 0..=span.start.col + 1 {
+    for _ in 0..=span.start.col + 2 {
         result.push(' ');
     }
 

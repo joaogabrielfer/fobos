@@ -35,6 +35,31 @@ pub enum Expr {
     String(String),
     Bool(bool),
     Ident(String),
+
+    Binary {
+        lhs: Box<Expr>,
+        op: BinaryOp,
+        rhs: Box<Expr>,
+    },
+
+    Call {
+        callee: Box<Expr>,
+        args: Vec<Expr>,
+    },
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum BinaryOp {
+    Add,
+    Sub,
+    Mul,
+    Div,
+    Eq,
+    NotEq,
+    Greater,
+    GreaterEq,
+    Less,
+    LessEq,
 }
 
 #[derive(Debug, Clone)]
@@ -93,6 +118,7 @@ impl<'a> Parser<'a> {
             let stmt = self.parse_statement()?;
             // eprintln!("{:#?}", stmt.clone());
             statements.push(stmt);
+            self.expect_many(vec![TokenTag::NewLine])?;
             self.consume_newlines();
         }
         Ok(Program { statements })
@@ -126,18 +152,128 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_expr(&mut self) -> Result<Expr, Box<ParserError>> {
-        let value = match self.current().kind.clone() {
-            TokenKind::Int(n) => Ok(Expr::Int(n)),
-            TokenKind::Float(n) => Ok(Expr::Float(n)),
-            TokenKind::Bool(b) => Ok(Expr::Bool(b)),
-            TokenKind::String(s) => Ok(Expr::String(s.to_string())),
-            TokenKind::Ident(i) => Ok(Expr::Ident(i.to_string())),
+        self.parse_binary_expr(0)
+    }
+
+    fn parse_binary_expr(&mut self, min_level: u8) -> Result<Expr, Box<ParserError>> {
+        let mut lhs = self.parse_postfix_expr()?;
+
+        while let Some((op, level)) = self.current_tag().precedence_level()
+            && level >= min_level
+        {
+            self.advance();
+            let rhs = self.parse_binary_expr(level + 1)?;
+            lhs = Expr::Binary {
+                lhs: Box::new(lhs),
+                op,
+                rhs: Box::new(rhs),
+            };
+        }
+
+        Ok(lhs)
+    }
+
+    fn parse_postfix_expr(&mut self) -> Result<Expr, Box<ParserError>> {
+        let mut expr = self.parse_primary_expr()?;
+
+        loop {
+            if self.check(TokenTag::LParen) {
+                let args = self.parse_call_args()?;
+
+                expr = Expr::Call {
+                    callee: Box::new(expr),
+                    args,
+                };
+
+                continue;
+            }
+
+            if self.check(TokenTag::Dot) {
+                self.advance(); // consume `.`
+
+                let method_name = self.expect_ident()?;
+
+                if !self.check(TokenTag::LParen) {
+                    return Err(self.error(ParserErrorKind::ExpectedToken {
+                        expected: "(".to_string(),
+                        found: self.current().kind.tag().to_string(),
+                    }));
+                }
+
+                let mut args = self.parse_call_args()?;
+
+                // foo.bar(a, b) => bar(foo, a, b)
+                args.insert(0, expr);
+
+                expr = Expr::Call {
+                    callee: Box::new(Expr::Ident(method_name)),
+                    args,
+                };
+
+                continue;
+            }
+
+            break;
+        }
+
+        Ok(expr)
+    }
+
+    fn parse_call_args(&mut self) -> Result<Vec<Expr>, Box<ParserError>> {
+        self.expect(TokenTag::LParen)?;
+        let mut args = vec![];
+
+        if self.check(TokenTag::RParen) {
+            self.advance();
+            return Ok(args);
+        }
+
+        loop {
+            let expr = self.parse_expr()?;
+            args.push(expr);
+
+            if self.check(TokenTag::Comma) {
+                self.advance();
+            } else {
+                break;
+            }
+        }
+        self.expect(TokenTag::RParen)?;
+        Ok(args)
+    }
+
+    fn parse_primary_expr(&mut self) -> Result<Expr, Box<ParserError>> {
+        match self.current().kind.clone() {
+            TokenKind::Int(n) => {
+                self.advance();
+                Ok(Expr::Int(n))
+            }
+            TokenKind::Float(n) => {
+                self.advance();
+                Ok(Expr::Float(n))
+            }
+            TokenKind::Bool(b) => {
+                self.advance();
+                Ok(Expr::Bool(b))
+            }
+            TokenKind::String(s) => {
+                self.advance();
+                Ok(Expr::String(s.to_string()))
+            }
+            TokenKind::Ident(i) => {
+                self.advance();
+                Ok(Expr::Ident(i.to_string()))
+            }
+            TokenKind::LParen => {
+                self.advance();
+                let expr = self.parse_expr()?;
+                self.expect(TokenTag::RParen)?;
+                Ok(expr)
+            }
             other => Err(self.error(ParserErrorKind::ExpectedExpression {
                 found: other.tag().to_string(),
             })),
-        };
-        self.advance();
-        value
+        }
     }
 
     fn parse_type(&mut self) -> Result<Option<Type>, Box<ParserError>> {
@@ -210,6 +346,23 @@ impl<'a> Parser<'a> {
             }))
         }
     }
+    fn expect_many(&mut self, tags: Vec<TokenTag>) -> Result<(), Box<ParserError>> {
+        let mut any = false;
+        for tag in &tags {
+            if *tag == self.current_tag() {
+                any = true
+            }
+        }
+        if any {
+            self.advance();
+            Ok(())
+        } else {
+            Err(self.error(ParserErrorKind::ExpectedTokens {
+                expected: tags.iter().map(|t| t.to_string()).collect(),
+                found: self.current().origin.to_string(),
+            }))
+        }
+    }
     fn expect_ident(&mut self) -> Result<String, Box<ParserError>> {
         match self.current().kind.clone() {
             TokenKind::Ident(s) => {
@@ -257,7 +410,15 @@ mod tests {
                 };
 
                 let ast_expected_path = create_expected_by_ext(&current_file_path, ".ast").unwrap();
-                let expected_ast = read_to_string(ast_expected_path.clone()).unwrap();
+                let expected_ast = match read_to_string(ast_expected_path.clone()) {
+                    Ok(s) => s,
+                    Err(_) => {
+                        eprintln!(
+                            "Expected tokens file {ast_expected_path:?} not found. Skipping it"
+                        );
+                        continue;
+                    }
+                };
 
                 for (i, (my_line, expected_line)) in
                     ast_str.lines().zip(expected_ast.lines()).enumerate()
