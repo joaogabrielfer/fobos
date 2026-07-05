@@ -1,4 +1,7 @@
-use crate::source::{Span, SrcPos};
+use crate::{
+    file_utils::read_line_from,
+    source::{Span, SrcPos},
+};
 use std::{iter::Peekable, path::PathBuf, str::Chars};
 use thiserror::Error;
 
@@ -233,11 +236,16 @@ impl std::fmt::Display for TokenTag {
 }
 
 #[derive(Error, Debug)]
-#[error("{file_path}:{pos}: ERROR: {kind}")]
+#[error(
+    " --> {file_path}:{}:{}:\n|\n|   {} -> {kind}",
+    read_line_from(file_path, *pos).0,
+    read_line_from(file_path, *pos).1,
+    read_line_from(file_path, *pos).2,
+)]
 pub struct LexerError {
     pub kind: LexerErrorKind,
     pub file_path: PathBuf,
-    pub pos: SrcPos,
+    pub pos: Span,
 }
 
 #[derive(Error, Debug)]
@@ -261,7 +269,7 @@ impl<'a> Lexer<'a> {
             pos: SrcPos {
                 line: 1,
                 col: 1,
-                idx: 1,
+                idx: 0,
             },
         }
     }
@@ -271,7 +279,7 @@ impl<'a> Lexer<'a> {
         match result {
             Some('\n') => {
                 self.pos.line += 1;
-                self.pos.col = 1;
+                self.pos.col = 0;
                 self.pos.idx += '\n'.len_utf8();
                 result
             }
@@ -451,7 +459,10 @@ impl<'a> Lexer<'a> {
         LexerError {
             kind,
             file_path: self.file_path.clone(),
-            pos: self.pos,
+            pos: Span {
+                start: self.pos,
+                end: self.pos,
+            },
         }
     }
 
@@ -459,8 +470,11 @@ impl<'a> Lexer<'a> {
         let offset = match origin {
             "EOF" => 0,
             "\\n" => 0,
+            _ if self.pos.col < 1 => 0,
             _ => origin.len(),
         };
+
+        let subtract = if self.pos.col > 1 { 1 } else { 0 };
         // eprintln!("offset = {offset}\nkind = {kind:?}");
         Token {
             origin,
@@ -473,8 +487,8 @@ impl<'a> Lexer<'a> {
                 },
                 SrcPos {
                     line: self.pos.line,
-                    col: self.pos.col - 1,
-                    idx: self.pos.idx - 1,
+                    col: self.pos.col - subtract,
+                    idx: self.pos.idx - subtract,
                 },
             ),
         }
@@ -501,7 +515,7 @@ mod tests {
         fs::{read_dir, read_to_string},
     };
 
-    use crate::path_utils::create_expected_by_ext;
+    use crate::file_utils::create_expected_by_ext;
 
     use super::*;
 

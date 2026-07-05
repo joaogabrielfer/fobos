@@ -1,0 +1,18 @@
+Err(
+    LexerError {
+        kind: UnterminatedString,
+        file_path: "/home/joaogabriel/personal/programming/projects/blorp/fixtures/tokeninzer_error.blorp",
+        pos: Span {
+            start: SrcPos {
+                line: 2,
+                col: 0,
+                idx: 32,
+            },
+            end: SrcPos {
+                line: 2,
+                col: 0,
+                idx: 32,
+            },
+        },
+    },
+)

@@ -19,8 +19,8 @@ impl SrcPos {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Span {
-    start: SrcPos,
-    end: SrcPos,
+    pub start: SrcPos,
+    pub end: SrcPos,
 }
 
 impl Span {

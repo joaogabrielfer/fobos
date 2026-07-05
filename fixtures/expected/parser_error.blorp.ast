@@ -1,0 +1,20 @@
+Err(
+    ParserError {
+        kind: ExpectedIdentifier {
+            found: "If",
+        },
+        file_path: "/home/joaogabriel/personal/programming/projects/blorp/fixtures/parser_error.blorp",
+        pos: Span {
+            start: SrcPos {
+                line: 1,
+                col: 5,
+                idx: 4,
+            },
+            end: SrcPos {
+                line: 1,
+                col: 6,
+                idx: 5,
+            },
+        },
+    },
+)

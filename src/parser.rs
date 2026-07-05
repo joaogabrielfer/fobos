@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use anyhow::Result;
 use thiserror::Error;
 
+use crate::file_utils::read_line_from;
 use crate::lexer::{Token, TokenKind, TokenTag};
 use crate::source::Span;
 
@@ -43,6 +44,38 @@ pub struct Parser<'a> {
     file_path: &'a PathBuf,
 }
 
+#[derive(Error, Debug)]
+#[error(
+    " --> {file_path}:{}:{}:\n|\n|   {} -> {kind}",
+    read_line_from(file_path, *pos).0,
+    read_line_from(file_path, *pos).1,
+    read_line_from(file_path, *pos).2,
+)]
+pub struct ParserError {
+    pub kind: ParserErrorKind,
+    pub file_path: PathBuf,
+    pub pos: Span,
+}
+
+#[derive(Error, Debug)]
+pub enum ParserErrorKind {
+    #[error("expected token '{expected}', found '{found}'")]
+    ExpectedToken { expected: String, found: String },
+    #[error("expected tokens '{expected:?}', found '{found}'")]
+    ExpectedTokens {
+        expected: Vec<String>,
+        found: String,
+    },
+    #[error("expected identifier, found '{found}'")]
+    ExpectedIdentifier { found: String },
+    #[error("expected expression, found '{found}'")]
+    ExpectedExpression { found: String },
+    #[error("unexpected token '{found}'")]
+    UnexpectedToken { found: String },
+    #[error("unexpected EOF")]
+    UnexpectedEof,
+}
+
 impl<'a> Parser<'a> {
     pub fn new(tokens: Vec<Token<'a>>, file_path: &'a PathBuf) -> Self {
         Self {
@@ -52,7 +85,7 @@ impl<'a> Parser<'a> {
         }
     }
 
-    pub fn parse_program(&mut self) -> Result<Program, ParserError> {
+    pub fn parse_program(&mut self) -> Result<Program, Box<ParserError>> {
         let mut statements = vec![];
         self.consume_newlines();
 
@@ -65,7 +98,7 @@ impl<'a> Parser<'a> {
         Ok(Program { statements })
     }
 
-    fn parse_statement(&mut self) -> Result<Stmt, ParserError> {
+    fn parse_statement(&mut self) -> Result<Stmt, Box<ParserError>> {
         match self.current().kind {
             TokenKind::Let => self.parse_binding(false),
             TokenKind::Var => self.parse_binding(true),
@@ -73,7 +106,7 @@ impl<'a> Parser<'a> {
         }
     }
 
-    fn parse_binding(&mut self, mutable: bool) -> Result<Stmt, ParserError> {
+    fn parse_binding(&mut self, mutable: bool) -> Result<Stmt, Box<ParserError>> {
         if mutable {
             self.expect(TokenTag::Var)?;
         } else {
@@ -92,7 +125,7 @@ impl<'a> Parser<'a> {
         })
     }
 
-    fn parse_expr(&mut self) -> Result<Expr, ParserError> {
+    fn parse_expr(&mut self) -> Result<Expr, Box<ParserError>> {
         let value = match self.current().kind.clone() {
             TokenKind::Int(n) => Ok(Expr::Int(n)),
             TokenKind::Float(n) => Ok(Expr::Float(n)),
@@ -107,7 +140,7 @@ impl<'a> Parser<'a> {
         value
     }
 
-    fn parse_type(&mut self) -> Result<Option<Type>, ParserError> {
+    fn parse_type(&mut self) -> Result<Option<Type>, Box<ParserError>> {
         self.expect(TokenTag::Colon)?;
         match self.current().kind.clone() {
             TokenKind::Equals => Ok(None),
@@ -158,15 +191,15 @@ impl<'a> Parser<'a> {
         }
     }
 
-    fn error(&self, kind: ParserErrorKind) -> ParserError {
-        ParserError {
+    fn error(&self, kind: ParserErrorKind) -> Box<ParserError> {
+        Box::new(ParserError {
             kind,
             file_path: self.file_path.clone(),
             pos: self.current().span,
-        }
+        })
     }
 
-    fn expect(&mut self, tag: TokenTag) -> Result<(), ParserError> {
+    fn expect(&mut self, tag: TokenTag) -> Result<(), Box<ParserError>> {
         if self.current_tag() == tag {
             self.advance();
             Ok(())
@@ -177,7 +210,7 @@ impl<'a> Parser<'a> {
             }))
         }
     }
-    fn expect_ident(&mut self) -> Result<String, ParserError> {
+    fn expect_ident(&mut self) -> Result<String, Box<ParserError>> {
         match self.current().kind.clone() {
             TokenKind::Ident(s) => {
                 self.advance();
@@ -190,33 +223,6 @@ impl<'a> Parser<'a> {
     }
 }
 
-#[derive(Error, Debug)]
-#[error("{file_path}:{pos}: ERROR: {kind}")]
-pub struct ParserError {
-    pub kind: ParserErrorKind,
-    pub file_path: PathBuf,
-    pub pos: Span,
-}
-
-#[derive(Error, Debug)]
-pub enum ParserErrorKind {
-    #[error("expected token '{expected}', found '{found}'")]
-    ExpectedToken { expected: String, found: String },
-    #[error("expected tokens '{expected:?}', found '{found}'")]
-    ExpectedTokens {
-        expected: Vec<String>,
-        found: String,
-    },
-    #[error("expected identifier, found '{found}'")]
-    ExpectedIdentifier { found: String },
-    #[error("expected expression, found '{found}'")]
-    ExpectedExpression { found: String },
-    #[error("unexpected token '{found}'")]
-    UnexpectedToken { found: String },
-    #[error("unexpected EOF")]
-    UnexpectedEof,
-}
-
 #[cfg(test)]
 mod tests {
 
@@ -226,7 +232,7 @@ mod tests {
         fs::{read_dir, read_to_string},
     };
 
-    use crate::{parser, path_utils::create_expected_by_ext};
+    use crate::{file_utils::create_expected_by_ext, parser};
 
     #[test]
     fn validate_expected_ast() {
