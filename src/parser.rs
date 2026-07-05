@@ -35,6 +35,9 @@ pub enum Expr {
     String(String),
     Bool(bool),
     Ident(String),
+    Unit,
+
+    Tuple(Vec<Expr>),
 
     Unary {
         op: UnaryOp,
@@ -224,7 +227,7 @@ impl<'a> Parser<'a> {
             }
 
             if self.check(TokenTag::Dot) {
-                self.advance(); // consume `.`
+                self.advance();
 
                 let method_name = self.expect_ident()?;
 
@@ -237,7 +240,13 @@ impl<'a> Parser<'a> {
 
                 let mut args = self.parse_call_args()?;
 
-                args.insert(0, expr);
+                if let Expr::Tuple(mut t) = expr {
+                    while let Some(e) = t.pop() {
+                        args.insert(0, e);
+                    }
+                } else {
+                    args.insert(0, expr);
+                }
 
                 expr = Expr::Call {
                     callee: Box::new(Expr::Ident(method_name)),
@@ -300,9 +309,24 @@ impl<'a> Parser<'a> {
             }
             TokenKind::LParen => {
                 self.advance();
-                let expr = self.parse_expr()?;
+                let mut exprs = vec![];
+                if self.check(TokenTag::RParen) {
+                    self.advance();
+                    return Ok(Expr::Unit);
+                }
+                let mut tuple = self.check(TokenTag::LParen);
+                exprs.push(self.parse_expr()?);
+                while self.check(TokenTag::Comma) {
+                    tuple = true;
+                    self.advance();
+                    exprs.push(self.parse_expr()?);
+                }
                 self.expect(TokenTag::RParen)?;
-                Ok(expr)
+                if tuple {
+                    Ok(Expr::Tuple(exprs))
+                } else {
+                    Ok(exprs[0].clone())
+                }
             }
             other => Err(self.error(ParserErrorKind::ExpectedExpression {
                 found: other.tag().to_string(),
@@ -447,9 +471,7 @@ mod tests {
                 let expected_ast = match read_to_string(ast_expected_path.clone()) {
                     Ok(s) => s,
                     Err(_) => {
-                        eprintln!(
-                            "Expected tokens file {ast_expected_path:?} not found. Skipping it"
-                        );
+                        eprintln!("Expected ast file {ast_expected_path:?} not found. Skipping it");
                         continue;
                     }
                 };

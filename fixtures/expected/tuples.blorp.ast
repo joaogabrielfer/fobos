@@ -1,0 +1,83 @@
+Ok(
+    Program {
+        statements: [
+            Bind {
+                mutable: true,
+                name: "t0",
+                type_annotation: None,
+                value: Unit,
+            },
+            Bind {
+                mutable: true,
+                name: "t1",
+                type_annotation: None,
+                value: Int(
+                    10,
+                ),
+            },
+            Bind {
+                mutable: true,
+                name: "t2",
+                type_annotation: None,
+                value: Tuple(
+                    [
+                        Tuple(
+                            [
+                                Int(
+                                    10,
+                                ),
+                                Int(
+                                    2,
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            },
+            Bind {
+                mutable: true,
+                name: "t3",
+                type_annotation: None,
+                value: Tuple(
+                    [
+                        Tuple(
+                            [
+                                Int(
+                                    10,
+                                ),
+                                Int(
+                                    2,
+                                ),
+                            ],
+                        ),
+                        Int(
+                            3,
+                        ),
+                    ],
+                ),
+            },
+            Bind {
+                mutable: true,
+                name: "a",
+                type_annotation: None,
+                value: Call {
+                    callee: Ident(
+                        "add",
+                    ),
+                    args: [
+                        Tuple(
+                            [
+                                Int(
+                                    1,
+                                ),
+                                Int(
+                                    2,
+                                ),
+                            ],
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+)
