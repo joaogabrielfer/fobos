@@ -1,14 +1,12 @@
-use anyhow::Context;
 use clap::{Parser, Subcommand};
-use std::{
-    ffi::OsStr,
-    fs::{read_dir, read_to_string, write},
-    path::PathBuf,
-    process::exit,
-};
+use std::{fs::read_to_string, path::PathBuf, process::exit};
 use thiserror::Error;
 
-use blorp::{lexer::Lexer, parser};
+use blorp::{
+    dump::dump_expected,
+    lexer::Lexer,
+    parser::{self},
+};
 
 #[derive(Parser)]
 #[command(name = "blorp")]
@@ -33,6 +31,14 @@ enum Commands {
     GenerateExpected,
 }
 
+#[derive(Error, Debug)]
+pub enum CliError {
+    #[error(
+        "Path {0:?} is not a directory. Please provide a directory for generating the expected results"
+    )]
+    GenerateTestPathNotDir(PathBuf),
+}
+
 fn main() {
     match run() {
         Ok(_) => {}
@@ -45,8 +51,6 @@ fn main() {
 
 fn run() -> anyhow::Result<()> {
     let cli = Cli::parse();
-    let cargo_dir = env!("CARGO_MANIFEST_DIR");
-
     match &cli.command {
         Commands::Run { path: _path } => {
             // let content = read_to_string(path)?;
@@ -72,43 +76,6 @@ fn run() -> anyhow::Result<()> {
             println!("{ast:#?}");
             Ok(())
         }
-        Commands::GenerateExpected => {
-            let entries = read_dir(format!("{cargo_dir}/tests"))
-                .with_context(|| format!("Failed to open directory '{cargo_dir}/tests/'"))?;
-
-            for entry in entries {
-                let file = entry.with_context(|| "Failed to read directory entry")?;
-                let current_file_path = file.path();
-
-                if current_file_path.is_file()
-                    && current_file_path.extension() != Some(OsStr::new("expected"))
-                {
-                    let content = read_to_string(&current_file_path).with_context(|| {
-                        format!("Failed to read file '{}'", current_file_path.display())
-                    })?;
-
-                    let tokens = Lexer::new(&current_file_path, &content).tokenize()?;
-
-                    let mut expected_file_path = current_file_path.clone();
-                    expected_file_path.as_mut_os_string().push(".expected");
-
-                    println!(
-                        "Writing expected tokens to: {}",
-                        expected_file_path.display()
-                    );
-
-                    write(expected_file_path, format!("{tokens:#?}"))?;
-                }
-            }
-            Ok(())
-        }
+        Commands::GenerateExpected => dump_expected(),
     }
-}
-
-#[derive(Error, Debug)]
-pub enum CliError {
-    #[error(
-        "Path {0:?} is not a directory. Please provide a directory for generating the expected results"
-    )]
-    GenerateTestPathNotDir(PathBuf),
 }

@@ -299,6 +299,7 @@ impl<'a> Lexer<'a> {
     fn next_token(&mut self) -> Result<Token<'a>, LexerError> {
         self.skip_whitespace();
         let start_idx = self.pos.idx;
+        // println!("current = {:?}", self.source.peek());
         match self.advance() {
             Some('(') => Ok(self.new_token(TokenKind::LParen, "(")),
             Some(')') => Ok(self.new_token(TokenKind::RParen, ")")),
@@ -455,17 +456,22 @@ impl<'a> Lexer<'a> {
     }
 
     fn new_token(&self, kind: TokenKind<'a>, origin: &'a str) -> Token<'a> {
-        let offset = origin.len();
+        let offset = match origin {
+            "EOF" => 0,
+            "\\n" => 0,
+            _ => origin.len(),
+        };
+        // eprintln!("offset = {offset}\nkind = {kind:?}");
         Token {
             origin,
             kind,
             span: Span::new(
-                self.pos,
                 SrcPos {
                     line: self.pos.line,
-                    col: self.pos.col + offset,
-                    idx: self.pos.idx + offset,
+                    col: self.pos.col - offset,
+                    idx: self.pos.idx - offset,
                 },
+                self.pos,
             ),
         }
     }
@@ -491,27 +497,29 @@ mod tests {
         fs::{read_dir, read_to_string},
     };
 
+    use crate::path_utils::create_expected_by_ext;
+
     use super::*;
 
     #[test]
     fn validate_expected_tokens() {
         let cargo_dir = env!("CARGO_MANIFEST_DIR");
-        let entries = read_dir(format!("{cargo_dir}/tests")).unwrap();
+        let entries = read_dir(format!("{cargo_dir}/fixtures")).unwrap();
 
         for entry in entries {
             let current_file_path = entry.unwrap().path();
 
             if current_file_path.is_file()
-                && current_file_path.extension() != Some(OsStr::new("expected"))
+                && current_file_path.extension() == Some(OsStr::new("blorp"))
             {
                 let content = read_to_string(&current_file_path).unwrap();
                 let tokens = Lexer::new(&current_file_path, &content).tokenize().unwrap();
                 let tokens_str = format!("{tokens:#?}");
 
-                let mut expected_file_path = current_file_path.clone();
-                expected_file_path.as_mut_os_string().push(".expected");
+                let token_expected_path =
+                    create_expected_by_ext(&current_file_path, ".tokens").unwrap();
+                let expected_tokens = read_to_string(token_expected_path).unwrap();
 
-                let expected_tokens = read_to_string(expected_file_path).unwrap();
                 assert_eq!(tokens_str, expected_tokens);
             }
         }

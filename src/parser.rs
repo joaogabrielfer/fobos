@@ -8,7 +8,7 @@ use crate::source::Span;
 
 #[derive(Debug, Clone)]
 pub struct Program {
-    statements: Vec<Stmt>,
+    pub statements: Vec<Stmt>,
 }
 
 #[derive(Debug, Clone)]
@@ -215,4 +215,43 @@ pub enum ParserErrorKind {
     UnexpectedToken { found: String },
     #[error("unexpected EOF")]
     UnexpectedEof,
+}
+
+#[cfg(test)]
+mod tests {
+
+    use crate::lexer::Lexer;
+    use std::{
+        ffi::OsStr,
+        fs::{read_dir, read_to_string},
+    };
+
+    use crate::{parser, path_utils::create_expected_by_ext};
+
+    #[test]
+    fn validate_expected_ast() {
+        let cargo_dir = env!("CARGO_MANIFEST_DIR");
+        let entries = read_dir(format!("{cargo_dir}/fixtures")).unwrap();
+
+        for entry in entries {
+            let current_file_path = entry.unwrap().path();
+
+            if current_file_path.is_file()
+                && current_file_path.extension() == Some(OsStr::new("blorp"))
+            {
+                let content = read_to_string(&current_file_path).unwrap();
+                let tokens = Lexer::new(&current_file_path, &content).tokenize().unwrap();
+
+                let ast = parser::Parser::new(tokens, &current_file_path)
+                    .parse_program()
+                    .unwrap();
+                let ast_str = format!("{ast:#?}");
+
+                let ast_expected_path = create_expected_by_ext(&current_file_path, ".ast").unwrap();
+                let expected_ast = read_to_string(ast_expected_path).unwrap();
+
+                assert_eq!(ast_str, expected_ast);
+            }
+        }
+    }
 }
