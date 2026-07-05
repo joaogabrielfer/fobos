@@ -164,3 +164,94 @@ match str in
     other => println("i dont know what this is: {}", other)
 end
 ```
+
+### Types and interfaces
+
+Product types are defined with the `struct` keyword
+
+```blorp
+struct Point =
+    x: Int,
+    y: Int,
+end
+```
+
+Sum types are defined with the `enum` keyword
+
+```blorp
+enum State =
+    Active,
+    Inactive
+end
+```
+
+blorp allow for full algebraic data types with generics:
+
+```blorp
+struct User =
+    id: Int,
+    role: UserRole,
+end
+
+enum UserRole =
+    Admin,
+    Customer,
+end
+```
+
+For simple type aliases, use `type` keyword
+
+```blorp
+type IntArrray = Arr(Int)
+
+type MyUnitType // defines a type with only one value
+```
+
+Design patterns from functional programming language are also expressed here
+
+```blorp
+enum Result[T, E] =
+    Ok(T),
+    Err(T).
+end
+```
+
+Interfaces are what allow constraints with generics
+
+A type T implements the interface if all the functions inside the interface exist with those parameters. Inside interfaces, `Self` is a special type that represents the type of the thing
+
+```blorp
+// in this case, any type that implements to_string is considered of the interface Display
+interface Display =
+    fun to_string(Self) -> String
+end
+```
+
+More complete example
+
+```blorp
+type Cat
+type Dog
+
+interface Speak =
+    fun make_sound(Self): String
+end
+
+fun make_sound(_: Cat): String =
+    return "meow"
+end
+// now Cat implements Speak
+
+fun make_sound(_: Dog): String =
+    return "woof"
+end
+// Dog too now
+
+// interfaces allow you to talk about all members that implement this at once
+fun [T: Speak] speak(speaker: T) :=
+    println("spoke: {}", animal.speak())
+end
+```
+
+# Todo
+- Change generic types from things like `Arr<T>` to `Arr(T)`, so that angle brackets would be only used as an operator
