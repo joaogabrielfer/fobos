@@ -1,0 +1,187 @@
+Ok(
+    Program {
+        statements: [
+            Bind {
+                mutable: false,
+                name: "x",
+                type_annotation: None,
+                value: Call {
+                    callee: Ident(
+                        "add",
+                    ),
+                    args: [],
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "x",
+                type_annotation: None,
+                value: Call {
+                    callee: Ident(
+                        "add",
+                    ),
+                    args: [
+                        Int(
+                            1,
+                        ),
+                    ],
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "x",
+                type_annotation: None,
+                value: Call {
+                    callee: Ident(
+                        "add",
+                    ),
+                    args: [
+                        Int(
+                            1,
+                        ),
+                        Int(
+                            2,
+                        ),
+                    ],
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "x",
+                type_annotation: None,
+                value: Call {
+                    callee: Ident(
+                        "add",
+                    ),
+                    args: [
+                        Binary {
+                            lhs: Int(
+                                1,
+                            ),
+                            op: Add,
+                            rhs: Int(
+                                2,
+                            ),
+                        },
+                        Binary {
+                            lhs: Int(
+                                3,
+                            ),
+                            op: Mul,
+                            rhs: Int(
+                                4,
+                            ),
+                        },
+                    ],
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "x",
+                type_annotation: None,
+                value: Call {
+                    callee: Ident(
+                        "double",
+                    ),
+                    args: [
+                        Call {
+                            callee: Ident(
+                                "add",
+                            ),
+                            args: [
+                                Int(
+                                    1,
+                                ),
+                                Int(
+                                    2,
+                                ),
+                            ],
+                        },
+                    ],
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "x",
+                type_annotation: None,
+                value: Binary {
+                    lhs: Call {
+                        callee: Ident(
+                            "add",
+                        ),
+                        args: [
+                            Int(
+                                1,
+                            ),
+                            Int(
+                                2,
+                            ),
+                        ],
+                    },
+                    op: Mul,
+                    rhs: Int(
+                        3,
+                    ),
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "x",
+                type_annotation: None,
+                value: Call {
+                    callee: Call {
+                        callee: Ident(
+                            "add_curried",
+                        ),
+                        args: [
+                            Int(
+                                1,
+                            ),
+                        ],
+                    },
+                    args: [
+                        Int(
+                            2,
+                        ),
+                    ],
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "x",
+                type_annotation: None,
+                value: Call {
+                    callee: Ident(
+                        "len",
+                    ),
+                    args: [
+                        Ident(
+                            "foo",
+                        ),
+                        Ident(
+                            "bar",
+                        ),
+                    ],
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "x",
+                type_annotation: None,
+                value: Call {
+                    callee: Ident(
+                        "len",
+                    ),
+                    args: [
+                        Ident(
+                            "foo",
+                        ),
+                        Ident(
+                            "bar",
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+)

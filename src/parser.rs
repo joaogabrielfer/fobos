@@ -202,7 +202,6 @@ impl<'a> Parser<'a> {
 
                 let mut args = self.parse_call_args()?;
 
-                // foo.bar(a, b) => bar(foo, a, b)
                 args.insert(0, expr);
 
                 expr = Expr::Call {

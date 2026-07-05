@@ -6,5 +6,5 @@ let x := double(add(1, 2))
 let x := add(1, 2) * 3
 let x := add_curried(1)(2)
 
-let x := foo.len()
-let x := len(foo)
+let x := foo.len(bar)
+let x := len(foo, bar)
