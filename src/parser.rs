@@ -5,6 +5,7 @@ use anyhow::Result;
 use thiserror::Error;
 
 use crate::file_utils::read_line_from;
+use crate::lexer::TokenTag::RParen;
 use crate::lexer::{Token, TokenKind, TokenTag};
 use crate::source::Span;
 
@@ -15,27 +16,51 @@ pub struct Program {
 
 #[derive(Debug, Clone)]
 pub enum Stmt {
+    Expr(Expr),
+    Return(Expr),
+
     Bind {
         mutable: bool,
         name: String,
-        type_annotation: Option<Type>,
+        type_annotation: TypeAnnotation,
         value: Expr,
     },
-    Expr(Expr),
-    Return(Expr),
+
     Assignment {
         target: Expr,
         value: Expr,
     },
+
     While {
         condition: Expr,
         block: Block,
     },
+
+    FunDecl {
+        name: String,
+        generics: Vec<String>,
+        parameters: Vec<Parameter>,
+        return_type: TypeAnnotation,
+        body: Block,
+    },
+}
+
+#[derive(Debug, Clone)]
+pub enum TypeAnnotation {
+    Inferred,
+    Explicit(Type),
 }
 
 #[derive(Debug, Clone)]
 pub enum Type {
     Named(String),
+    Unit,
+}
+
+#[derive(Debug, Clone)]
+pub struct Parameter {
+    name: String,
+    t: Type,
 }
 
 #[derive(Debug, Clone)]
@@ -187,6 +212,7 @@ impl<'a> Parser<'a> {
             TokenKind::Let => self.parse_binding(false),
             TokenKind::Var => self.parse_binding(true),
             TokenKind::While => self.parse_while(),
+            TokenKind::Fun => self.parse_fun_decl(),
             TokenKind::Return => {
                 self.advance();
                 Ok(Stmt::Return(self.parse_expr()?))
@@ -219,7 +245,7 @@ impl<'a> Parser<'a> {
             self.expect(TokenTag::Let)?;
         }
         let name = self.expect_ident()?;
-        let type_annotation = self.parse_type()?;
+        let type_annotation = self.parse_option_type()?;
         self.expect(TokenTag::Equals)?;
         let value = if self.check(TokenTag::NewLine) {
             Expr::Block(self.parse_block()?)
@@ -241,6 +267,60 @@ impl<'a> Parser<'a> {
         self.expect(TokenTag::Do)?;
         let block = self.parse_block()?;
         Ok(Stmt::While { condition, block })
+    }
+
+    fn parse_fun_decl(&mut self) -> Result<Stmt, Box<ParserError>> {
+        self.expect(TokenTag::Fun)?;
+        let mut generics = vec![];
+        if let TokenTag::LBrace = self.current_tag() {
+            self.advance();
+            while !self.check(TokenTag::RBrace) {
+                let name = self.expect_ident()?;
+                generics.push(name);
+                if let TokenTag::Comma = self.current_tag() {
+                    self.expect(TokenTag::Comma)?;
+                }
+            }
+            self.expect(TokenTag::RBrace)?;
+        }
+        let name = self.expect_ident()?;
+        self.expect(TokenTag::LParen)?;
+        let mut parameters = vec![];
+        while !self.check(TokenTag::NewLine) {
+            if let TokenTag::RParen = self.current_tag() {
+                self.advance();
+                break;
+            }
+            let name = self.expect_ident()?;
+            self.expect(TokenTag::Colon)?;
+            let t = Type::Named(self.expect_ident()?);
+            parameters.push(Parameter { name, t });
+            match self.current_tag() {
+                TokenTag::Comma => {
+                    self.expect(TokenTag::Comma)?;
+                }
+                TokenTag::RParen => {
+                    self.expect(RParen)?;
+                    break;
+                }
+                other => {
+                    return Err(self.error(ParserErrorKind::ExpectedTokens {
+                        expected: vec![")".to_string(), ",".to_string()],
+                        found: other.to_string(),
+                    }));
+                }
+            }
+        }
+        let return_type = self.parse_option_type()?;
+        self.expect(TokenTag::Equals)?;
+        let body = self.parse_block()?;
+        Ok(Stmt::FunDecl {
+            name,
+            generics,
+            parameters,
+            body,
+            return_type,
+        })
     }
 
     fn parse_expr(&mut self) -> Result<Expr, Box<ParserError>> {
@@ -439,13 +519,18 @@ impl<'a> Parser<'a> {
         }
     }
 
-    fn parse_type(&mut self) -> Result<Option<Type>, Box<ParserError>> {
+    fn parse_option_type(&mut self) -> Result<TypeAnnotation, Box<ParserError>> {
         self.expect(TokenTag::Colon)?;
-        match self.current().kind.clone() {
-            TokenKind::Equals => Ok(None),
-            TokenKind::Ident(t) => {
-                self.advance();
-                Ok(Some(Type::Named(t.to_string())))
+        match self.current_tag() {
+            TokenTag::Equals => Ok(TypeAnnotation::Inferred),
+            TokenTag::Ident => {
+                let t = self.expect_ident()?;
+                Ok(TypeAnnotation::Explicit(Type::Named(t.to_string())))
+            }
+            TokenTag::LParen => {
+                self.expect(TokenTag::LParen)?;
+                self.expect(TokenTag::RParen)?;
+                Ok(TypeAnnotation::Explicit(Type::Unit))
             }
             other => Err(self.error(ParserErrorKind::ExpectedTokens {
                 expected: vec!["=".to_string(), "type".to_string()],

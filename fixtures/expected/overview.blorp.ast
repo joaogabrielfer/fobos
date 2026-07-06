@@ -1,19 +1,23 @@
 Err(
     ParserError {
-        kind: ExpectedExpression {
-            found: "fun",
+        kind: ExpectedTokens {
+            expected: [
+                ")",
+                ",",
+            ],
+            found: "<",
         },
         file_path: "/home/joaogabriel/personal/programming/projects/blorp/fixtures/overview.blorp",
         pos: Span {
             start: SrcPos {
-                line: 1,
-                col: 1,
-                idx: 0,
+                line: 10,
+                col: 23,
+                idx: 149,
             },
             end: SrcPos {
-                line: 1,
-                col: 3,
-                idx: 2,
+                line: 10,
+                col: 23,
+                idx: 149,
             },
         },
     },

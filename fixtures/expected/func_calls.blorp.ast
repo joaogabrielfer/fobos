@@ -4,7 +4,7 @@ Ok(
             Bind {
                 mutable: false,
                 name: "x",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Call {
                     callee: Ident(
                         "add",
@@ -15,7 +15,7 @@ Ok(
             Bind {
                 mutable: false,
                 name: "x",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Call {
                     callee: Ident(
                         "add",
@@ -30,7 +30,7 @@ Ok(
             Bind {
                 mutable: false,
                 name: "x",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Call {
                     callee: Ident(
                         "add",
@@ -48,7 +48,7 @@ Ok(
             Bind {
                 mutable: false,
                 name: "x",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Call {
                     callee: Ident(
                         "add",
@@ -78,7 +78,7 @@ Ok(
             Bind {
                 mutable: false,
                 name: "x",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Call {
                     callee: Ident(
                         "double",
@@ -103,7 +103,7 @@ Ok(
             Bind {
                 mutable: false,
                 name: "x",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Binary {
                     lhs: Call {
                         callee: Ident(
@@ -127,7 +127,7 @@ Ok(
             Bind {
                 mutable: false,
                 name: "x",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Call {
                     callee: Call {
                         callee: Ident(
@@ -149,7 +149,7 @@ Ok(
             Bind {
                 mutable: false,
                 name: "x",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Call {
                     callee: Ident(
                         "len",
@@ -167,7 +167,7 @@ Ok(
             Bind {
                 mutable: false,
                 name: "x",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Call {
                     callee: Ident(
                         "len",

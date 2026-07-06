@@ -4,13 +4,13 @@ Ok(
             Bind {
                 mutable: true,
                 name: "t0",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Unit,
             },
             Bind {
                 mutable: true,
                 name: "t1",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Int(
                     10,
                 ),
@@ -18,7 +18,7 @@ Ok(
             Bind {
                 mutable: true,
                 name: "t2",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Tuple(
                     [
                         Tuple(
@@ -37,7 +37,7 @@ Ok(
             Bind {
                 mutable: true,
                 name: "t3",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Tuple(
                     [
                         Tuple(
@@ -59,7 +59,7 @@ Ok(
             Bind {
                 mutable: true,
                 name: "a",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Call {
                     callee: Ident(
                         "add",

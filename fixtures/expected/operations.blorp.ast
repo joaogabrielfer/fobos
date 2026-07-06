@@ -4,7 +4,7 @@ Ok(
             Bind {
                 mutable: false,
                 name: "foo",
-                type_annotation: Some(
+                type_annotation: Explicit(
                     Named(
                         "Int",
                     ),
@@ -22,7 +22,7 @@ Ok(
             Bind {
                 mutable: false,
                 name: "bar",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Binary {
                     lhs: Int(
                         1,
@@ -42,7 +42,7 @@ Ok(
             Bind {
                 mutable: false,
                 name: "baz",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Binary {
                     lhs: Int(
                         5,
@@ -68,7 +68,7 @@ Ok(
             Bind {
                 mutable: false,
                 name: "x",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Binary {
                     lhs: Ident(
                         "a",
@@ -82,7 +82,7 @@ Ok(
             Bind {
                 mutable: false,
                 name: "y",
-                type_annotation: Some(
+                type_annotation: Explicit(
                     Named(
                         "Bool",
                     ),
@@ -106,7 +106,7 @@ Ok(
             Bind {
                 mutable: false,
                 name: "z",
-                type_annotation: Some(
+                type_annotation: Explicit(
                     Named(
                         "Int",
                     ),
@@ -130,7 +130,7 @@ Ok(
             Bind {
                 mutable: false,
                 name: "w",
-                type_annotation: Some(
+                type_annotation: Explicit(
                     Named(
                         "Int",
                     ),
@@ -151,7 +151,7 @@ Ok(
             Bind {
                 mutable: false,
                 name: "f",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Unary {
                     op: Not,
                     operan: Bool(

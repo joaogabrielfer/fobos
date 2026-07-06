@@ -4,14 +4,14 @@ Ok(
             Bind {
                 mutable: false,
                 name: "foo",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Block(
                     Block {
                         statements: [
                             Bind {
                                 mutable: false,
                                 name: "a",
-                                type_annotation: None,
+                                type_annotation: Inferred,
                                 value: Int(
                                     10,
                                 ),
@@ -19,7 +19,7 @@ Ok(
                             Bind {
                                 mutable: false,
                                 name: "b",
-                                type_annotation: None,
+                                type_annotation: Inferred,
                                 value: Int(
                                     20,
                                 ),

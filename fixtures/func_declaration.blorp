@@ -1,0 +1,29 @@
+fun add_and_print_hey(x: Int, y: Int): Int =
+	println("hey")
+	return x + y
+end
+
+ fun foo(): Int =
+     return 10
+ end
+
+fun identity(x: Int): Int =
+    return x
+end
+
+ fun greet(): String =
+     return "hello"
+ end
+
+fun no_return_type(): () =
+	do_effectful_thing("hello world")
+end
+
+fun inferred_type(x: Foo) :=
+end
+
+fun [T] generic_over_T(foo: T): T =
+end
+
+fun [A, B] generic_over_AB(x: A, y: B): () =
+end

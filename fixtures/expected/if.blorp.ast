@@ -121,7 +121,7 @@ Ok(
             Bind {
                 mutable: false,
                 name: "foo",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: If {
                     condition: Bool(
                         true,

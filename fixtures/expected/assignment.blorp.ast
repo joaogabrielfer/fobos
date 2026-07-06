@@ -4,7 +4,7 @@ Ok(
             Bind {
                 mutable: true,
                 name: "foo",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: Int(
                     10,
                 ),
@@ -20,7 +20,7 @@ Ok(
             Bind {
                 mutable: true,
                 name: "bar",
-                type_annotation: None,
+                type_annotation: Inferred,
                 value: String(
                     "foo",
                 ),

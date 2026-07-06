@@ -1,0 +1,209 @@
+Ok(
+    Program {
+        statements: [
+            FunDecl {
+                name: "add_and_print_hey",
+                generics: [],
+                parameters: [
+                    Parameter {
+                        name: "x",
+                        t: Named(
+                            "Int",
+                        ),
+                    },
+                    Parameter {
+                        name: "y",
+                        t: Named(
+                            "Int",
+                        ),
+                    },
+                ],
+                return_type: Explicit(
+                    Named(
+                        "Int",
+                    ),
+                ),
+                body: Block {
+                    statements: [
+                        Expr(
+                            Call {
+                                callee: Ident(
+                                    "println",
+                                ),
+                                args: [
+                                    String(
+                                        "hey",
+                                    ),
+                                ],
+                            },
+                        ),
+                        Return(
+                            Binary {
+                                lhs: Ident(
+                                    "x",
+                                ),
+                                op: Add,
+                                rhs: Ident(
+                                    "y",
+                                ),
+                            },
+                        ),
+                    ],
+                },
+            },
+            FunDecl {
+                name: "foo",
+                generics: [],
+                parameters: [],
+                return_type: Explicit(
+                    Named(
+                        "Int",
+                    ),
+                ),
+                body: Block {
+                    statements: [
+                        Return(
+                            Int(
+                                10,
+                            ),
+                        ),
+                    ],
+                },
+            },
+            FunDecl {
+                name: "identity",
+                generics: [],
+                parameters: [
+                    Parameter {
+                        name: "x",
+                        t: Named(
+                            "Int",
+                        ),
+                    },
+                ],
+                return_type: Explicit(
+                    Named(
+                        "Int",
+                    ),
+                ),
+                body: Block {
+                    statements: [
+                        Return(
+                            Ident(
+                                "x",
+                            ),
+                        ),
+                    ],
+                },
+            },
+            FunDecl {
+                name: "greet",
+                generics: [],
+                parameters: [],
+                return_type: Explicit(
+                    Named(
+                        "String",
+                    ),
+                ),
+                body: Block {
+                    statements: [
+                        Return(
+                            String(
+                                "hello",
+                            ),
+                        ),
+                    ],
+                },
+            },
+            FunDecl {
+                name: "no_return_type",
+                generics: [],
+                parameters: [],
+                return_type: Explicit(
+                    Unit,
+                ),
+                body: Block {
+                    statements: [
+                        Expr(
+                            Call {
+                                callee: Ident(
+                                    "do_effectful_thing",
+                                ),
+                                args: [
+                                    String(
+                                        "hello world",
+                                    ),
+                                ],
+                            },
+                        ),
+                    ],
+                },
+            },
+            FunDecl {
+                name: "inferred_type",
+                generics: [],
+                parameters: [
+                    Parameter {
+                        name: "x",
+                        t: Named(
+                            "Foo",
+                        ),
+                    },
+                ],
+                return_type: Inferred,
+                body: Block {
+                    statements: [],
+                },
+            },
+            FunDecl {
+                name: "generic_over_T",
+                generics: [
+                    "T",
+                ],
+                parameters: [
+                    Parameter {
+                        name: "foo",
+                        t: Named(
+                            "T",
+                        ),
+                    },
+                ],
+                return_type: Explicit(
+                    Named(
+                        "T",
+                    ),
+                ),
+                body: Block {
+                    statements: [],
+                },
+            },
+            FunDecl {
+                name: "generic_over_AB",
+                generics: [
+                    "A",
+                    "B",
+                ],
+                parameters: [
+                    Parameter {
+                        name: "x",
+                        t: Named(
+                            "A",
+                        ),
+                    },
+                    Parameter {
+                        name: "y",
+                        t: Named(
+                            "B",
+                        ),
+                    },
+                ],
+                return_type: Explicit(
+                    Unit,
+                ),
+                body: Block {
+                    statements: [],
+                },
+            },
+        ],
+    },
+)
