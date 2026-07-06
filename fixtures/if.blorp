@@ -1,0 +1,19 @@
+if true do
+	return 1
+end
+
+if x > 30 do
+	return "bigger"
+end else do
+	return "smaller"
+end
+
+if x > 10 do
+	return "bigger than 10"
+end else if x > 5 do
+	return "between 5 and 10"
+end else do
+	return "smaller than 5"
+end
+
+let foo := if true 10 else 20

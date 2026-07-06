@@ -21,6 +21,7 @@ pub enum Stmt {
         value: Expr,
     },
     Expr(Expr),
+    Return(Expr),
 }
 
 #[derive(Debug, Clone)]
@@ -36,6 +37,8 @@ pub enum Expr {
     Bool(bool),
     Ident(String),
     Unit,
+
+    Block(Block),
 
     Tuple(Vec<Expr>),
 
@@ -54,6 +57,17 @@ pub enum Expr {
         callee: Box<Expr>,
         args: Vec<Expr>,
     },
+
+    If {
+        condition: Box<Expr>,
+        then_branch: Box<Expr>,
+        else_branch: Option<Box<Expr>>,
+    },
+}
+
+#[derive(Debug, Clone)]
+pub struct Block {
+    pub statements: Vec<Stmt>,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -142,6 +156,10 @@ impl<'a> Parser<'a> {
         match self.current().kind {
             TokenKind::Let => self.parse_binding(false),
             TokenKind::Var => self.parse_binding(true),
+            TokenKind::Return => {
+                self.advance();
+                Ok(Stmt::Return(self.parse_expr()?))
+            }
             _ => Ok(Stmt::Expr(self.parse_expr()?)),
         }
     }
@@ -155,7 +173,12 @@ impl<'a> Parser<'a> {
         let name = self.expect_ident()?;
         let type_annotation = self.parse_type()?;
         self.expect(TokenTag::Equals)?;
-        let value = self.parse_expr()?;
+        let value = if self.check(TokenTag::NewLine) {
+            self.advance();
+            Expr::Block(self.parse_block()?)
+        } else {
+            self.parse_expr()?
+        };
 
         Ok(Stmt::Bind {
             mutable,
@@ -185,6 +208,22 @@ impl<'a> Parser<'a> {
         }
 
         Ok(lhs)
+    }
+
+    fn parse_block(&mut self) -> Result<Block, Box<ParserError>> {
+        let mut statements = vec![];
+        self.consume_newlines();
+
+        while !self.check(TokenTag::End) {
+            let stmt = self.parse_statement()?;
+            statements.push(stmt);
+            self.expect_many(vec![TokenTag::NewLine])?;
+            self.consume_newlines();
+        }
+
+        self.advance();
+
+        Ok(Block { statements })
     }
 
     fn parse_unary_expr(&mut self) -> Result<Expr, Box<ParserError>> {
@@ -307,6 +346,11 @@ impl<'a> Parser<'a> {
                 self.advance();
                 Ok(Expr::Ident(i.to_string()))
             }
+            TokenKind::If => self.parse_if_expr(),
+            TokenKind::Do => {
+                self.expect(TokenTag::Do)?;
+                Ok(Expr::Block(self.parse_block()?))
+            }
             TokenKind::LParen => {
                 self.advance();
                 let mut exprs = vec![];
@@ -347,6 +391,29 @@ impl<'a> Parser<'a> {
                 found: format!("{other:?}"),
             })),
         }
+    }
+
+    fn parse_if_expr(&mut self) -> Result<Expr, Box<ParserError>> {
+        self.expect(TokenTag::If)?;
+        let condition = Box::new(self.parse_expr()?);
+        // if !self.check(TokenTag::Do) {
+        //     self.advance();
+        //     return Err(self.error(ParserErrorKind::ExpectedExpression {
+        //         found: self.current_tag().to_string(),
+        //     }));
+        // }
+        let then_branch = Box::new(self.parse_expr()?);
+        let else_branch = if self.check(TokenTag::Else) {
+            self.advance();
+            Some(Box::new(self.parse_expr()?))
+        } else {
+            None
+        };
+        Ok(Expr::If {
+            condition,
+            then_branch,
+            else_branch,
+        })
     }
 
     fn current(&self) -> &Token<'a> {

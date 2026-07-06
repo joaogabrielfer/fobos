@@ -1,0 +1,141 @@
+Ok(
+    Program {
+        statements: [
+            Expr(
+                If {
+                    condition: Bool(
+                        true,
+                    ),
+                    then_branch: Block(
+                        Block {
+                            statements: [
+                                Return(
+                                    Int(
+                                        1,
+                                    ),
+                                ),
+                            ],
+                        },
+                    ),
+                    else_branch: None,
+                },
+            ),
+            Expr(
+                If {
+                    condition: Binary {
+                        lhs: Ident(
+                            "x",
+                        ),
+                        op: Greater,
+                        rhs: Int(
+                            30,
+                        ),
+                    },
+                    then_branch: Block(
+                        Block {
+                            statements: [
+                                Return(
+                                    String(
+                                        "bigger",
+                                    ),
+                                ),
+                            ],
+                        },
+                    ),
+                    else_branch: Some(
+                        Block(
+                            Block {
+                                statements: [
+                                    Return(
+                                        String(
+                                            "smaller",
+                                        ),
+                                    ),
+                                ],
+                            },
+                        ),
+                    ),
+                },
+            ),
+            Expr(
+                If {
+                    condition: Binary {
+                        lhs: Ident(
+                            "x",
+                        ),
+                        op: Greater,
+                        rhs: Int(
+                            10,
+                        ),
+                    },
+                    then_branch: Block(
+                        Block {
+                            statements: [
+                                Return(
+                                    String(
+                                        "bigger than 10",
+                                    ),
+                                ),
+                            ],
+                        },
+                    ),
+                    else_branch: Some(
+                        If {
+                            condition: Binary {
+                                lhs: Ident(
+                                    "x",
+                                ),
+                                op: Greater,
+                                rhs: Int(
+                                    5,
+                                ),
+                            },
+                            then_branch: Block(
+                                Block {
+                                    statements: [
+                                        Return(
+                                            String(
+                                                "between 5 and 10",
+                                            ),
+                                        ),
+                                    ],
+                                },
+                            ),
+                            else_branch: Some(
+                                Block(
+                                    Block {
+                                        statements: [
+                                            Return(
+                                                String(
+                                                    "smaller than 5",
+                                                ),
+                                            ),
+                                        ],
+                                    },
+                                ),
+                            ),
+                        },
+                    ),
+                },
+            ),
+            Bind {
+                mutable: false,
+                name: "foo",
+                type_annotation: None,
+                value: If {
+                    condition: Bool(
+                        true,
+                    ),
+                    then_branch: Int(
+                        10,
+                    ),
+                    else_branch: Some(
+                        Int(
+                            20,
+                        ),
+                    ),
+                },
+            },
+        ],
+    },
+)

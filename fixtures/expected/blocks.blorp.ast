@@ -1,0 +1,44 @@
+Ok(
+    Program {
+        statements: [
+            Bind {
+                mutable: false,
+                name: "foo",
+                type_annotation: None,
+                value: Block(
+                    Block {
+                        statements: [
+                            Bind {
+                                mutable: false,
+                                name: "a",
+                                type_annotation: None,
+                                value: Int(
+                                    10,
+                                ),
+                            },
+                            Bind {
+                                mutable: false,
+                                name: "b",
+                                type_annotation: None,
+                                value: Int(
+                                    20,
+                                ),
+                            },
+                            Return(
+                                Binary {
+                                    lhs: Ident(
+                                        "a",
+                                    ),
+                                    op: Add,
+                                    rhs: Ident(
+                                        "b",
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                ),
+            },
+        ],
+    },
+)
