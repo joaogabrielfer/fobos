@@ -1,3 +1,4 @@
+use std::fmt::Display;
 use std::path::PathBuf;
 
 use anyhow::Result;
@@ -22,6 +23,10 @@ pub enum Stmt {
     },
     Expr(Expr),
     Return(Expr),
+    Assignment {
+        target: Expr,
+        value: Expr,
+    },
 }
 
 #[derive(Debug, Clone)]
@@ -63,6 +68,25 @@ pub enum Expr {
         then_branch: Box<Expr>,
         else_branch: Option<Box<Expr>>,
     },
+}
+
+impl Display for Expr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Expr::Int(i) => write!(f, "integer '{i}'"),
+            Expr::Float(d) => write!(f, "float '{d}'"),
+            Expr::String(s) => write!(f, "string '{s}'"),
+            Expr::Bool(b) => write!(f, "bool '{b}'"),
+            Expr::Ident(i) => write!(f, "identifier '{i}'"),
+            Expr::Unit => write!(f, "unit"),
+            Expr::Block(_) => write!(f, "block"),
+            Expr::Tuple(_) => write!(f, "tuple"),
+            Expr::Unary { .. } => write!(f, "unary operation"),
+            Expr::Binary { .. } => write!(f, "binary operation"),
+            Expr::Call { .. } => write!(f, "function calling"),
+            Expr::If { .. } => write!(f, "if condition"),
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -127,6 +151,8 @@ pub enum ParserErrorKind {
     UnexpectedToken { found: String },
     #[error("unexpected EOF")]
     UnexpectedEof,
+    #[error("{expr} is not a valid assignment target")]
+    InvalidAssignmentTarget { expr: String },
 }
 
 impl<'a> Parser<'a> {
@@ -160,7 +186,24 @@ impl<'a> Parser<'a> {
                 self.advance();
                 Ok(Stmt::Return(self.parse_expr()?))
             }
-            _ => Ok(Stmt::Expr(self.parse_expr()?)),
+            _ => {
+                let expr = self.parse_expr()?;
+                if self.check(TokenTag::Equals) {
+                    if !matches!(expr, Expr::Ident(_) | Expr::Tuple(_)) {
+                        return Err(self.error(ParserErrorKind::InvalidAssignmentTarget {
+                            expr: expr.to_string(),
+                        }));
+                    }
+                    self.advance();
+                    let value = self.parse_expr()?;
+                    Ok(Stmt::Assignment {
+                        target: expr,
+                        value,
+                    })
+                } else {
+                    Ok(Stmt::Expr(expr))
+                }
+            }
         }
     }
 
@@ -396,12 +439,6 @@ impl<'a> Parser<'a> {
     fn parse_if_expr(&mut self) -> Result<Expr, Box<ParserError>> {
         self.expect(TokenTag::If)?;
         let condition = Box::new(self.parse_expr()?);
-        // if !self.check(TokenTag::Do) {
-        //     self.advance();
-        //     return Err(self.error(ParserErrorKind::ExpectedExpression {
-        //         found: self.current_tag().to_string(),
-        //     }));
-        // }
         let then_branch = Box::new(self.parse_expr()?);
         let else_branch = if self.check(TokenTag::Else) {
             self.advance();

@@ -1,0 +1,20 @@
+Err(
+    ParserError {
+        kind: InvalidAssignmentTarget {
+            expr: "integer '10'",
+        },
+        file_path: "/home/joaogabriel/personal/programming/projects/blorp/fixtures/assignment_error.blorp",
+        pos: Span {
+            start: SrcPos {
+                line: 4,
+                col: 3,
+                idx: 27,
+            },
+            end: SrcPos {
+                line: 4,
+                col: 3,
+                idx: 27,
+            },
+        },
+    },
+)

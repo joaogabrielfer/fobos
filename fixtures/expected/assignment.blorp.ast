@@ -1,0 +1,38 @@
+Ok(
+    Program {
+        statements: [
+            Bind {
+                mutable: true,
+                name: "foo",
+                type_annotation: None,
+                value: Int(
+                    10,
+                ),
+            },
+            Assignment {
+                target: Ident(
+                    "foo",
+                ),
+                value: Int(
+                    20,
+                ),
+            },
+            Bind {
+                mutable: true,
+                name: "bar",
+                type_annotation: None,
+                value: String(
+                    "foo",
+                ),
+            },
+            Assignment {
+                target: Ident(
+                    "bar",
+                ),
+                value: String(
+                    "baz",
+                ),
+            },
+        ],
+    },
+)
