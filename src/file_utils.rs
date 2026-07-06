@@ -1,12 +1,10 @@
 use std::{
     ffi::OsString,
-    fs::{self, read_to_string},
+    fs::{self},
     path::{Path, PathBuf},
 };
 
-use anyhow::Context;
-
-use crate::source::{Span, SrcPos};
+use crate::source::Span;
 
 pub fn create_expected_by_ext(file_path: &Path, extension: &str) -> anyhow::Result<PathBuf> {
     // here we would be iterating over the dir entries, so it would always have a parent
@@ -24,58 +22,48 @@ pub fn create_expected_by_ext(file_path: &Path, extension: &str) -> anyhow::Resu
     Ok(new_dir.join(new_file_name))
 }
 
-pub fn read_line_from(file_path: &Path, span: Span) -> (usize, usize, String) {
-    let mut result = String::new();
-    let content = read_to_string(file_path).unwrap();
+pub fn render_source_span(file_path: &Path, span: Span) -> anyhow::Result<(usize, usize, String)> {
+    let content = std::fs::read_to_string(file_path)?;
 
-    let is_start = span.start.col == 0;
-    let mut span = if is_start {
-        Span {
-            start: SrcPos {
-                line: span.start.line - 1,
-                col: 0,
-                idx: 0,
-            },
-            end: span.end,
-        }
+    let line_idx = span.start.line.saturating_sub(1);
+
+    // `split('\n')` keeps a final empty line better than `lines()`.
+    let lines: Vec<&str> = content.split('\n').collect();
+
+    let line = lines.get(line_idx).copied().ok_or_else(|| {
+        anyhow::anyhow!(
+            "invalid source span: line {} does not exist in source",
+            span.start.line
+        )
+    })?;
+
+    let line_len = line.chars().count();
+
+    let start_col = span.start.col.max(1).min(line_len + 1);
+
+    let width = if span.start.line == span.end.line {
+        span.end.col.saturating_sub(span.start.col).max(1)
     } else {
-        span
+        line_len.saturating_sub(start_col - 1).max(1)
     };
 
-    let line = content
-        .lines()
-        .nth(span.start.line - 1)
-        .with_context(|| {
-            format!(
-                "invalid source span: line {} does not exist in source",
-                span.start.line - 1
-            )
-        })
-        .unwrap();
-
-    if is_start {
-        span.end.line = span.start.line;
-        span.start.col = line.len() + 2;
-        span.end.col = line.len() + 2;
-    }
+    let mut result = String::new();
 
     result.push_str(line);
     result.push('\n');
 
+    result.push(' ');
+    result.push(' ');
     result.push('|');
-    for _ in 0..=span.start.col + 2 {
+    result.push_str("   ");
+
+    for _ in 1..start_col {
         result.push(' ');
     }
 
-    let count = if span.start.line == span.end.line {
-        span.end.col - span.start.col
-    } else {
-        line.len() - span.start.col
-    };
-
-    for _ in 0..=count {
+    for _ in 0..width {
         result.push('^');
     }
 
-    (span.start.line, span.start.col, result)
+    Ok((span.start.line, span.start.col, result))
 }

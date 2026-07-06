@@ -4,7 +4,7 @@ use std::path::PathBuf;
 use anyhow::Result;
 use thiserror::Error;
 
-use crate::file_utils::read_line_from;
+use crate::file_utils::render_source_span;
 use crate::lexer::TokenTag::RParen;
 use crate::lexer::{Token, TokenKind, TokenTag};
 use crate::source::Span;
@@ -57,6 +57,7 @@ pub enum Type {
     Unit,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct Parameter {
     name: String,
@@ -157,16 +158,39 @@ pub struct Parser<'a> {
 }
 
 #[derive(Error, Debug)]
-#[error(
-    " --> {file_path}:{}:{}:\n|\n|   {} -> {kind}",
-    read_line_from(file_path, *pos).0,
-    read_line_from(file_path, *pos).1,
-    read_line_from(file_path, *pos).2,
-)]
 pub struct ParserError {
     pub kind: ParserErrorKind,
     pub file_path: PathBuf,
     pub pos: Span,
+}
+
+impl Display for ParserError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match render_source_span(&self.file_path, self.pos) {
+            Ok((line, col, snippet)) => {
+                write!(
+                    f,
+                    "error: {}\n --> {}:{}:{}:\n  |\n{} |   {}",
+                    self.kind,
+                    self.file_path.display(),
+                    line,
+                    col,
+                    line,
+                    snippet,
+                )
+            }
+            Err(_) => {
+                write!(
+                    f,
+                    "error: {}\n --> {}:{}:{}",
+                    self.kind,
+                    self.file_path.display(),
+                    self.pos.start.line,
+                    self.pos.start.col,
+                )
+            }
+        }
+    }
 }
 
 #[derive(Error, Debug)]
@@ -226,11 +250,16 @@ impl<'a> Parser<'a> {
                 Ok(Stmt::Return(self.parse_expr()?))
             }
             _ => {
+                let starting_span = self.current().span;
                 let expr = self.parse_expr()?;
                 if self.check(TokenTag::Equals) {
                     if !matches!(expr, Expr::Ident(_) | Expr::Tuple(_)) {
-                        return Err(self.error(ParserErrorKind::InvalidAssignmentTarget {
-                            expr: expr.to_string(),
+                        return Err(Box::new(ParserError {
+                            kind: ParserErrorKind::InvalidAssignmentTarget {
+                                expr: expr.to_string(),
+                            },
+                            file_path: self.file_path.clone(),
+                            pos: starting_span,
                         }));
                     }
                     self.advance();

@@ -1,9 +1,10 @@
 use crate::{
-    file_utils::read_line_from,
+    file_utils::render_source_span,
+    lexer::LexerErrorKind::UnterminatedString,
     parser::BinaryOp,
     source::{Span, SrcPos},
 };
-use std::{iter::Peekable, path::PathBuf, str::Chars};
+use std::{fmt::Display, iter::Peekable, path::PathBuf, str::Chars};
 use thiserror::Error;
 
 #[derive(Debug, Clone)]
@@ -255,16 +256,39 @@ impl std::fmt::Display for TokenTag {
 }
 
 #[derive(Error, Debug)]
-#[error(
-    " --> {file_path}:{}:{}:\n|\n|   {} -> {kind}",
-    read_line_from(file_path, *pos).0,
-    read_line_from(file_path, *pos).1,
-    read_line_from(file_path, *pos).2,
-)]
 pub struct LexerError {
     pub kind: LexerErrorKind,
     pub file_path: PathBuf,
     pub pos: Span,
+}
+
+impl Display for LexerError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match render_source_span(&self.file_path, self.pos) {
+            Ok((line, col, snippet)) => {
+                write!(
+                    f,
+                    "error: {}\n --> {}:{}:{}:\n  |\n{} |   {}",
+                    self.kind,
+                    self.file_path.display(),
+                    line,
+                    col,
+                    line,
+                    snippet,
+                )
+            }
+            Err(_) => {
+                write!(
+                    f,
+                    "error: {}\n --> {}:{}:{}",
+                    self.kind,
+                    self.file_path.display(),
+                    self.pos.start.line,
+                    self.pos.start.col,
+                )
+            }
+        }
+    }
 }
 
 #[derive(Error, Debug)]
@@ -298,7 +322,7 @@ impl<'a> Lexer<'a> {
         match result {
             Some('\n') => {
                 self.pos.line += 1;
-                self.pos.col = 0;
+                self.pos.col = 1;
                 self.pos.idx += '\n'.len_utf8();
                 result
             }
@@ -448,6 +472,7 @@ impl<'a> Lexer<'a> {
                 }
             }
             Some('"') => {
+                let string_start_pos = self.pos;
                 while let Some(c) = self.source.peek() {
                     if *c == '"' {
                         break;
@@ -466,7 +491,14 @@ impl<'a> Lexer<'a> {
                         let origin = &self.raw_src[start_idx..end_idx + 1];
                         Ok(self.new_token(TokenKind::String(s), origin))
                     }
-                    _ => Err(self.error(LexerErrorKind::UnterminatedString)),
+                    _ => Err(LexerError {
+                        kind: UnterminatedString,
+                        file_path: self.file_path.clone(),
+                        pos: Span {
+                            start: string_start_pos,
+                            end: self.pos,
+                        },
+                    }),
                 }
             }
             Some(other) => Err(self.error(LexerErrorKind::UnknownChar(other))),
@@ -480,7 +512,11 @@ impl<'a> Lexer<'a> {
             file_path: self.file_path.clone(),
             pos: Span {
                 start: self.pos,
-                end: self.pos,
+                end: SrcPos {
+                    line: self.pos.line,
+                    col: self.pos.col + 1,
+                    idx: self.pos.idx + 1,
+                },
             },
         }
     }
@@ -492,8 +528,6 @@ impl<'a> Lexer<'a> {
             _ if self.pos.col < 1 => 0,
             _ => origin.len(),
         };
-
-        let subtract = if self.pos.col > 1 { 1 } else { 0 };
         // eprintln!("offset = {offset}\nkind = {kind:?}");
         Token {
             origin,
@@ -506,8 +540,8 @@ impl<'a> Lexer<'a> {
                 },
                 SrcPos {
                     line: self.pos.line,
-                    col: self.pos.col - subtract,
-                    idx: self.pos.idx - subtract,
+                    col: self.pos.col,
+                    idx: self.pos.idx,
                 },
             ),
         }
