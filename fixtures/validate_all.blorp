@@ -1,0 +1,84 @@
+let unit_value: () = ()
+let int_value := 10
+let float_value := 10.5
+let bool_value := true
+let string_value := "hello"
+
+let grouped := (10)
+let tuple_pair := (10, 20)
+let tuple_nested := ((1, 2), 3)
+let tuple_mixed := (1, "hello", true, (2, 3))
+
+let arithmetic := 1 + 2 * 3
+let arithmetic_grouped := (1 + 2) * 3
+
+let comparison_1 := arithmetic == 7
+let comparison_2 := arithmetic != 10
+let comparison_3 := arithmetic > 3
+let comparison_4 := arithmetic >= 7
+let comparison_5 := arithmetic < 100
+let comparison_6 := arithmetic <= 7
+
+let if_expr_1 := if true "yes" else "no"
+let if_expr_2 := if false "yes" else "no"
+let if_expr_without_else := if false "unused"
+
+let if_block := if arithmetic > 5 do
+    return "big"
+end else do
+    return "small"
+end
+
+let block_value := do
+    let a := 10
+    let b := 20
+    return a + b
+end
+
+var counter := 0
+
+while counter < 3 do
+    counter = counter + 1
+end
+
+fun add(x: Int, y: Int): Int =
+    return x + y
+end
+
+fun unit_func(): () =
+    return ()
+end
+
+fun inferred_return(x: Int, y: Int) :=
+    return x + y
+end
+
+fun [T] identity(x: T): T =
+    return x
+end
+
+let add_result := add(10, 20)
+let inferred_result := inferred_return(2, 3)
+let identity_int := identity(123)
+let identity_string := identity("abc")
+
+let inc := x -> x + 1
+let inc_result := inc(10)
+
+let lambda_add := (x, y) -> x + y
+let lambda_add_result := lambda_add(5, 6)
+
+let lambda_block := (x, y) -> do
+    let doubled := x * 2
+    return doubled + y
+end
+
+let lambda_block_result := lambda_block(10, 5)
+
+let make_adder := x -> y -> x + y
+let add_ten := make_adder(10)
+let fifteen := add_ten(5)
+
+let label := x -> if x > 10 "big" else "small"
+let label_result_1 := label(20)
+let label_result_2 := label(3)

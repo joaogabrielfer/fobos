@@ -1,8 +1,4 @@
-use std::{
-    ffi::OsString,
-    fs::{self},
-    path::{Path, PathBuf},
-};
+use std::path::Path;
 
 use crate::source::Span;
 

@@ -1,5 +1,7 @@
+pub mod ast;
+pub mod diagnostic;
 pub mod dump;
-pub mod file_utils;
+pub mod interpreter;
 pub mod lexer;
 pub mod parser;
 pub mod source;

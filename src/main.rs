@@ -4,6 +4,7 @@ use thiserror::Error;
 
 use blorp::{
     dump::dump_expected,
+    interpreter::Interpreter,
     lexer::Lexer,
     parser::{self},
 };
@@ -52,9 +53,12 @@ fn main() {
 fn run() -> anyhow::Result<()> {
     let cli = Cli::parse();
     match &cli.command {
-        Commands::Run { path: _path } => {
-            // let content = read_to_string(path)?;
-            // let lexer = Lexer::new(content.as_str());
+        Commands::Run { path } => {
+            let content = read_to_string(path)?;
+            let tokens = Lexer::new(path, &content).tokenize()?;
+            let ast = parser::Parser::new(tokens, path).parse_program()?;
+            let value = Interpreter::new(path).eval_program(&ast)?;
+            println!("{value}");
             Ok(())
         }
         Commands::Tokens { path, only_kinds } => {

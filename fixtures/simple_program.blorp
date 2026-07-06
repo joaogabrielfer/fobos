@@ -1,0 +1,9 @@
+let a := 1
+var b := 10
+b = 29
+
+if true do
+	return a + b
+end
+
+return 0

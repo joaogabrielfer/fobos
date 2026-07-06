@@ -26,26 +26,110 @@ Ok(
                 body: Block {
                     statements: [
                         Expr(
-                            Call {
-                                callee: Ident(
-                                    "println",
-                                ),
-                                args: [
-                                    String(
-                                        "hey",
-                                    ),
-                                ],
+                            Expr {
+                                kind: Call {
+                                    callee: Expr {
+                                        kind: Ident(
+                                            "println",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 2,
+                                                col: 2,
+                                                idx: 46,
+                                            },
+                                            end: SrcPos {
+                                                line: 2,
+                                                col: 10,
+                                                idx: 54,
+                                            },
+                                        },
+                                    },
+                                    args: [
+                                        Expr {
+                                            kind: String(
+                                                "hey",
+                                            ),
+                                            span: Span {
+                                                start: SrcPos {
+                                                    line: 2,
+                                                    col: 10,
+                                                    idx: 54,
+                                                },
+                                                end: SrcPos {
+                                                    line: 2,
+                                                    col: 16,
+                                                    idx: 60,
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 2,
+                                        col: 2,
+                                        idx: 46,
+                                    },
+                                    end: SrcPos {
+                                        line: 3,
+                                        col: 1,
+                                        idx: 61,
+                                    },
+                                },
                             },
                         ),
                         Return(
-                            Binary {
-                                lhs: Ident(
-                                    "x",
-                                ),
-                                op: Add,
-                                rhs: Ident(
-                                    "y",
-                                ),
+                            Expr {
+                                kind: Binary {
+                                    lhs: Expr {
+                                        kind: Ident(
+                                            "x",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 3,
+                                                col: 9,
+                                                idx: 69,
+                                            },
+                                            end: SrcPos {
+                                                line: 3,
+                                                col: 12,
+                                                idx: 72,
+                                            },
+                                        },
+                                    },
+                                    op: Add,
+                                    rhs: Expr {
+                                        kind: Ident(
+                                            "y",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 3,
+                                                col: 13,
+                                                idx: 73,
+                                            },
+                                            end: SrcPos {
+                                                line: 4,
+                                                col: 1,
+                                                idx: 75,
+                                            },
+                                        },
+                                    },
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 3,
+                                        col: 9,
+                                        idx: 69,
+                                    },
+                                    end: SrcPos {
+                                        line: 4,
+                                        col: 1,
+                                        idx: 75,
+                                    },
+                                },
                             },
                         ),
                     ],
@@ -63,9 +147,23 @@ Ok(
                 body: Block {
                     statements: [
                         Return(
-                            Int(
-                                10,
-                            ),
+                            Expr {
+                                kind: Int(
+                                    10,
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 7,
+                                        col: 13,
+                                        idx: 110,
+                                    },
+                                    end: SrcPos {
+                                        line: 8,
+                                        col: 1,
+                                        idx: 113,
+                                    },
+                                },
+                            },
                         ),
                     ],
                 },
@@ -89,9 +187,23 @@ Ok(
                 body: Block {
                     statements: [
                         Return(
-                            Ident(
-                                "x",
-                            ),
+                            Expr {
+                                kind: Ident(
+                                    "x",
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 11,
+                                        col: 12,
+                                        idx: 158,
+                                    },
+                                    end: SrcPos {
+                                        line: 12,
+                                        col: 1,
+                                        idx: 160,
+                                    },
+                                },
+                            },
                         ),
                     ],
                 },
@@ -108,9 +220,23 @@ Ok(
                 body: Block {
                     statements: [
                         Return(
-                            String(
-                                "hello",
-                            ),
+                            Expr {
+                                kind: String(
+                                    "hello",
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 15,
+                                        col: 13,
+                                        idx: 200,
+                                    },
+                                    end: SrcPos {
+                                        line: 16,
+                                        col: 1,
+                                        idx: 208,
+                                    },
+                                },
+                            },
                         ),
                     ],
                 },
@@ -125,15 +251,57 @@ Ok(
                 body: Block {
                     statements: [
                         Expr(
-                            Call {
-                                callee: Ident(
-                                    "do_effectful_thing",
-                                ),
-                                args: [
-                                    String(
-                                        "hello world",
-                                    ),
-                                ],
+                            Expr {
+                                kind: Call {
+                                    callee: Expr {
+                                        kind: Ident(
+                                            "do_effectful_thing",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 19,
+                                                col: 2,
+                                                idx: 242,
+                                            },
+                                            end: SrcPos {
+                                                line: 19,
+                                                col: 21,
+                                                idx: 261,
+                                            },
+                                        },
+                                    },
+                                    args: [
+                                        Expr {
+                                            kind: String(
+                                                "hello world",
+                                            ),
+                                            span: Span {
+                                                start: SrcPos {
+                                                    line: 19,
+                                                    col: 21,
+                                                    idx: 261,
+                                                },
+                                                end: SrcPos {
+                                                    line: 19,
+                                                    col: 35,
+                                                    idx: 275,
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 19,
+                                        col: 2,
+                                        idx: 242,
+                                    },
+                                    end: SrcPos {
+                                        line: 20,
+                                        col: 1,
+                                        idx: 276,
+                                    },
+                                },
                             },
                         ),
                     ],

@@ -11,8 +11,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 1,
-                    col: 3,
-                    idx: 2,
+                    col: 4,
+                    idx: 3,
                 },
             },
         },
@@ -27,8 +27,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 1,
-                    col: 6,
-                    idx: 5,
+                    col: 7,
+                    idx: 6,
                 },
             },
         },
@@ -43,8 +43,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 1,
-                    col: 8,
-                    idx: 7,
+                    col: 9,
+                    idx: 8,
                 },
             },
         },
@@ -59,8 +59,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 1,
-                    col: 9,
-                    idx: 8,
+                    col: 10,
+                    idx: 9,
                 },
             },
         },
@@ -77,8 +77,8 @@ Ok(
                 },
                 end: SrcPos {
                     line: 1,
-                    col: 12,
-                    idx: 11,
+                    col: 13,
+                    idx: 12,
                 },
             },
         },
@@ -89,11 +89,11 @@ Ok(
                 start: SrcPos {
                     line: 2,
                     col: 0,
-                    idx: 13,
+                    idx: 12,
                 },
                 end: SrcPos {
                     line: 2,
-                    col: 0,
+                    col: 1,
                     idx: 13,
                 },
             },
@@ -104,12 +104,12 @@ Ok(
             span: Span {
                 start: SrcPos {
                     line: 2,
-                    col: 0,
+                    col: 1,
                     idx: 13,
                 },
                 end: SrcPos {
                     line: 2,
-                    col: 0,
+                    col: 1,
                     idx: 13,
                 },
             },

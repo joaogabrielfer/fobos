@@ -1,7 +1,7 @@
 use crate::{
-    file_utils::render_source_span,
+    ast::BinaryOp,
+    diagnostic::render_source_span,
     lexer::LexerErrorKind::UnterminatedString,
-    parser::BinaryOp,
     source::{Span, SrcPos},
 };
 use std::{fmt::Display, iter::Peekable, path::PathBuf, str::Chars};
@@ -568,7 +568,7 @@ mod tests {
         fs::{read_dir, read_to_string},
     };
 
-    use crate::file_utils::create_expected_by_ext;
+    use crate::dump::create_expected_by_ext;
 
     use super::*;
 

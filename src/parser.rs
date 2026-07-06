@@ -4,151 +4,11 @@ use std::path::PathBuf;
 use anyhow::Result;
 use thiserror::Error;
 
-use crate::file_utils::render_source_span;
+use crate::ast::{self, Expr, ExprKind};
+use crate::diagnostic::render_source_span;
 use crate::lexer::TokenTag::RParen;
 use crate::lexer::{Token, TokenKind, TokenTag};
 use crate::source::Span;
-
-#[derive(Debug, Clone)]
-pub struct Program {
-    pub statements: Vec<Stmt>,
-}
-
-#[derive(Debug, Clone)]
-pub enum Stmt {
-    Expr(Expr),
-    Return(Expr),
-
-    Bind {
-        mutable: bool,
-        name: String,
-        type_annotation: TypeAnnotation,
-        value: Expr,
-    },
-
-    Assignment {
-        target: Expr,
-        value: Expr,
-    },
-
-    While {
-        condition: Expr,
-        block: Block,
-    },
-
-    FunDecl {
-        name: String,
-        generics: Vec<String>,
-        parameters: Vec<Parameter>,
-        return_type: TypeAnnotation,
-        body: Block,
-    },
-}
-
-#[derive(Debug, Clone)]
-pub enum TypeAnnotation {
-    Inferred,
-    Explicit(Type),
-}
-
-#[derive(Debug, Clone)]
-pub enum Type {
-    Named(String),
-    Unit,
-}
-
-#[allow(dead_code)]
-#[derive(Debug, Clone)]
-pub struct Parameter {
-    name: String,
-    t: Type,
-}
-
-#[derive(Debug, Clone)]
-pub enum Expr {
-    Int(i64),
-    Float(f64),
-    String(String),
-    Bool(bool),
-    Ident(String),
-    Unit,
-
-    Block(Block),
-
-    Tuple(Vec<Expr>),
-
-    Unary {
-        op: UnaryOp,
-        operan: Box<Expr>,
-    },
-
-    Binary {
-        lhs: Box<Expr>,
-        op: BinaryOp,
-        rhs: Box<Expr>,
-    },
-
-    Call {
-        callee: Box<Expr>,
-        args: Vec<Expr>,
-    },
-
-    If {
-        condition: Box<Expr>,
-        then_branch: Box<Expr>,
-        else_branch: Option<Box<Expr>>,
-    },
-
-    Lambda {
-        params: Vec<String>,
-        body: Box<Expr>,
-    },
-}
-
-impl Display for Expr {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Expr::Int(i) => write!(f, "integer '{i}'"),
-            Expr::Float(d) => write!(f, "float '{d}'"),
-            Expr::String(s) => write!(f, "string '{s}'"),
-            Expr::Bool(b) => write!(f, "bool '{b}'"),
-            Expr::Ident(i) => write!(f, "identifier '{i}'"),
-            Expr::Unit => write!(f, "unit"),
-            Expr::Block(_) => write!(f, "block"),
-            Expr::Tuple(_) => write!(f, "tuple"),
-            Expr::Unary { .. } => write!(f, "unary operation"),
-            Expr::Binary { .. } => write!(f, "binary operation"),
-            Expr::Call { .. } => write!(f, "function calling"),
-            Expr::If { .. } => write!(f, "if condition"),
-            Expr::Lambda { .. } => write!(f, "lambda"),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct Block {
-    pub statements: Vec<Stmt>,
-}
-
-#[derive(Debug, Clone, Copy)]
-pub enum BinaryOp {
-    Add,
-    Sub,
-    Mul,
-    Div,
-    Eq,
-    NotEq,
-    Greater,
-    GreaterEq,
-    Less,
-    LessEq,
-}
-
-#[derive(Debug, Clone, Copy)]
-pub enum UnaryOp {
-    Negate,
-    Not,
-}
 
 #[derive(Debug, Clone)]
 pub struct Parser<'a> {
@@ -225,7 +85,7 @@ impl<'a> Parser<'a> {
         }
     }
 
-    pub fn parse_program(&mut self) -> Result<Program, Box<ParserError>> {
+    pub fn parse_program(&mut self) -> Result<ast::Program, Box<ParserError>> {
         let mut statements = vec![];
         self.consume_newlines();
 
@@ -236,10 +96,10 @@ impl<'a> Parser<'a> {
             self.expect_many(vec![TokenTag::NewLine])?;
             self.consume_newlines();
         }
-        Ok(Program { statements })
+        Ok(ast::Program { statements })
     }
 
-    fn parse_statement(&mut self) -> Result<Stmt, Box<ParserError>> {
+    fn parse_statement(&mut self) -> Result<ast::Stmt, Box<ParserError>> {
         match self.current().kind {
             TokenKind::Let => self.parse_binding(false),
             TokenKind::Var => self.parse_binding(true),
@@ -247,16 +107,16 @@ impl<'a> Parser<'a> {
             TokenKind::Fun => self.parse_fun_decl(),
             TokenKind::Return => {
                 self.advance();
-                Ok(Stmt::Return(self.parse_expr()?))
+                Ok(ast::Stmt::Return(self.parse_expr()?))
             }
             _ => {
                 let starting_span = self.current().span;
                 let expr = self.parse_expr()?;
                 if self.check(TokenTag::Equals) {
-                    if !matches!(expr, Expr::Ident(_) | Expr::Tuple(_)) {
+                    if !matches!(expr.kind, ast::ExprKind::Ident(_) | ast::ExprKind::Tuple(_)) {
                         return Err(Box::new(ParserError {
                             kind: ParserErrorKind::InvalidAssignmentTarget {
-                                expr: expr.to_string(),
+                                expr: expr.kind.to_string(),
                             },
                             file_path: self.file_path.clone(),
                             pos: starting_span,
@@ -264,18 +124,19 @@ impl<'a> Parser<'a> {
                     }
                     self.advance();
                     let value = self.parse_expr()?;
-                    Ok(Stmt::Assignment {
+                    Ok(ast::Stmt::Assignment {
                         target: expr,
                         value,
                     })
                 } else {
-                    Ok(Stmt::Expr(expr))
+                    Ok(ast::Stmt::Expr(expr))
                 }
             }
         }
     }
 
-    fn parse_binding(&mut self, mutable: bool) -> Result<Stmt, Box<ParserError>> {
+    fn parse_binding(&mut self, mutable: bool) -> Result<ast::Stmt, Box<ParserError>> {
+        let start_span = self.current().span;
         if mutable {
             self.expect(TokenTag::Var)?;
         } else {
@@ -285,12 +146,13 @@ impl<'a> Parser<'a> {
         let type_annotation = self.parse_option_type()?;
         self.expect(TokenTag::Equals)?;
         let value = if self.check(TokenTag::NewLine) {
-            Expr::Block(self.parse_block()?)
+            let kind = ExprKind::Block(self.parse_block()?);
+            self.new_expr(start_span, kind)
         } else {
             self.parse_expr()?
         };
 
-        Ok(Stmt::Bind {
+        Ok(ast::Stmt::Bind {
             mutable,
             name,
             type_annotation,
@@ -298,15 +160,15 @@ impl<'a> Parser<'a> {
         })
     }
 
-    fn parse_while(&mut self) -> Result<Stmt, Box<ParserError>> {
+    fn parse_while(&mut self) -> Result<ast::Stmt, Box<ParserError>> {
         self.expect(TokenTag::While)?;
         let condition = self.parse_expr()?;
         self.expect(TokenTag::Do)?;
         let block = self.parse_block()?;
-        Ok(Stmt::While { condition, block })
+        Ok(ast::Stmt::While { condition, block })
     }
 
-    fn parse_fun_decl(&mut self) -> Result<Stmt, Box<ParserError>> {
+    fn parse_fun_decl(&mut self) -> Result<ast::Stmt, Box<ParserError>> {
         self.expect(TokenTag::Fun)?;
         let mut generics = vec![];
         if let TokenTag::LBrace = self.current_tag() {
@@ -330,8 +192,8 @@ impl<'a> Parser<'a> {
             }
             let name = self.expect_ident()?;
             self.expect(TokenTag::Colon)?;
-            let t = Type::Named(self.expect_ident()?);
-            parameters.push(Parameter { name, t });
+            let t = ast::Type::Named(self.expect_ident()?);
+            parameters.push(ast::Parameter { name, t });
             match self.current_tag() {
                 TokenTag::Comma => {
                     self.expect(TokenTag::Comma)?;
@@ -351,7 +213,7 @@ impl<'a> Parser<'a> {
         let return_type = self.parse_option_type()?;
         self.expect(TokenTag::Equals)?;
         let body = self.parse_block()?;
-        Ok(Stmt::FunDecl {
+        Ok(ast::Stmt::FunDecl {
             name,
             generics,
             parameters,
@@ -360,20 +222,21 @@ impl<'a> Parser<'a> {
         })
     }
 
-    fn parse_expr(&mut self) -> Result<Expr, Box<ParserError>> {
+    fn parse_expr(&mut self) -> Result<ast::Expr, Box<ParserError>> {
         self.parse_lambda()
     }
 
-    fn parse_lambda(&mut self) -> Result<Expr, Box<ParserError>> {
+    fn parse_lambda(&mut self) -> Result<ast::Expr, Box<ParserError>> {
+        let start_span = self.current().span;
         let expr = self.parse_binary_expr(0)?;
         if let TokenTag::RArrow = self.current_tag() {
             let mut params = vec![];
-            match expr {
-                Expr::Ident(i) => params.push(i),
-                Expr::Tuple(t) => {
+            match expr.kind {
+                ExprKind::Ident(i) => params.push(i),
+                ExprKind::Tuple(t) => {
                     for e in t {
-                        match e {
-                            Expr::Ident(i) => params.push(i),
+                        match e.kind {
+                            ExprKind::Ident(i) => params.push(i),
                             other => {
                                 return Err(self.error(ParserErrorKind::InvalidParameter {
                                     expr: other.to_string(),
@@ -390,13 +253,14 @@ impl<'a> Parser<'a> {
             }
             self.expect(TokenTag::RArrow)?;
             let body = Box::new(self.parse_expr()?);
-            Ok(Expr::Lambda { params, body })
+            Ok(self.new_expr(start_span, ExprKind::Lambda { params, body }))
         } else {
             Ok(expr)
         }
     }
 
-    fn parse_binary_expr(&mut self, min_level: u8) -> Result<Expr, Box<ParserError>> {
+    fn parse_binary_expr(&mut self, min_level: u8) -> Result<ast::Expr, Box<ParserError>> {
+        let start_span = self.current().span;
         let mut lhs = self.parse_unary_expr()?;
 
         while let Some((op, level)) = self.current_tag().precedence_level()
@@ -404,23 +268,26 @@ impl<'a> Parser<'a> {
         {
             self.advance();
             let rhs = self.parse_binary_expr(level + 1)?;
-            lhs = Expr::Binary {
-                lhs: Box::new(lhs),
-                op,
-                rhs: Box::new(rhs),
-            };
+            lhs = self.new_expr(
+                start_span,
+                ExprKind::Binary {
+                    lhs: Box::new(lhs),
+                    op,
+                    rhs: Box::new(rhs),
+                },
+            );
         }
 
         Ok(lhs)
     }
 
-    fn parse_block(&mut self) -> Result<Block, Box<ParserError>> {
+    fn parse_block(&mut self) -> Result<ast::Block, Box<ParserError>> {
         let mut statements = vec![];
 
         if !self.check(TokenTag::NewLine) {
             let stmt = self.parse_statement()?;
             statements.push(stmt);
-            return Ok(Block { statements });
+            return Ok(ast::Block { statements });
         }
 
         self.consume_newlines();
@@ -433,44 +300,55 @@ impl<'a> Parser<'a> {
 
         self.advance();
 
-        Ok(Block { statements })
+        Ok(ast::Block { statements })
     }
 
-    fn parse_unary_expr(&mut self) -> Result<Expr, Box<ParserError>> {
+    fn parse_unary_expr(&mut self) -> Result<ast::Expr, Box<ParserError>> {
+        let start_span = self.current().span;
         if self.check(TokenTag::Bang) {
             self.advance();
 
             let expr = self.parse_unary_expr()?;
-            return Ok(Expr::Unary {
-                op: UnaryOp::Not,
-                operan: Box::new(expr),
-            });
+            return Ok(self.new_expr(
+                start_span,
+                ExprKind::Unary {
+                    op: ast::UnaryOp::Not,
+                    operand: Box::new(expr),
+                },
+            ));
         }
 
         if self.check(TokenTag::Minus) {
             self.advance();
 
             let expr = self.parse_unary_expr()?;
-            return Ok(Expr::Unary {
-                op: UnaryOp::Negate,
-                operan: Box::new(expr),
-            });
+            return Ok(self.new_expr(
+                start_span,
+                ExprKind::Unary {
+                    op: ast::UnaryOp::Negate,
+                    operand: Box::new(expr),
+                },
+            ));
         }
 
         self.parse_postfix_expr()
     }
 
-    fn parse_postfix_expr(&mut self) -> Result<Expr, Box<ParserError>> {
+    fn parse_postfix_expr(&mut self) -> Result<ast::Expr, Box<ParserError>> {
+        let start_span = self.current().span;
         let mut expr = self.parse_primary_expr()?;
 
         loop {
             if self.check(TokenTag::LParen) {
                 let args = self.parse_call_args()?;
 
-                expr = Expr::Call {
-                    callee: Box::new(expr),
-                    args,
-                };
+                expr = self.new_expr(
+                    start_span,
+                    ExprKind::Call {
+                        callee: Box::new(expr),
+                        args,
+                    },
+                );
 
                 continue;
             }
@@ -479,6 +357,7 @@ impl<'a> Parser<'a> {
                 self.advance();
 
                 let method_name = self.expect_ident()?;
+                let end_span = self.current().span;
 
                 if !self.check(TokenTag::LParen) {
                     return Err(self.error(ParserErrorKind::ExpectedToken {
@@ -489,7 +368,7 @@ impl<'a> Parser<'a> {
 
                 let mut args = self.parse_call_args()?;
 
-                if let Expr::Tuple(mut t) = expr {
+                if let ExprKind::Tuple(mut t) = expr.kind {
                     while let Some(e) = t.pop() {
                         args.insert(0, e);
                     }
@@ -497,10 +376,19 @@ impl<'a> Parser<'a> {
                     args.insert(0, expr);
                 }
 
-                expr = Expr::Call {
-                    callee: Box::new(Expr::Ident(method_name)),
-                    args,
-                };
+                expr = self.new_expr(
+                    start_span,
+                    ExprKind::Call {
+                        callee: Box::new(Expr {
+                            kind: ExprKind::Ident(method_name),
+                            span: Span {
+                                start: start_span.start,
+                                end: end_span.end,
+                            },
+                        }),
+                        args,
+                    },
+                );
 
                 continue;
             }
@@ -511,7 +399,7 @@ impl<'a> Parser<'a> {
         Ok(expr)
     }
 
-    fn parse_call_args(&mut self) -> Result<Vec<Expr>, Box<ParserError>> {
+    fn parse_call_args(&mut self) -> Result<Vec<ast::Expr>, Box<ParserError>> {
         self.expect(TokenTag::LParen)?;
         let mut args = vec![];
 
@@ -534,39 +422,41 @@ impl<'a> Parser<'a> {
         Ok(args)
     }
 
-    fn parse_primary_expr(&mut self) -> Result<Expr, Box<ParserError>> {
+    fn parse_primary_expr(&mut self) -> Result<ast::Expr, Box<ParserError>> {
+        let start_span = self.current().span;
         match self.current().kind.clone() {
             TokenKind::Int(n) => {
                 self.advance();
-                Ok(Expr::Int(n))
+                Ok(self.new_expr(start_span, ExprKind::Int(n)))
             }
             TokenKind::Float(n) => {
                 self.advance();
-                Ok(Expr::Float(n))
+                Ok(self.new_expr(start_span, ExprKind::Float(n)))
             }
             TokenKind::Bool(b) => {
                 self.advance();
-                Ok(Expr::Bool(b))
+                Ok(self.new_expr(start_span, ExprKind::Bool(b)))
             }
             TokenKind::String(s) => {
                 self.advance();
-                Ok(Expr::String(s.to_string()))
+                Ok(self.new_expr(start_span, ExprKind::String(s.to_string())))
             }
             TokenKind::Ident(i) => {
                 self.advance();
-                Ok(Expr::Ident(i.to_string()))
+                Ok(self.new_expr(start_span, ExprKind::Ident(i.to_string())))
             }
             TokenKind::If => self.parse_if_expr(),
             TokenKind::Do => {
                 self.expect(TokenTag::Do)?;
-                Ok(Expr::Block(self.parse_block()?))
+                let block = self.parse_block()?;
+                Ok(self.new_expr(start_span, ExprKind::Block(block)))
             }
             TokenKind::LParen => {
                 self.advance();
                 let mut exprs = vec![];
                 if self.check(TokenTag::RParen) {
                     self.advance();
-                    return Ok(Expr::Unit);
+                    return Ok(self.new_expr(start_span, ExprKind::Unit));
                 }
                 let mut tuple = self.check(TokenTag::LParen);
                 exprs.push(self.parse_expr()?);
@@ -577,7 +467,7 @@ impl<'a> Parser<'a> {
                 }
                 self.expect(TokenTag::RParen)?;
                 if tuple {
-                    Ok(Expr::Tuple(exprs))
+                    Ok(self.new_expr(start_span, ExprKind::Tuple(exprs)))
                 } else {
                     Ok(exprs[0].clone())
                 }
@@ -588,18 +478,20 @@ impl<'a> Parser<'a> {
         }
     }
 
-    fn parse_option_type(&mut self) -> Result<TypeAnnotation, Box<ParserError>> {
+    fn parse_option_type(&mut self) -> Result<ast::TypeAnnotation, Box<ParserError>> {
         self.expect(TokenTag::Colon)?;
         match self.current_tag() {
-            TokenTag::Equals => Ok(TypeAnnotation::Inferred),
+            TokenTag::Equals => Ok(ast::TypeAnnotation::Inferred),
             TokenTag::Ident => {
                 let t = self.expect_ident()?;
-                Ok(TypeAnnotation::Explicit(Type::Named(t.to_string())))
+                Ok(ast::TypeAnnotation::Explicit(ast::Type::Named(
+                    t.to_string(),
+                )))
             }
             TokenTag::LParen => {
                 self.expect(TokenTag::LParen)?;
                 self.expect(TokenTag::RParen)?;
-                Ok(TypeAnnotation::Explicit(Type::Unit))
+                Ok(ast::TypeAnnotation::Explicit(ast::Type::Unit))
             }
             other => Err(self.error(ParserErrorKind::ExpectedTokens {
                 expected: vec!["=".to_string(), "type".to_string()],
@@ -608,7 +500,8 @@ impl<'a> Parser<'a> {
         }
     }
 
-    fn parse_if_expr(&mut self) -> Result<Expr, Box<ParserError>> {
+    fn parse_if_expr(&mut self) -> Result<ast::Expr, Box<ParserError>> {
+        let start_span = self.current().span;
         self.expect(TokenTag::If)?;
         let condition = Box::new(self.parse_expr()?);
         let then_branch = Box::new(self.parse_expr()?);
@@ -618,11 +511,24 @@ impl<'a> Parser<'a> {
         } else {
             None
         };
-        Ok(Expr::If {
-            condition,
-            then_branch,
-            else_branch,
-        })
+        Ok(self.new_expr(
+            start_span,
+            ExprKind::If {
+                condition,
+                then_branch,
+                else_branch,
+            },
+        ))
+    }
+
+    fn new_expr(&self, start_span: Span, kind: ExprKind) -> Expr {
+        Expr {
+            kind,
+            span: Span {
+                start: start_span.start,
+                end: self.current().span.end,
+            },
+        }
     }
 
     fn current(&self) -> &Token<'a> {
@@ -719,7 +625,7 @@ mod tests {
         fs::{read_dir, read_to_string},
     };
 
-    use crate::{file_utils::create_expected_by_ext, parser};
+    use crate::{dump::create_expected_by_ext, parser};
 
     #[test]
     fn validate_expected_ast() {

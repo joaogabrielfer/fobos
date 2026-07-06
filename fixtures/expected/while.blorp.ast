@@ -5,28 +5,112 @@ Ok(
                 mutable: true,
                 name: "a",
                 type_annotation: Inferred,
-                value: Int(
-                    0,
-                ),
+                value: Expr {
+                    kind: Int(
+                        0,
+                    ),
+                    span: Span {
+                        start: SrcPos {
+                            line: 1,
+                            col: 10,
+                            idx: 9,
+                        },
+                        end: SrcPos {
+                            line: 2,
+                            col: 1,
+                            idx: 11,
+                        },
+                    },
+                },
             },
             While {
-                condition: Bool(
-                    true,
-                ),
+                condition: Expr {
+                    kind: Bool(
+                        true,
+                    ),
+                    span: Span {
+                        start: SrcPos {
+                            line: 2,
+                            col: 7,
+                            idx: 17,
+                        },
+                        end: SrcPos {
+                            line: 2,
+                            col: 14,
+                            idx: 24,
+                        },
+                    },
+                },
                 block: Block {
                     statements: [
                         Assignment {
-                            target: Ident(
-                                "a",
-                            ),
-                            value: Binary {
-                                lhs: Ident(
+                            target: Expr {
+                                kind: Ident(
                                     "a",
                                 ),
-                                op: Add,
-                                rhs: Int(
-                                    1,
-                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 3,
+                                        col: 2,
+                                        idx: 26,
+                                    },
+                                    end: SrcPos {
+                                        line: 3,
+                                        col: 5,
+                                        idx: 29,
+                                    },
+                                },
+                            },
+                            value: Expr {
+                                kind: Binary {
+                                    lhs: Expr {
+                                        kind: Ident(
+                                            "a",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 3,
+                                                col: 6,
+                                                idx: 30,
+                                            },
+                                            end: SrcPos {
+                                                line: 3,
+                                                col: 9,
+                                                idx: 33,
+                                            },
+                                        },
+                                    },
+                                    op: Add,
+                                    rhs: Expr {
+                                        kind: Int(
+                                            1,
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 3,
+                                                col: 10,
+                                                idx: 34,
+                                            },
+                                            end: SrcPos {
+                                                line: 4,
+                                                col: 1,
+                                                idx: 36,
+                                            },
+                                        },
+                                    },
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 3,
+                                        col: 6,
+                                        idx: 30,
+                                    },
+                                    end: SrcPos {
+                                        line: 4,
+                                        col: 1,
+                                        idx: 36,
+                                    },
+                                },
                             },
                         },
                     ],
@@ -36,34 +120,146 @@ Ok(
                 mutable: true,
                 name: "b",
                 type_annotation: Inferred,
-                value: Int(
-                    10,
-                ),
+                value: Expr {
+                    kind: Int(
+                        10,
+                    ),
+                    span: Span {
+                        start: SrcPos {
+                            line: 6,
+                            col: 10,
+                            idx: 50,
+                        },
+                        end: SrcPos {
+                            line: 7,
+                            col: 1,
+                            idx: 53,
+                        },
+                    },
+                },
             },
             While {
-                condition: Binary {
-                    lhs: Ident(
-                        "b",
-                    ),
-                    op: Greater,
-                    rhs: Int(
-                        0,
-                    ),
+                condition: Expr {
+                    kind: Binary {
+                        lhs: Expr {
+                            kind: Ident(
+                                "b",
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 7,
+                                    col: 7,
+                                    idx: 59,
+                                },
+                                end: SrcPos {
+                                    line: 7,
+                                    col: 10,
+                                    idx: 62,
+                                },
+                            },
+                        },
+                        op: Greater,
+                        rhs: Expr {
+                            kind: Int(
+                                0,
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 7,
+                                    col: 11,
+                                    idx: 63,
+                                },
+                                end: SrcPos {
+                                    line: 7,
+                                    col: 15,
+                                    idx: 67,
+                                },
+                            },
+                        },
+                    },
+                    span: Span {
+                        start: SrcPos {
+                            line: 7,
+                            col: 7,
+                            idx: 59,
+                        },
+                        end: SrcPos {
+                            line: 7,
+                            col: 15,
+                            idx: 67,
+                        },
+                    },
                 },
                 block: Block {
                     statements: [
                         Assignment {
-                            target: Ident(
-                                "b",
-                            ),
-                            value: Binary {
-                                lhs: Ident(
+                            target: Expr {
+                                kind: Ident(
                                     "b",
                                 ),
-                                op: Sub,
-                                rhs: Int(
-                                    1,
-                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 7,
+                                        col: 16,
+                                        idx: 68,
+                                    },
+                                    end: SrcPos {
+                                        line: 7,
+                                        col: 19,
+                                        idx: 71,
+                                    },
+                                },
+                            },
+                            value: Expr {
+                                kind: Binary {
+                                    lhs: Expr {
+                                        kind: Ident(
+                                            "b",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 7,
+                                                col: 20,
+                                                idx: 72,
+                                            },
+                                            end: SrcPos {
+                                                line: 7,
+                                                col: 23,
+                                                idx: 75,
+                                            },
+                                        },
+                                    },
+                                    op: Sub,
+                                    rhs: Expr {
+                                        kind: Int(
+                                            1,
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 7,
+                                                col: 24,
+                                                idx: 76,
+                                            },
+                                            end: SrcPos {
+                                                line: 8,
+                                                col: 1,
+                                                idx: 78,
+                                            },
+                                        },
+                                    },
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 7,
+                                        col: 20,
+                                        idx: 72,
+                                    },
+                                    end: SrcPos {
+                                        line: 8,
+                                        col: 1,
+                                        idx: 78,
+                                    },
+                                },
                             },
                         },
                     ],

@@ -1,12 +1,12 @@
-use anyhow::Context;
-use std::fs::write;
+use std::{
+    ffi::{OsStr, OsString},
+    fs::{self, read_dir, read_to_string, write},
+    path::{Path, PathBuf},
+};
 
-use crate::file_utils::create_expected_by_ext;
-use crate::lexer::Lexer;
-use crate::parser;
-use std::ffi::OsStr;
-use std::fs::read_dir;
-use std::fs::read_to_string;
+use crate::{lexer::Lexer, parser};
+
+use anyhow::Context;
 
 pub fn dump_expected() -> anyhow::Result<()> {
     let cargo_dir = env!("CARGO_MANIFEST_DIR");
@@ -55,4 +55,20 @@ pub fn dump_expected() -> anyhow::Result<()> {
         }
     }
     Ok(())
+}
+
+pub fn create_expected_by_ext(file_path: &Path, extension: &str) -> anyhow::Result<PathBuf> {
+    // here we would be iterating over the dir entries, so it would always have a parent
+    let parent = file_path.parent().unwrap();
+
+    // also i guess it wouldnt end in '..'
+    let file_name = file_path.file_name().unwrap();
+
+    let new_dir = parent.join("expected");
+    fs::create_dir_all(&new_dir)?;
+
+    let mut new_file_name = OsString::from(file_name);
+    new_file_name.push(extension);
+
+    Ok(new_dir.join(new_file_name))
 }
