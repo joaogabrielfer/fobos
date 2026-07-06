@@ -27,6 +27,10 @@ pub enum Stmt {
         target: Expr,
         value: Expr,
     },
+    While {
+        condition: Expr,
+        block: Block,
+    },
 }
 
 #[derive(Debug, Clone)]
@@ -182,6 +186,7 @@ impl<'a> Parser<'a> {
         match self.current().kind {
             TokenKind::Let => self.parse_binding(false),
             TokenKind::Var => self.parse_binding(true),
+            TokenKind::While => self.parse_while(),
             TokenKind::Return => {
                 self.advance();
                 Ok(Stmt::Return(self.parse_expr()?))
@@ -217,7 +222,6 @@ impl<'a> Parser<'a> {
         let type_annotation = self.parse_type()?;
         self.expect(TokenTag::Equals)?;
         let value = if self.check(TokenTag::NewLine) {
-            self.advance();
             Expr::Block(self.parse_block()?)
         } else {
             self.parse_expr()?
@@ -229,6 +233,14 @@ impl<'a> Parser<'a> {
             type_annotation,
             value,
         })
+    }
+
+    fn parse_while(&mut self) -> Result<Stmt, Box<ParserError>> {
+        self.expect(TokenTag::While)?;
+        let condition = self.parse_expr()?;
+        self.expect(TokenTag::Do)?;
+        let block = self.parse_block()?;
+        Ok(Stmt::While { condition, block })
     }
 
     fn parse_expr(&mut self) -> Result<Expr, Box<ParserError>> {
@@ -255,8 +267,14 @@ impl<'a> Parser<'a> {
 
     fn parse_block(&mut self) -> Result<Block, Box<ParserError>> {
         let mut statements = vec![];
-        self.consume_newlines();
 
+        if !self.check(TokenTag::NewLine) {
+            let stmt = self.parse_statement()?;
+            statements.push(stmt);
+            return Ok(Block { statements });
+        }
+
+        self.consume_newlines();
         while !self.check(TokenTag::End) {
             let stmt = self.parse_statement()?;
             statements.push(stmt);

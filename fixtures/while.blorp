@@ -1,0 +1,7 @@
+var a := 0
+while true do
+	a = a + 1
+end
+
+var b := 10
+while b > 0 do b = b - 1

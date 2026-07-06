@@ -1,0 +1,74 @@
+Ok(
+    Program {
+        statements: [
+            Bind {
+                mutable: true,
+                name: "a",
+                type_annotation: None,
+                value: Int(
+                    0,
+                ),
+            },
+            While {
+                condition: Bool(
+                    true,
+                ),
+                block: Block {
+                    statements: [
+                        Assignment {
+                            target: Ident(
+                                "a",
+                            ),
+                            value: Binary {
+                                lhs: Ident(
+                                    "a",
+                                ),
+                                op: Add,
+                                rhs: Int(
+                                    1,
+                                ),
+                            },
+                        },
+                    ],
+                },
+            },
+            Bind {
+                mutable: true,
+                name: "b",
+                type_annotation: None,
+                value: Int(
+                    10,
+                ),
+            },
+            While {
+                condition: Binary {
+                    lhs: Ident(
+                        "b",
+                    ),
+                    op: Greater,
+                    rhs: Int(
+                        0,
+                    ),
+                },
+                block: Block {
+                    statements: [
+                        Assignment {
+                            target: Ident(
+                                "b",
+                            ),
+                            value: Binary {
+                                lhs: Ident(
+                                    "b",
+                                ),
+                                op: Sub,
+                                rhs: Int(
+                                    1,
+                                ),
+                            },
+                        },
+                    ],
+                },
+            },
+        ],
+    },
+)
