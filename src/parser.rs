@@ -97,6 +97,11 @@ pub enum Expr {
         then_branch: Box<Expr>,
         else_branch: Option<Box<Expr>>,
     },
+
+    Lambda {
+        params: Vec<String>,
+        body: Box<Expr>,
+    },
 }
 
 impl Display for Expr {
@@ -114,6 +119,7 @@ impl Display for Expr {
             Expr::Binary { .. } => write!(f, "binary operation"),
             Expr::Call { .. } => write!(f, "function calling"),
             Expr::If { .. } => write!(f, "if condition"),
+            Expr::Lambda { .. } => write!(f, "lambda"),
         }
     }
 }
@@ -182,6 +188,8 @@ pub enum ParserErrorKind {
     UnexpectedEof,
     #[error("{expr} is not a valid assignment target")]
     InvalidAssignmentTarget { expr: String },
+    #[error("{expr} is not a valid lamda parameter")]
+    InvalidParameter { expr: String },
 }
 
 impl<'a> Parser<'a> {
@@ -324,7 +332,39 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_expr(&mut self) -> Result<Expr, Box<ParserError>> {
-        self.parse_binary_expr(0)
+        self.parse_lambda()
+    }
+
+    fn parse_lambda(&mut self) -> Result<Expr, Box<ParserError>> {
+        let expr = self.parse_binary_expr(0)?;
+        if let TokenTag::RArrow = self.current_tag() {
+            let mut params = vec![];
+            match expr {
+                Expr::Ident(i) => params.push(i),
+                Expr::Tuple(t) => {
+                    for e in t {
+                        match e {
+                            Expr::Ident(i) => params.push(i),
+                            other => {
+                                return Err(self.error(ParserErrorKind::InvalidParameter {
+                                    expr: other.to_string(),
+                                }));
+                            }
+                        }
+                    }
+                }
+                other => {
+                    return Err(self.error(ParserErrorKind::InvalidParameter {
+                        expr: other.to_string(),
+                    }));
+                }
+            }
+            self.expect(TokenTag::RArrow)?;
+            let body = Box::new(self.parse_expr()?);
+            Ok(Expr::Lambda { params, body })
+        } else {
+            Ok(expr)
+        }
     }
 
     fn parse_binary_expr(&mut self, min_level: u8) -> Result<Expr, Box<ParserError>> {

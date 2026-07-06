@@ -1,0 +1,215 @@
+Ok(
+    Program {
+        statements: [
+            Bind {
+                mutable: false,
+                name: "add",
+                type_annotation: Inferred,
+                value: Lambda {
+                    params: [
+                        "x",
+                        "y",
+                    ],
+                    body: Block(
+                        Block {
+                            statements: [
+                                Return(
+                                    Binary {
+                                        lhs: Ident(
+                                            "x",
+                                        ),
+                                        op: Add,
+                                        rhs: Ident(
+                                            "y",
+                                        ),
+                                    },
+                                ),
+                            ],
+                        },
+                    ),
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "result",
+                type_annotation: Inferred,
+                value: Call {
+                    callee: Ident(
+                        "add",
+                    ),
+                    args: [
+                        Int(
+                            10,
+                        ),
+                        Int(
+                            20,
+                        ),
+                    ],
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "inc",
+                type_annotation: Inferred,
+                value: Lambda {
+                    params: [
+                        "x",
+                    ],
+                    body: Binary {
+                        lhs: Ident(
+                            "x",
+                        ),
+                        op: Add,
+                        rhs: Int(
+                            1,
+                        ),
+                    },
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "result",
+                type_annotation: Inferred,
+                value: Call {
+                    callee: Ident(
+                        "map",
+                    ),
+                    args: [
+                        Ident(
+                            "values",
+                        ),
+                        Lambda {
+                            params: [
+                                "x",
+                            ],
+                            body: Binary {
+                                lhs: Ident(
+                                    "x",
+                                ),
+                                op: Add,
+                                rhs: Int(
+                                    1,
+                                ),
+                            },
+                        },
+                    ],
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "make_adder",
+                type_annotation: Inferred,
+                value: Lambda {
+                    params: [
+                        "x",
+                    ],
+                    body: Lambda {
+                        params: [
+                            "y",
+                        ],
+                        body: Binary {
+                            lhs: Ident(
+                                "x",
+                            ),
+                            op: Add,
+                            rhs: Ident(
+                                "y",
+                            ),
+                        },
+                    },
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "shout",
+                type_annotation: Inferred,
+                value: Lambda {
+                    params: [
+                        "s",
+                    ],
+                    body: Call {
+                        callee: Ident(
+                            "to_upper",
+                        ),
+                        args: [
+                            Ident(
+                                "s",
+                            ),
+                        ],
+                    },
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "label",
+                type_annotation: Inferred,
+                value: Lambda {
+                    params: [
+                        "x",
+                    ],
+                    body: If {
+                        condition: Binary {
+                            lhs: Ident(
+                                "x",
+                            ),
+                            op: Greater,
+                            rhs: Int(
+                                10,
+                            ),
+                        },
+                        then_branch: String(
+                            "big",
+                        ),
+                        else_branch: Some(
+                            String(
+                                "small",
+                            ),
+                        ),
+                    },
+                },
+            },
+            Bind {
+                mutable: false,
+                name: "calc",
+                type_annotation: Inferred,
+                value: Lambda {
+                    params: [
+                        "x",
+                        "y",
+                    ],
+                    body: Block(
+                        Block {
+                            statements: [
+                                Bind {
+                                    mutable: false,
+                                    name: "doubled",
+                                    type_annotation: Inferred,
+                                    value: Binary {
+                                        lhs: Ident(
+                                            "x",
+                                        ),
+                                        op: Mul,
+                                        rhs: Int(
+                                            2,
+                                        ),
+                                    },
+                                },
+                                Return(
+                                    Binary {
+                                        lhs: Ident(
+                                            "doubled",
+                                        ),
+                                        op: Add,
+                                        rhs: Ident(
+                                            "y",
+                                        ),
+                                    },
+                                ),
+                            ],
+                        },
+                    ),
+                },
+            },
+        ],
+    },
+)

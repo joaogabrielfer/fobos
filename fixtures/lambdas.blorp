@@ -1,0 +1,16 @@
+let add := (x, y) -> do
+	return x + y
+end
+let result := add(10, 20)
+
+let inc := x -> x + 1
+
+let result := map(values, x -> x + 1)
+let make_adder := x -> y -> x + y
+let shout := s -> s.to_upper()
+let label := x -> if x > 10 "big" else "small"
+
+let calc := (x, y) -> do
+    let doubled := x * 2
+    return doubled + y
+end
