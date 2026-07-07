@@ -179,4 +179,8 @@ pub enum RuntimeErrorKind {
     ArityMismatch { expected: usize, found: usize },
     #[error("missing 'else' branch for 'if' condition that yields a value")]
     ElseBranchMissing,
+    #[error("IO error: {0}")]
+    IoError(String),
+    #[error("not implemented")]
+    NotImplemented,
 }

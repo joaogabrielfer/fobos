@@ -1,0 +1,16 @@
+RuntimeError {
+    kind: NotImplemented,
+    span: Span {
+        start: SrcPos {
+            line: 0,
+            col: 0,
+            idx: 0,
+        },
+        end: SrcPos {
+            line: 0,
+            col: 0,
+            idx: 0,
+        },
+    },
+    file_path: "/home/joaogabriel/personal/programming/projects/blorp/fixtures/func_declaration.blorp",
+}

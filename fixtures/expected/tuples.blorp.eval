@@ -1,0 +1,18 @@
+RuntimeError {
+    kind: UndefinedVariable(
+        "add",
+    ),
+    span: Span {
+        start: SrcPos {
+            line: 5,
+            col: 10,
+            idx: 80,
+        },
+        end: SrcPos {
+            line: 5,
+            col: 23,
+            idx: 93,
+        },
+    },
+    file_path: "/home/joaogabriel/personal/programming/projects/blorp/fixtures/tuples.blorp",
+}

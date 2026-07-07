@@ -35,7 +35,7 @@ macro_rules! value_or_flow {
     };
 }
 
-impl<'a> Interpreter<'a> {
+impl<'a, W: std::io::Write> Interpreter<'a, W> {
     pub fn eval_program(&mut self, program: &'a Program) -> Result<Value, Box<RuntimeError>> {
         for stmt in &program.statements {
             match self.eval_statement(stmt)? {
@@ -104,7 +104,7 @@ impl<'a> Interpreter<'a> {
                 parameters,
                 return_type,
                 body,
-            } => todo!(),
+            } => Err(self.error_at(Span::dummy(), RuntimeErrorKind::NotImplemented)),
         }
     }
 
@@ -439,7 +439,9 @@ impl<'a> Interpreter<'a> {
             } => self.eval_if(condition, then_branch, else_branch, yield_mode),
             ExprKind::While { condition, block } => self.eval_while(condition, block, yield_mode),
             #[allow(unused_variables)]
-            ExprKind::Lambda { params, body } => todo!(),
+            ExprKind::Lambda { params, body } => {
+                Err(self.error_at(body.span, RuntimeErrorKind::NotImplemented))
+            }
         }
     }
 
@@ -532,7 +534,7 @@ impl<'a> Interpreter<'a> {
         Ok(EvalFlow::Continue(Value::Unit))
     }
 
-    fn error_at(&self, span: Span, kind: RuntimeErrorKind) -> Box<RuntimeError> {
+    pub fn error_at(&self, span: Span, kind: RuntimeErrorKind) -> Box<RuntimeError> {
         Box::new(RuntimeError {
             kind,
             span,
@@ -541,7 +543,7 @@ impl<'a> Interpreter<'a> {
     }
 
     fn call_builtin(
-        &self,
+        &mut self,
         builtin: BuiltinFunction,
         args_values: Vec<Value>,
         span: crate::source::Span,
@@ -557,9 +559,83 @@ impl<'a> Interpreter<'a> {
                         },
                     ))
                 } else {
-                    println!("{}", args_values[0]);
+                    self.writeln_output(format!("{}", args_values[0]))?;
                     Ok(EvalFlow::Continue(Value::Unit))
                 }
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::lexer::Lexer;
+    use std::{
+        ffi::OsStr,
+        fs::{read_dir, read_to_string},
+    };
+
+    use crate::{dump::create_expected_by_ext, interpreter::Interpreter, parser};
+
+    #[test]
+    fn validate_expected_eval() {
+        let cargo_dir = env!("CARGO_MANIFEST_DIR");
+        let entries = read_dir(format!("{cargo_dir}/fixtures")).unwrap();
+
+        for entry in entries {
+            let current_file_path = entry.unwrap().path();
+
+            if current_file_path.is_file()
+                && current_file_path.extension() == Some(OsStr::new("blorp"))
+            {
+                let eval_expected_path =
+                    create_expected_by_ext(&current_file_path, ".eval").unwrap();
+
+                let expected_eval = match read_to_string(eval_expected_path.clone()) {
+                    Ok(s) => s,
+                    Err(_) => {
+                        eprintln!(
+                            "Expected eval file {eval_expected_path:?} not found. Skipping it"
+                        );
+                        continue;
+                    }
+                };
+
+                let content = read_to_string(&current_file_path).unwrap();
+                let tokens = Lexer::new(&current_file_path, &content).tokenize();
+
+                let eval_str = match tokens {
+                    Ok(tokens) => {
+                        let ast = parser::Parser::new(tokens, &current_file_path).parse_program();
+
+                        match ast {
+                            Ok(program) => {
+                                let mut interpreter = Interpreter::new_buffered(&current_file_path);
+
+                                let eval_result = interpreter.eval_program(&program);
+                                let output = interpreter.into_output_string();
+
+                                match eval_result {
+                                    Ok(value) => {
+                                        if output.is_empty() {
+                                            format!("result:\n{value:#?}\n")
+                                        } else {
+                                            format!("output:\n{output}\nresult:\n{value:#?}\n")
+                                        }
+                                    }
+                                    Err(e) => format!("{e:#?}"),
+                                }
+                            }
+                            Err(e) => format!("{e:#?}"),
+                        }
+                    }
+                    Err(e) => format!("{e:#?}"),
+                };
+
+                assert_eq!(
+                    eval_str, expected_eval,
+                    "failed to match eval output in file {eval_expected_path:?}"
+                );
             }
         }
     }

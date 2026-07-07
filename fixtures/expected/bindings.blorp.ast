@@ -1,76 +1,74 @@
-Ok(
-    Program {
-        statements: [
-            Bind {
-                mutable: false,
-                name: "foo",
-                type_annotation: Inferred,
-                value: Expr {
-                    kind: Int(
-                        10,
-                    ),
-                    span: Span {
-                        start: SrcPos {
-                            line: 1,
-                            col: 12,
-                            idx: 11,
-                        },
-                        end: SrcPos {
-                            line: 2,
-                            col: 1,
-                            idx: 14,
-                        },
-                    },
-                },
-            },
-            Bind {
-                mutable: true,
-                name: "bar",
-                type_annotation: Explicit(
-                    Named(
-                        "String",
-                    ),
+Program {
+    statements: [
+        Bind {
+            mutable: false,
+            name: "foo",
+            type_annotation: Inferred,
+            value: Expr {
+                kind: Int(
+                    10,
                 ),
-                value: Expr {
-                    kind: String(
-                        "baz",
-                    ),
-                    span: Span {
-                        start: SrcPos {
-                            line: 2,
-                            col: 19,
-                            idx: 32,
-                        },
-                        end: SrcPos {
-                            line: 3,
-                            col: 1,
-                            idx: 38,
-                        },
+                span: Span {
+                    start: SrcPos {
+                        line: 1,
+                        col: 12,
+                        idx: 11,
+                    },
+                    end: SrcPos {
+                        line: 2,
+                        col: 1,
+                        idx: 14,
                     },
                 },
             },
-            Bind {
-                mutable: false,
-                name: "baz",
-                type_annotation: Inferred,
-                value: Expr {
-                    kind: Bool(
-                        true,
-                    ),
-                    span: Span {
-                        start: SrcPos {
-                            line: 3,
-                            col: 12,
-                            idx: 49,
-                        },
-                        end: SrcPos {
-                            line: 4,
-                            col: 1,
-                            idx: 54,
-                        },
+        },
+        Bind {
+            mutable: true,
+            name: "bar",
+            type_annotation: Explicit(
+                Named(
+                    "String",
+                ),
+            ),
+            value: Expr {
+                kind: String(
+                    "baz",
+                ),
+                span: Span {
+                    start: SrcPos {
+                        line: 2,
+                        col: 19,
+                        idx: 32,
+                    },
+                    end: SrcPos {
+                        line: 3,
+                        col: 1,
+                        idx: 38,
                     },
                 },
             },
-        ],
-    },
-)
+        },
+        Bind {
+            mutable: false,
+            name: "baz",
+            type_annotation: Inferred,
+            value: Expr {
+                kind: Bool(
+                    true,
+                ),
+                span: Span {
+                    start: SrcPos {
+                        line: 3,
+                        col: 12,
+                        idx: 49,
+                    },
+                    end: SrcPos {
+                        line: 4,
+                        col: 1,
+                        idx: 54,
+                    },
+                },
+            },
+        },
+    ],
+}

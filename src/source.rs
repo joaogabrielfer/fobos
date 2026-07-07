@@ -27,6 +27,20 @@ impl Span {
     pub fn new(start: SrcPos, end: SrcPos) -> Self {
         Self { start, end }
     }
+    pub fn dummy() -> Self {
+        Self {
+            start: SrcPos {
+                line: 0,
+                col: 0,
+                idx: 0,
+            },
+            end: SrcPos {
+                line: 0,
+                col: 0,
+                idx: 0,
+            },
+        }
+    }
 }
 
 impl std::fmt::Display for Span {

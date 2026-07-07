@@ -60,7 +60,8 @@ fn run() -> anyhow::Result<()> {
         None => {
             let mut editor = DefaultEditor::new()?;
             let path = &PathBuf::from("repl");
-            let mut interpreter = Interpreter::new(path);
+            let stdout = std::io::stdout();
+            let mut interpreter = Interpreter::new(path, stdout.lock());
             let ast_arena = Arena::new();
             let mut c_c_pressed = false;
             loop {
@@ -102,7 +103,8 @@ fn run() -> anyhow::Result<()> {
             let content = read_to_string(path)?;
             let tokens = Lexer::new(path, &content).tokenize()?;
             let ast = parser::Parser::new(tokens, path).parse_program()?;
-            Interpreter::new(path).eval_program(&ast)?;
+            let stdout = std::io::stdout();
+            Interpreter::new(path, stdout.lock()).eval_program(&ast)?;
             Ok(())
         }
         Some(Commands::Tokens { path, only_kinds }) => {

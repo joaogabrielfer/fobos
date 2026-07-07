@@ -1,0 +1,18 @@
+RuntimeError {
+    kind: UndefinedVariable(
+        "a",
+    ),
+    span: Span {
+        start: SrcPos {
+            line: 4,
+            col: 10,
+            idx: 76,
+        },
+        end: SrcPos {
+            line: 4,
+            col: 14,
+            idx: 80,
+        },
+    },
+    file_path: "/home/joaogabriel/personal/programming/projects/blorp/fixtures/operations.blorp",
+}

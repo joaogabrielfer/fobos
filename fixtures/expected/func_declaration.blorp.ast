@@ -1,377 +1,375 @@
-Ok(
-    Program {
-        statements: [
-            FunDecl {
-                name: "add_and_print_hey",
-                generics: [],
-                parameters: [
-                    Parameter {
-                        name: "x",
-                        t: Named(
-                            "Int",
-                        ),
-                    },
-                    Parameter {
-                        name: "y",
-                        t: Named(
-                            "Int",
-                        ),
-                    },
-                ],
-                return_type: Explicit(
-                    Named(
+Program {
+    statements: [
+        FunDecl {
+            name: "add_and_print_hey",
+            generics: [],
+            parameters: [
+                Parameter {
+                    name: "x",
+                    t: Named(
                         "Int",
                     ),
+                },
+                Parameter {
+                    name: "y",
+                    t: Named(
+                        "Int",
+                    ),
+                },
+            ],
+            return_type: Explicit(
+                Named(
+                    "Int",
                 ),
-                body: Block {
-                    statements: [
-                        Expr(
-                            Expr {
-                                kind: Call {
-                                    callee: Expr {
-                                        kind: Ident(
-                                            "println",
+            ),
+            body: Block {
+                statements: [
+                    Expr(
+                        Expr {
+                            kind: Call {
+                                callee: Expr {
+                                    kind: Ident(
+                                        "println",
+                                    ),
+                                    span: Span {
+                                        start: SrcPos {
+                                            line: 2,
+                                            col: 2,
+                                            idx: 46,
+                                        },
+                                        end: SrcPos {
+                                            line: 2,
+                                            col: 10,
+                                            idx: 54,
+                                        },
+                                    },
+                                },
+                                args: [
+                                    Expr {
+                                        kind: String(
+                                            "hey",
                                         ),
                                         span: Span {
                                             start: SrcPos {
-                                                line: 2,
-                                                col: 2,
-                                                idx: 46,
-                                            },
-                                            end: SrcPos {
                                                 line: 2,
                                                 col: 10,
                                                 idx: 54,
                                             },
-                                        },
-                                    },
-                                    args: [
-                                        Expr {
-                                            kind: String(
-                                                "hey",
-                                            ),
-                                            span: Span {
-                                                start: SrcPos {
-                                                    line: 2,
-                                                    col: 10,
-                                                    idx: 54,
-                                                },
-                                                end: SrcPos {
-                                                    line: 2,
-                                                    col: 16,
-                                                    idx: 60,
-                                                },
+                                            end: SrcPos {
+                                                line: 2,
+                                                col: 16,
+                                                idx: 60,
                                             },
                                         },
-                                    ],
+                                    },
+                                ],
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 2,
+                                    col: 2,
+                                    idx: 46,
                                 },
-                                span: Span {
-                                    start: SrcPos {
-                                        line: 2,
-                                        col: 2,
-                                        idx: 46,
-                                    },
-                                    end: SrcPos {
-                                        line: 3,
-                                        col: 1,
-                                        idx: 61,
-                                    },
+                                end: SrcPos {
+                                    line: 3,
+                                    col: 1,
+                                    idx: 61,
                                 },
                             },
-                        ),
-                        Return(
-                            Expr {
-                                kind: Binary {
-                                    lhs: Expr {
-                                        kind: Ident(
-                                            "x",
-                                        ),
-                                        span: Span {
-                                            start: SrcPos {
-                                                line: 3,
-                                                col: 9,
-                                                idx: 69,
-                                            },
-                                            end: SrcPos {
-                                                line: 3,
-                                                col: 12,
-                                                idx: 72,
-                                            },
-                                        },
-                                    },
-                                    op: Add,
-                                    rhs: Expr {
-                                        kind: Ident(
-                                            "y",
-                                        ),
-                                        span: Span {
-                                            start: SrcPos {
-                                                line: 3,
-                                                col: 13,
-                                                idx: 73,
-                                            },
-                                            end: SrcPos {
-                                                line: 4,
-                                                col: 1,
-                                                idx: 75,
-                                            },
-                                        },
-                                    },
-                                },
-                                span: Span {
-                                    start: SrcPos {
-                                        line: 3,
-                                        col: 9,
-                                        idx: 69,
-                                    },
-                                    end: SrcPos {
-                                        line: 4,
-                                        col: 1,
-                                        idx: 75,
-                                    },
-                                },
-                            },
-                        ),
-                    ],
-                },
-            },
-            FunDecl {
-                name: "foo",
-                generics: [],
-                parameters: [],
-                return_type: Explicit(
-                    Named(
-                        "Int",
+                        },
                     ),
-                ),
-                body: Block {
-                    statements: [
-                        Return(
-                            Expr {
-                                kind: Int(
-                                    10,
-                                ),
-                                span: Span {
-                                    start: SrcPos {
-                                        line: 7,
-                                        col: 13,
-                                        idx: 110,
+                    Return(
+                        Expr {
+                            kind: Binary {
+                                lhs: Expr {
+                                    kind: Ident(
+                                        "x",
+                                    ),
+                                    span: Span {
+                                        start: SrcPos {
+                                            line: 3,
+                                            col: 9,
+                                            idx: 69,
+                                        },
+                                        end: SrcPos {
+                                            line: 3,
+                                            col: 12,
+                                            idx: 72,
+                                        },
                                     },
-                                    end: SrcPos {
-                                        line: 8,
-                                        col: 1,
-                                        idx: 113,
+                                },
+                                op: Add,
+                                rhs: Expr {
+                                    kind: Ident(
+                                        "y",
+                                    ),
+                                    span: Span {
+                                        start: SrcPos {
+                                            line: 3,
+                                            col: 13,
+                                            idx: 73,
+                                        },
+                                        end: SrcPos {
+                                            line: 4,
+                                            col: 1,
+                                            idx: 75,
+                                        },
                                     },
                                 },
                             },
-                        ),
-                    ],
-                },
-            },
-            FunDecl {
-                name: "identity",
-                generics: [],
-                parameters: [
-                    Parameter {
-                        name: "x",
-                        t: Named(
-                            "Int",
-                        ),
-                    },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 3,
+                                    col: 9,
+                                    idx: 69,
+                                },
+                                end: SrcPos {
+                                    line: 4,
+                                    col: 1,
+                                    idx: 75,
+                                },
+                            },
+                        },
+                    ),
                 ],
-                return_type: Explicit(
-                    Named(
+            },
+        },
+        FunDecl {
+            name: "foo",
+            generics: [],
+            parameters: [],
+            return_type: Explicit(
+                Named(
+                    "Int",
+                ),
+            ),
+            body: Block {
+                statements: [
+                    Return(
+                        Expr {
+                            kind: Int(
+                                10,
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 7,
+                                    col: 13,
+                                    idx: 110,
+                                },
+                                end: SrcPos {
+                                    line: 8,
+                                    col: 1,
+                                    idx: 113,
+                                },
+                            },
+                        },
+                    ),
+                ],
+            },
+        },
+        FunDecl {
+            name: "identity",
+            generics: [],
+            parameters: [
+                Parameter {
+                    name: "x",
+                    t: Named(
                         "Int",
                     ),
+                },
+            ],
+            return_type: Explicit(
+                Named(
+                    "Int",
                 ),
-                body: Block {
-                    statements: [
-                        Return(
-                            Expr {
-                                kind: Ident(
-                                    "x",
-                                ),
-                                span: Span {
-                                    start: SrcPos {
-                                        line: 11,
-                                        col: 12,
-                                        idx: 158,
-                                    },
-                                    end: SrcPos {
-                                        line: 12,
-                                        col: 1,
-                                        idx: 160,
-                                    },
+            ),
+            body: Block {
+                statements: [
+                    Return(
+                        Expr {
+                            kind: Ident(
+                                "x",
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 11,
+                                    col: 12,
+                                    idx: 158,
+                                },
+                                end: SrcPos {
+                                    line: 12,
+                                    col: 1,
+                                    idx: 160,
                                 },
                             },
-                        ),
-                    ],
-                },
-            },
-            FunDecl {
-                name: "greet",
-                generics: [],
-                parameters: [],
-                return_type: Explicit(
-                    Named(
-                        "String",
+                        },
                     ),
+                ],
+            },
+        },
+        FunDecl {
+            name: "greet",
+            generics: [],
+            parameters: [],
+            return_type: Explicit(
+                Named(
+                    "String",
                 ),
-                body: Block {
-                    statements: [
-                        Return(
-                            Expr {
-                                kind: String(
-                                    "hello",
-                                ),
-                                span: Span {
-                                    start: SrcPos {
-                                        line: 15,
-                                        col: 13,
-                                        idx: 200,
-                                    },
-                                    end: SrcPos {
-                                        line: 16,
-                                        col: 1,
-                                        idx: 208,
-                                    },
+            ),
+            body: Block {
+                statements: [
+                    Return(
+                        Expr {
+                            kind: String(
+                                "hello",
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 15,
+                                    col: 13,
+                                    idx: 200,
+                                },
+                                end: SrcPos {
+                                    line: 16,
+                                    col: 1,
+                                    idx: 208,
                                 },
                             },
-                        ),
-                    ],
-                },
+                        },
+                    ),
+                ],
             },
-            FunDecl {
-                name: "no_return_type",
-                generics: [],
-                parameters: [],
-                return_type: Explicit(
-                    Unit,
-                ),
-                body: Block {
-                    statements: [
-                        Expr(
-                            Expr {
-                                kind: Call {
-                                    callee: Expr {
-                                        kind: Ident(
-                                            "do_effectful_thing",
+        },
+        FunDecl {
+            name: "no_return_type",
+            generics: [],
+            parameters: [],
+            return_type: Explicit(
+                Unit,
+            ),
+            body: Block {
+                statements: [
+                    Expr(
+                        Expr {
+                            kind: Call {
+                                callee: Expr {
+                                    kind: Ident(
+                                        "do_effectful_thing",
+                                    ),
+                                    span: Span {
+                                        start: SrcPos {
+                                            line: 19,
+                                            col: 2,
+                                            idx: 242,
+                                        },
+                                        end: SrcPos {
+                                            line: 19,
+                                            col: 21,
+                                            idx: 261,
+                                        },
+                                    },
+                                },
+                                args: [
+                                    Expr {
+                                        kind: String(
+                                            "hello world",
                                         ),
                                         span: Span {
                                             start: SrcPos {
-                                                line: 19,
-                                                col: 2,
-                                                idx: 242,
-                                            },
-                                            end: SrcPos {
                                                 line: 19,
                                                 col: 21,
                                                 idx: 261,
                                             },
-                                        },
-                                    },
-                                    args: [
-                                        Expr {
-                                            kind: String(
-                                                "hello world",
-                                            ),
-                                            span: Span {
-                                                start: SrcPos {
-                                                    line: 19,
-                                                    col: 21,
-                                                    idx: 261,
-                                                },
-                                                end: SrcPos {
-                                                    line: 19,
-                                                    col: 35,
-                                                    idx: 275,
-                                                },
+                                            end: SrcPos {
+                                                line: 19,
+                                                col: 35,
+                                                idx: 275,
                                             },
                                         },
-                                    ],
+                                    },
+                                ],
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 19,
+                                    col: 2,
+                                    idx: 242,
                                 },
-                                span: Span {
-                                    start: SrcPos {
-                                        line: 19,
-                                        col: 2,
-                                        idx: 242,
-                                    },
-                                    end: SrcPos {
-                                        line: 20,
-                                        col: 1,
-                                        idx: 276,
-                                    },
+                                end: SrcPos {
+                                    line: 20,
+                                    col: 1,
+                                    idx: 276,
                                 },
                             },
-                        ),
-                    ],
-                },
+                        },
+                    ),
+                ],
             },
-            FunDecl {
-                name: "inferred_type",
-                generics: [],
-                parameters: [
-                    Parameter {
-                        name: "x",
-                        t: Named(
-                            "Foo",
-                        ),
-                    },
-                ],
-                return_type: Inferred,
-                body: Block {
-                    statements: [],
+        },
+        FunDecl {
+            name: "inferred_type",
+            generics: [],
+            parameters: [
+                Parameter {
+                    name: "x",
+                    t: Named(
+                        "Foo",
+                    ),
                 },
+            ],
+            return_type: Inferred,
+            body: Block {
+                statements: [],
             },
-            FunDecl {
-                name: "generic_over_T",
-                generics: [
-                    "T",
-                ],
-                parameters: [
-                    Parameter {
-                        name: "foo",
-                        t: Named(
-                            "T",
-                        ),
-                    },
-                ],
-                return_type: Explicit(
-                    Named(
+        },
+        FunDecl {
+            name: "generic_over_T",
+            generics: [
+                "T",
+            ],
+            parameters: [
+                Parameter {
+                    name: "foo",
+                    t: Named(
                         "T",
                     ),
-                ),
-                body: Block {
-                    statements: [],
                 },
-            },
-            FunDecl {
-                name: "generic_over_AB",
-                generics: [
-                    "A",
-                    "B",
-                ],
-                parameters: [
-                    Parameter {
-                        name: "x",
-                        t: Named(
-                            "A",
-                        ),
-                    },
-                    Parameter {
-                        name: "y",
-                        t: Named(
-                            "B",
-                        ),
-                    },
-                ],
-                return_type: Explicit(
-                    Unit,
+            ],
+            return_type: Explicit(
+                Named(
+                    "T",
                 ),
-                body: Block {
-                    statements: [],
-                },
+            ),
+            body: Block {
+                statements: [],
             },
-        ],
-    },
-)
+        },
+        FunDecl {
+            name: "generic_over_AB",
+            generics: [
+                "A",
+                "B",
+            ],
+            parameters: [
+                Parameter {
+                    name: "x",
+                    t: Named(
+                        "A",
+                    ),
+                },
+                Parameter {
+                    name: "y",
+                    t: Named(
+                        "B",
+                    ),
+                },
+            ],
+            return_type: Explicit(
+                Unit,
+            ),
+            body: Block {
+                statements: [],
+            },
+        },
+    ],
+}

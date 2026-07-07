@@ -1,0 +1,16 @@
+RuntimeError {
+    kind: NotImplemented,
+    span: Span {
+        start: SrcPos {
+            line: 1,
+            col: 22,
+            idx: 21,
+        },
+        end: SrcPos {
+            line: 4,
+            col: 1,
+            idx: 42,
+        },
+    },
+    file_path: "/home/joaogabriel/personal/programming/projects/blorp/fixtures/lambdas.blorp",
+}

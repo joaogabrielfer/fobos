@@ -4,7 +4,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use crate::{lexer::Lexer, parser};
+use crate::{interpreter::Interpreter, lexer::Lexer, parser};
 
 use anyhow::Context;
 
@@ -15,45 +15,145 @@ pub fn dump_expected() -> anyhow::Result<()> {
         .with_context(|| format!("Failed to open directory '{cargo_dir}/fixtures/'"))?;
 
     for entry in entries {
-        let file = entry.with_context(|| "Failed to read directory entry")?;
+        let file = match entry {
+            Ok(file) => file,
+            Err(e) => {
+                eprintln!("Failed to read directory entry: {e}");
+                continue;
+            }
+        };
+
         let current_file_path = file.path();
 
-        if current_file_path.is_file() && current_file_path.extension() == Some(OsStr::new("blorp"))
+        if !current_file_path.is_file()
+            || current_file_path.extension() != Some(OsStr::new("blorp"))
         {
-            let content = read_to_string(&current_file_path).with_context(|| {
-                format!("Failed to read file '{}'", current_file_path.display())
-            })?;
-
-            let tokens = Lexer::new(&current_file_path, &content).tokenize();
-            let ast_str = match &tokens {
-                Ok(t) => {
-                    let ast = parser::Parser::new(t.clone(), &current_file_path).parse_program();
-                    if let Err(e) = &ast {
-                        eprintln!(
-                            "Error while trying to dump into files: {e}\nWriting the error to the file:"
-                        );
-                    }
-                    format!("{ast:#?}")
-                }
-                Err(e) => {
-                    eprintln!(
-                        "Error while trying to dump into files: {e}\nWriting the error to the file."
-                    );
-                    format!("{e:#?}")
-                }
-            };
-            let tokens_str = format!("{tokens:#?}");
-
-            let token_file_path = create_expected_by_ext(&current_file_path, ".tokens")?;
-            write(&token_file_path, tokens_str)?;
-
-            let parser_file_path = create_expected_by_ext(&current_file_path, ".ast")?;
-            write(&parser_file_path, ast_str)?;
-
-            println!("Writing to: {}", token_file_path.display());
-            println!("Writing to: {}", parser_file_path.display());
+            continue;
         }
+
+        println!("Processing: {}", current_file_path.display());
+
+        let content = match read_to_string(&current_file_path) {
+            Ok(content) => content,
+            Err(e) => {
+                eprintln!("Failed to read '{}': {e}", current_file_path.display());
+                continue;
+            }
+        };
+
+        let tokens = Lexer::new(&current_file_path, &content).tokenize();
+
+        let tokens_str = format!("{tokens:#?}");
+
+        let (ast_str, eval_str) = match tokens {
+            Ok(tokens) => {
+                let ast = parser::Parser::new(tokens, &current_file_path).parse_program();
+
+                match ast {
+                    Ok(program) => {
+                        let ast_str = format!("{program:#?}");
+
+                        let mut interpreter = Interpreter::new_buffered(&current_file_path);
+
+                        let eval_result = interpreter.eval_program(&program);
+                        let output = interpreter.into_output_string();
+
+                        let eval_str = match eval_result {
+                            Ok(value) => {
+                                if output.is_empty() {
+                                    format!("result:\n{value:#?}\n")
+                                } else {
+                                    format!("output:\n{output}\nresult:\n{value:#?}\n")
+                                }
+                            }
+                            Err(e) => {
+                                eprintln!(
+                                    "Eval error in '{}':\n{}",
+                                    current_file_path.display(),
+                                    e
+                                );
+
+                                format!("{e:#?}")
+                            }
+                        };
+
+                        (ast_str, eval_str)
+                    }
+
+                    Err(e) => {
+                        eprintln!("Parse error in '{}':\n{}", current_file_path.display(), e);
+
+                        let err = format!("{e:#?}");
+
+                        // AST is the parser error. Eval cannot run, so eval also stores the error.
+                        (err.clone(), err)
+                    }
+                }
+            }
+
+            Err(e) => {
+                eprintln!("Lexer error in '{}':\n{}", current_file_path.display(), e);
+
+                let err = format!("{e:#?}");
+
+                // Tokens are the lexer error. AST/eval cannot run.
+                (err.clone(), err)
+            }
+        };
+
+        let token_file_path = match create_expected_by_ext(&current_file_path, ".tokens") {
+            Ok(path) => path,
+            Err(e) => {
+                eprintln!(
+                    "Could not create .tokens path for '{}': {e}",
+                    current_file_path.display()
+                );
+                continue;
+            }
+        };
+
+        let parser_file_path = match create_expected_by_ext(&current_file_path, ".ast") {
+            Ok(path) => path,
+            Err(e) => {
+                eprintln!(
+                    "Could not create .ast path for '{}': {e}",
+                    current_file_path.display()
+                );
+                continue;
+            }
+        };
+
+        let eval_file_path = match create_expected_by_ext(&current_file_path, ".eval") {
+            Ok(path) => path,
+            Err(e) => {
+                eprintln!(
+                    "Could not create .eval path for '{}': {e}",
+                    current_file_path.display()
+                );
+                continue;
+            }
+        };
+
+        if let Err(e) = write(&token_file_path, tokens_str) {
+            eprintln!("Failed to write '{}': {e}", token_file_path.display());
+            continue;
+        }
+
+        if let Err(e) = write(&parser_file_path, ast_str) {
+            eprintln!("Failed to write '{}': {e}", parser_file_path.display());
+            continue;
+        }
+
+        if let Err(e) = write(&eval_file_path, eval_str) {
+            eprintln!("Failed to write '{}': {e}", eval_file_path.display());
+            continue;
+        }
+
+        println!("  wrote {}", token_file_path.display());
+        println!("  wrote {}", parser_file_path.display());
+        println!("  wrote {}", eval_file_path.display());
     }
+
     Ok(())
 }
 
