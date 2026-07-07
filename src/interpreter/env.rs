@@ -4,6 +4,7 @@ use anyhow::Result;
 
 use crate::interpreter::{errors::RuntimeErrorKind, values::Value};
 
+#[derive(Debug, Clone)]
 pub struct Env<'a> {
     scopes: Vec<HashMap<&'a str, Binding>>,
 }

@@ -14,10 +14,7 @@ pub struct Interpreter<'a> {
 }
 
 impl<'a> Interpreter<'a> {
-    pub fn new(file_path: &'a PathBuf) -> Self {
-        Self {
-            env: env::Env::default(),
-            file_path,
-        }
+    pub fn new(file_path: &'a PathBuf, env: Env<'a>) -> Self {
+        Self { env, file_path }
     }
 }

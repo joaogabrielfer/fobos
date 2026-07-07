@@ -1,10 +1,17 @@
 use clap::{Parser, Subcommand};
+use colored::Colorize;
+use rustyline::{DefaultEditor, Editor, error::ReadlineError, history::FileHistory};
 use std::{fs::read_to_string, path::PathBuf, process::exit};
 use thiserror::Error;
+use typed_arena::Arena;
 
 use blorp::{
+    ast::Program,
     dump::dump_expected,
-    interpreter::Interpreter,
+    interpreter::{
+        self, Interpreter,
+        env::{self, Env},
+    },
     lexer::Lexer,
     parser::{self},
 };
@@ -13,7 +20,7 @@ use blorp::{
 #[command(name = "blorp")]
 struct Cli {
     #[command(subcommand)]
-    command: Commands,
+    command: Option<Commands>,
 }
 
 #[derive(Subcommand)]
@@ -53,15 +60,56 @@ fn main() {
 fn run() -> anyhow::Result<()> {
     let cli = Cli::parse();
     match &cli.command {
-        Commands::Run { path } => {
+        None => {
+            let mut editor = DefaultEditor::new()?;
+            let path = &PathBuf::from("repl");
+            let mut interpreter = Interpreter::new(path, Env::default());
+            let ast_arena = Arena::new();
+            let mut c_c_pressed = false;
+            loop {
+                let prompt = if !c_c_pressed {
+                    ">> ".green().to_string()
+                } else {
+                    "".to_string()
+                };
+                let mut line = match editor.readline(&prompt) {
+                    Ok(line) => {
+                        c_c_pressed = false;
+                        line
+                    }
+                    Err(rustyline::error::ReadlineError::Interrupted) => {
+                        if c_c_pressed {
+                            return Ok(());
+                        } else {
+                            println!("press 'C-c' again to exit the repl");
+                            c_c_pressed = true;
+                            continue;
+                        }
+                    }
+                    Err(rustyline::error::ReadlineError::Eof) => {
+                        return Ok(());
+                    }
+                    Err(err) => return Err(err.into()),
+                };
+
+                let mut source = std::mem::take(&mut line);
+                source.push('\n');
+                let tokens = Lexer::new(path, &source).tokenize()?;
+                let ast = parser::Parser::new(tokens, path).parse_program()?;
+                let ast: &Program = ast_arena.alloc(ast);
+                let value = interpreter.eval_program(ast)?;
+                println!("{value}");
+            }
+        }
+        Some(Commands::Run { path }) => {
             let content = read_to_string(path)?;
             let tokens = Lexer::new(path, &content).tokenize()?;
             let ast = parser::Parser::new(tokens, path).parse_program()?;
-            let value = Interpreter::new(path).eval_program(&ast)?;
+            let value = Interpreter::new(path, Env::default()).eval_program(&ast)?;
             println!("{value}");
             Ok(())
         }
-        Commands::Tokens { path, only_kinds } => {
+        Some(Commands::Tokens { path, only_kinds }) => {
             let content = read_to_string(path)?;
             let tokens = Lexer::new(path, &content).tokenize()?;
             if *only_kinds {
@@ -73,13 +121,13 @@ fn run() -> anyhow::Result<()> {
             }
             Ok(())
         }
-        Commands::Ast { path } => {
+        Some(Commands::Ast { path }) => {
             let content = read_to_string(path)?;
             let tokens = Lexer::new(path, &content).tokenize()?;
             let ast = parser::Parser::new(tokens, path).parse_program()?;
             println!("{ast:#?}");
             Ok(())
         }
-        Commands::GenerateExpected => dump_expected(),
+        Some(Commands::GenerateExpected) => dump_expected(),
     }
 }
