@@ -23,15 +23,15 @@ let if_expr_1 := if true "yes" else "no"
 let if_expr_2 := if false "yes" else "no"
 
 let if_block := if arithmetic > 5 do
-    return "big"
+    yield "big"
 end else do
-    return "small"
+    yield "small"
 end
 
 let block_value := do
     let a := 10
     let b := 20
-    return a + b
+    yield a + b
 end
 
 var counter := 0
@@ -81,3 +81,44 @@ let fifteen := add_ten(5)
 let label := x -> if x > 10 "big" else "small"
 let label_result_1 := label(20)
 let label_result_2 := label(3)
+
+echo("unit_value:" <> unit_value)
+echo("int_value:" <> int_value)
+echo("float_value:" <> float_value)
+echo("bool_value:" <> bool_value)
+echo("string_value:" <> string_value)
+
+echo("grouped:" <> grouped)
+echo("tuple_pair:" <> tuple_pair)
+echo("tuple_nested:" <> tuple_nested)
+echo("tuple_mixed:" <> tuple_mixed)
+
+echo("arithmetic:" <> arithmetic)
+echo("arithmetic_grouped:" <> arithmetic_grouped)
+
+echo("comparison_1:" <> comparison_1)
+echo("comparison_2:" <> comparison_2)
+echo("comparison_3:" <> comparison_3)
+echo("comparison_4:" <> comparison_4)
+echo("comparison_5:" <> comparison_5)
+echo("comparison_6:" <> comparison_6)
+
+echo("if_expr_1:" <> if_expr_1)
+echo("if_expr_2:" <> if_expr_2)
+echo("if_block:" <> if_block)
+echo("block_value:" <> block_value)
+echo("counter:" <> counter)
+
+echo("add_result:" <> add_result)
+echo("unit_func:" <> unit_func())
+echo("inferred_result:" <> inferred_result)
+echo("identity_int:" <> identity_int)
+echo("identity_string:" <> identity_string)
+
+echo("inc_result:" <> inc_result)
+echo("lambda_add_result:" <> lambda_add_result)
+echo("lambda_block_result:" <> lambda_block_result)
+
+echo("fifteen:" <> fifteen)
+echo("label_result_1:" <> label_result_1)
+echo("label_result_2:" <> label_result_2)

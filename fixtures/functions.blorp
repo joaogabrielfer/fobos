@@ -2,4 +2,9 @@ fun add(x: Int, y: Int) :=
 	return x + y
 end
 
-(10, 5).add().echo()
+echo("add(10, 5) = " <> add(10, 5))
+
+let make_adder := x -> y -> x + y
+let inc := make_adder(1)
+
+echo("inc(10) = " <> inc(10))

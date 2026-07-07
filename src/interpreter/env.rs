@@ -4,12 +4,18 @@ use anyhow::Result;
 
 use crate::{errors::RuntimeErrorKind, interpreter::values::Value};
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct Env {
-    scopes: Vec<HashMap<String, Binding>>,
+#[derive(Debug, Clone, PartialEq, Default)]
+pub struct EnvFrame {
+    pub frame: HashMap<String, Binding>,
+    pub parent: Option<EnvRef>,
 }
 
-pub type EnvRef = Rc<RefCell<Env>>;
+pub type EnvRef = Rc<RefCell<EnvFrame>>;
+
+#[derive(Debug, Clone)]
+pub struct Env {
+    current: EnvRef,
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Binding {
@@ -19,53 +25,82 @@ pub struct Binding {
 
 impl Default for Env {
     fn default() -> Self {
+        let frame = EnvFrame::default();
         Self {
-            scopes: vec![HashMap::new()],
+            current: Rc::new(RefCell::new(frame)),
         }
     }
 }
 
 impl Env {
+    pub fn current_ref(&self) -> EnvRef {
+        Rc::clone(&self.current)
+    }
+
+    pub fn from_ref(current: EnvRef) -> Self {
+        Self { current }
+    }
+
     pub fn push_scope(&mut self) {
-        self.scopes.push(HashMap::new());
+        let new_frame = Rc::new(RefCell::new(EnvFrame {
+            frame: HashMap::new(),
+            parent: Some(Rc::clone(&self.current)),
+        }));
+
+        self.current = new_frame;
     }
+
     pub fn pop_scope(&mut self) {
-        if self.scopes.len() > 1 {
-            self.scopes.pop();
-        }
-    }
-    pub fn get(&self, name: String) -> Result<Value, RuntimeErrorKind> {
-        for scope in self.scopes.iter().rev() {
-            if scope.contains_key(&name) {
-                return Ok(scope.get(&name).unwrap().clone().value);
-            }
-        }
-        Err(RuntimeErrorKind::UndefinedVariable(name.to_string()))
+        let parent = self
+            .current
+            .borrow()
+            .parent
+            .clone()
+            .expect("cannot pop global scope");
+
+        self.current = parent;
     }
     pub fn define(&mut self, name: String, mutable: bool, value: Value) {
-        self.scopes
-            .last_mut()
-            .expect("scopes should always have at least one entry")
+        self.current
+            .borrow_mut()
+            .frame
             .insert(name, Binding { mutable, value });
     }
 
-    pub fn assign(&mut self, name: String, value: Value) -> Result<(), RuntimeErrorKind> {
-        for scope in self.scopes.iter_mut().rev() {
-            if let Some(key) = scope.get_mut(&name) {
-                if !key.mutable {
-                    return Err(RuntimeErrorKind::CannotAssignImmutable(name.to_string()));
-                } else {
-                    key.value = value;
-                    return Ok(());
-                }
+    pub fn get(&self, name: &str) -> Result<Value, RuntimeErrorKind> {
+        let mut current = Some(Rc::clone(&self.current));
+
+        while let Some(env) = current {
+            let borrowed = env.borrow();
+
+            if let Some(binding) = borrowed.frame.get(name) {
+                return Ok(binding.value.clone());
             }
+
+            current = borrowed.parent.clone();
         }
+
         Err(RuntimeErrorKind::UndefinedVariable(name.to_string()))
     }
-    pub fn debug_scopes(&self) {
-        eprintln!("scopes:");
-        for (i, scope) in self.scopes.iter().enumerate() {
-            eprintln!("  scope {i}: {:?}", scope.keys().collect::<Vec<_>>());
+
+    pub fn assign(&mut self, name: &str, value: Value) -> Result<(), RuntimeErrorKind> {
+        let mut current = Some(Rc::clone(&self.current));
+
+        while let Some(env) = current {
+            let mut borrowed = env.borrow_mut();
+
+            if let Some(binding) = borrowed.frame.get_mut(name) {
+                if !binding.mutable {
+                    return Err(RuntimeErrorKind::CannotAssignImmutable(name.to_string()));
+                }
+
+                binding.value = value;
+                return Ok(());
+            }
+
+            current = borrowed.parent.clone();
         }
+
+        Err(RuntimeErrorKind::UndefinedVariable(name.to_string()))
     }
 }

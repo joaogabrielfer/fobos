@@ -1,4 +1,37 @@
+output:
+unit_value:()
+int_value:10
+float_value:10.5
+bool_value:true
+string_value:hello
+grouped:10
+tuple_pair:(10, 20)
+tuple_nested:((1, 2), 3)
+tuple_mixed:(1, hello, true, (2, 3))
+arithmetic:7
+arithmetic_grouped:9
+comparison_1:true
+comparison_2:true
+comparison_3:true
+comparison_4:true
+comparison_5:true
+comparison_6:true
+if_expr_1:yes
+if_expr_2:no
+if_block:big
+block_value:30
+counter:3
+add_result:30
+unit_func:()
+inferred_result:5
+identity_int:123
+identity_string:abc
+inc_result:11
+lambda_add_result:11
+lambda_block_result:25
+fifteen:15
+label_result_1:big
+label_result_2:small
+
 result:
-String(
-    "big",
-)
+Unit

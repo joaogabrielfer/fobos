@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::{cell::RefCell, collections::HashMap, rc::Rc};
 
 use anyhow::Result;
 
@@ -11,6 +11,7 @@ use crate::{
     errors::{RuntimeError, RuntimeErrorKind},
     interpreter::{
         Interpreter,
+        env::{Env, EnvFrame},
         values::{BuiltinFunction, FunctionBody, FunctionValue, Value},
     },
     source::Span,
@@ -18,8 +19,8 @@ use crate::{
 
 pub enum EvalFlow {
     Continue(Value),
-    Return(Value),
-    Yield(Value),
+    Return { value: Value, span: Span },
+    Yield { value: Value, span: Span },
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -32,8 +33,8 @@ macro_rules! value_or_flow {
     ($flow:expr) => {
         match $flow {
             EvalFlow::Continue(value) => value,
-            EvalFlow::Return(value) => return Ok(EvalFlow::Return(value)),
-            EvalFlow::Yield(value) => return Ok(EvalFlow::Yield(value)),
+            EvalFlow::Return { value, span } => return Ok(EvalFlow::Return { value, span }),
+            EvalFlow::Yield { value, span } => return Ok(EvalFlow::Yield { value, span }),
         }
     };
 }
@@ -43,13 +44,17 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
         for stmt in program.statements {
             match self.eval_statement(stmt)? {
                 EvalFlow::Continue(_value) => {}
-                EvalFlow::Yield(_value) => {}
-                EvalFlow::Return(value) => {
-                    self.env.borrow_mut().pop_scope();
+
+                EvalFlow::Yield { span, .. } => {
+                    return Err(self.error_at(span, RuntimeErrorKind::YieldOutsideHandler));
+                }
+
+                EvalFlow::Return { value, span: _ } => {
                     return Ok(value);
                 }
             }
         }
+
         Ok(Value::Unit)
     }
 
@@ -60,12 +65,20 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 Ok(EvalFlow::Continue(value_or_flow!(value)))
             }
             Stmt::Return(expr) => {
+                let span = expr.span;
                 let value = self.eval_expr(expr, YieldMode::Capture)?;
-                Ok(EvalFlow::Return(value_or_flow!(value)))
+                Ok(EvalFlow::Return {
+                    value: value_or_flow!(value),
+                    span,
+                })
             }
             Stmt::Yield(expr) => {
+                let span = expr.span;
                 let value = self.eval_expr(expr, YieldMode::Capture)?;
-                Ok(EvalFlow::Yield(value_or_flow!(value)))
+                Ok(EvalFlow::Yield {
+                    value: value_or_flow!(value),
+                    span,
+                })
             }
             Stmt::Bind {
                 mutable,
@@ -74,7 +87,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 ..
             } => {
                 let value = value_or_flow!(self.eval_expr(value, YieldMode::Capture)?);
-                self.env.borrow_mut().define(name, mutable, value);
+                self.env.define(name, mutable, value);
                 Ok(EvalFlow::Continue(Value::Unit))
             }
             Stmt::Assignment { target, value } => {
@@ -82,8 +95,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 let value = self.eval_expr(value, YieldMode::Capture)?;
                 if let ExprKind::Ident(name) = target.kind {
                     self.env
-                        .borrow_mut()
-                        .assign(name, value_or_flow!(value))
+                        .assign(&name, value_or_flow!(value))
                         .map_err(|kind| {
                             self.error_at(
                                 Span {
@@ -117,10 +129,10 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                     parameters,
                     body: FunctionBody::Block(body),
                     return_type,
-                    captured_env: Rc::clone(&self.env),
+                    captured_env: self.env.current_ref(),
                 });
 
-                self.env.borrow_mut().define(name, false, fun);
+                self.env.define(name, false, fun);
                 Ok(EvalFlow::Continue(Value::Unit))
             }
         }
@@ -131,11 +143,13 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
         block: Block,
         yield_mode: YieldMode,
     ) -> Result<EvalFlow, Box<RuntimeError>> {
-        self.env.borrow_mut().push_scope();
+        let previous_env = self.env.clone();
+
+        self.env.push_scope();
 
         let result = self.eval_block_inner(block, yield_mode);
 
-        self.env.borrow_mut().pop_scope();
+        self.env = previous_env;
 
         result
     }
@@ -153,14 +167,14 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                     last_value = value;
                 }
 
-                EvalFlow::Return(value) => {
-                    return Ok(EvalFlow::Return(value));
+                EvalFlow::Return { value, span } => {
+                    return Ok(EvalFlow::Return { value, span });
                 }
 
-                EvalFlow::Yield(value) => {
+                EvalFlow::Yield { value, span } => {
                     return match yield_mode {
                         YieldMode::Capture => Ok(EvalFlow::Continue(value)),
-                        YieldMode::Bubble => Ok(EvalFlow::Yield(value)),
+                        YieldMode::Bubble => Ok(EvalFlow::Yield { value, span }),
                     };
                 }
             }
@@ -180,7 +194,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
             ExprKind::String(val) => Ok(EvalFlow::Continue(Value::String(val))),
             ExprKind::Bool(val) => Ok(EvalFlow::Continue(Value::Bool(val))),
             ExprKind::Ident(i) => {
-                let value = self.env.borrow_mut().get(i).map_err(|kind| {
+                let value = self.env.get(&i).map_err(|kind| {
                     Box::new(RuntimeError {
                         kind,
                         span: expr.span,
@@ -463,7 +477,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                     name: None,
                     parameters,
                     body: FunctionBody::Expr(*body),
-                    captured_env: Rc::clone(&self.env),
+                    captured_env: self.env.current_ref(),
                     return_type: TypeAnnotation::Inferred,
                 };
                 Ok(EvalFlow::Continue(Value::Function(fun)))
@@ -510,7 +524,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
         };
 
         match (yield_mode, flow) {
-            (YieldMode::Capture, EvalFlow::Yield(value)) => Ok(EvalFlow::Continue(value)),
+            (YieldMode::Capture, EvalFlow::Yield { value, .. }) => Ok(EvalFlow::Continue(value)),
             (_, other) => Ok(other),
         }
     }
@@ -547,14 +561,14 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
             match flow {
                 EvalFlow::Continue(_) => {}
 
-                EvalFlow::Return(value) => {
-                    return Ok(EvalFlow::Return(value));
+                EvalFlow::Return { value, span } => {
+                    return Ok(EvalFlow::Return { value, span });
                 }
 
-                EvalFlow::Yield(value) => {
+                EvalFlow::Yield { value, span } => {
                     return match yield_mode {
                         YieldMode::Capture => Ok(EvalFlow::Continue(value)),
-                        YieldMode::Bubble => Ok(EvalFlow::Yield(value)),
+                        YieldMode::Bubble => Ok(EvalFlow::Yield { value, span }),
                     };
                 }
             }
@@ -601,13 +615,14 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
         args: Vec<Value>,
         span: Span,
     ) -> Result<EvalFlow, Box<RuntimeError>> {
-        let previous_env = Rc::clone(&self.env);
-        self.env = Rc::clone(&fun.captured_env);
-
-        self.env.borrow_mut().push_scope();
+        let previous_env = self.env.clone();
+        self.env = Env::from_ref(Rc::new(RefCell::new(EnvFrame {
+            frame: HashMap::new(),
+            parent: Some(fun.captured_env),
+        })));
 
         for (param, arg) in fun.parameters.iter().zip(args) {
-            self.env.borrow_mut().define(param.name.clone(), false, arg);
+            self.env.define(param.name.clone(), false, arg);
         }
 
         let flow = match fun.body {
@@ -615,12 +630,13 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
             FunctionBody::Expr(expr) => self.eval_expr(expr, YieldMode::Capture)?,
         };
 
-        self.env.borrow_mut().pop_scope();
         self.env = previous_env;
         match flow {
             EvalFlow::Continue(value) => Ok(EvalFlow::Continue(value)),
-            EvalFlow::Return(value) => Ok(EvalFlow::Continue(value)),
-            EvalFlow::Yield(_) => Err(self.error_at(span, RuntimeErrorKind::YieldOutsideHandler)),
+            EvalFlow::Return { value, .. } => Ok(EvalFlow::Continue(value)),
+            EvalFlow::Yield { .. } => {
+                Err(self.error_at(span, RuntimeErrorKind::YieldOutsideHandler))
+            }
         }
     }
 }
