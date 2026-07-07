@@ -1,3 +1,5 @@
+use anyhow::Result;
+
 use crate::{
     ast::{
         BinaryOp, Block, Expr, ExprKind, Program,
@@ -14,13 +16,15 @@ use crate::{
 pub enum EvalFlow {
     Continue(Value),
     Return(Value),
+    Yield(Value),
 }
 
-macro_rules! value_or_return {
+macro_rules! value_or_flow {
     ($flow:expr) => {
         match $flow {
             EvalFlow::Continue(value) => value,
             EvalFlow::Return(value) => return Ok(EvalFlow::Return(value)),
+            EvalFlow::Yield(value) => return Ok(EvalFlow::Yield(value)),
         }
     };
 }
@@ -29,7 +33,8 @@ impl<'a> Interpreter<'a> {
     pub fn eval_program(&mut self, program: &'a Program) -> Result<Value, Box<RuntimeError>> {
         for stmt in &program.statements {
             match self.eval_statement(stmt)? {
-                EvalFlow::Continue(value) => {}
+                EvalFlow::Continue(_value) => {}
+                EvalFlow::Yield(_value) => {}
                 EvalFlow::Return(value) => {
                     self.env.pop_scope();
                     return Ok(value);
@@ -43,11 +48,15 @@ impl<'a> Interpreter<'a> {
         match statement {
             Stmt::Expr(expr) => {
                 let value = self.eval_expr(expr)?;
-                Ok(EvalFlow::Continue(value_or_return!(value)))
+                Ok(EvalFlow::Continue(value_or_flow!(value)))
             }
             Stmt::Return(expr) => {
                 let value = self.eval_expr(expr)?;
-                Ok(EvalFlow::Return(value_or_return!(value)))
+                Ok(EvalFlow::Return(value_or_flow!(value)))
+            }
+            Stmt::Yield(expr) => {
+                let value = self.eval_expr(expr)?;
+                Ok(EvalFlow::Yield(value_or_flow!(value)))
             }
             Stmt::Bind {
                 mutable,
@@ -56,7 +65,7 @@ impl<'a> Interpreter<'a> {
                 ..
             } => {
                 let value = self.eval_expr(value)?;
-                self.env.define(name, *mutable, value_or_return!(value));
+                self.env.define(name, *mutable, value_or_flow!(value));
                 Ok(EvalFlow::Continue(Value::Unit))
             }
             Stmt::Assignment { target, value } => {
@@ -64,7 +73,7 @@ impl<'a> Interpreter<'a> {
                 let value = self.eval_expr(value)?;
                 if let ExprKind::Ident(name) = &target.kind {
                     self.env
-                        .assign(name, value_or_return!(value))
+                        .assign(name, value_or_flow!(value))
                         .map_err(|kind| {
                             self.error_at(
                                 Span {
@@ -84,7 +93,7 @@ impl<'a> Interpreter<'a> {
             }
             Stmt::While { condition, block } => {
                 loop {
-                    let condition_bool = match value_or_return!(self.eval_expr(condition)?) {
+                    let condition_bool = match value_or_flow!(self.eval_expr(condition)?) {
                         Value::Bool(b) => b,
                         other => {
                             return Err(self.error_at(
@@ -104,6 +113,9 @@ impl<'a> Interpreter<'a> {
                         EvalFlow::Continue(_) => {}
                         EvalFlow::Return(value) => {
                             return Ok(EvalFlow::Return(value));
+                        }
+                        EvalFlow::Yield(value) => {
+                            return Ok(EvalFlow::Yield(value));
                         }
                     }
                 }
@@ -134,10 +146,22 @@ impl<'a> Interpreter<'a> {
                     self.env.pop_scope();
                     return Ok(EvalFlow::Return(value));
                 }
+                EvalFlow::Yield(value) => {
+                    self.env.pop_scope();
+                    return Ok(EvalFlow::Yield(value));
+                }
             }
         }
         self.env.pop_scope();
         Ok(EvalFlow::Continue(last_value))
+    }
+
+    fn eval_block_expr(&mut self, block: &'a Block) -> Result<EvalFlow, Box<RuntimeError>> {
+        match self.eval_block(block)? {
+            EvalFlow::Continue(value) => Ok(EvalFlow::Continue(value)),
+            EvalFlow::Return(value) => Ok(EvalFlow::Return(value)),
+            EvalFlow::Yield(value) => Ok(EvalFlow::Continue(value)),
+        }
     }
 
     fn eval_expr(&mut self, expr: &'a Expr) -> Result<EvalFlow, Box<RuntimeError>> {
@@ -157,19 +181,19 @@ impl<'a> Interpreter<'a> {
                 Ok(EvalFlow::Continue(value))
             }
             ExprKind::Unit => Ok(EvalFlow::Continue(Value::Unit)),
-            ExprKind::Block(block) => self.eval_block(block),
+            ExprKind::Block(block) => self.eval_block_expr(block),
             ExprKind::Tuple(exprs) => {
                 let mut values = vec![];
 
                 for expr in exprs {
-                    let value = value_or_return!(self.eval_expr(expr)?);
+                    let value = value_or_flow!(self.eval_expr(expr)?);
                     values.push(value);
                 }
 
                 Ok(EvalFlow::Continue(Value::Tuple(values)))
             }
             ExprKind::Unary { op, operand } => {
-                let value = value_or_return!(self.eval_expr(operand)?);
+                let value = value_or_flow!(self.eval_expr(operand)?);
                 match op {
                     crate::ast::UnaryOp::Negate => match value {
                         Value::Int(val) => Ok(EvalFlow::Continue(Value::Int(-val))),
@@ -195,8 +219,8 @@ impl<'a> Interpreter<'a> {
                 }
             }
             ExprKind::Binary { lhs, op, rhs } => {
-                let lhs = value_or_return!(self.eval_expr(lhs)?);
-                let rhs = value_or_return!(self.eval_expr(rhs)?);
+                let lhs = value_or_flow!(self.eval_expr(lhs)?);
+                let rhs = value_or_flow!(self.eval_expr(rhs)?);
                 match op {
                     BinaryOp::Add => match (lhs, rhs) {
                         (Value::String(s1), Value::String(s2)) => Ok(EvalFlow::Continue(
@@ -392,6 +416,7 @@ impl<'a> Interpreter<'a> {
                 let condition_value = match self.eval_expr(condition)? {
                     EvalFlow::Continue(value) => value,
                     EvalFlow::Return(value) => return Ok(EvalFlow::Return(value)),
+                    EvalFlow::Yield(value) => return Ok(EvalFlow::Yield(value)),
                 };
 
                 let condition_bool = match condition_value {

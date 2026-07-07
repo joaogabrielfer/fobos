@@ -109,6 +109,10 @@ impl<'a> Parser<'a> {
                 self.advance();
                 Ok(ast::Stmt::Return(self.parse_expr()?))
             }
+            TokenKind::Yield => {
+                self.advance();
+                Ok(ast::Stmt::Yield(self.parse_expr()?))
+            }
             _ => {
                 let starting_span = self.current().span;
                 let expr = self.parse_expr()?;

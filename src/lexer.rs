@@ -59,6 +59,7 @@ pub enum TokenKind<'a> {
 
     Fun,
     Return,
+    Yield,
     End,
     Var,
     Let,
@@ -112,6 +113,7 @@ impl<'a> TokenKind<'a> {
 
             TokenKind::Fun => TokenTag::Fun,
             TokenKind::Return => TokenTag::Return,
+            TokenKind::Yield => TokenTag::Yield,
             TokenKind::End => TokenTag::End,
             TokenKind::Var => TokenTag::Var,
             TokenKind::Let => TokenTag::Let,
@@ -166,6 +168,7 @@ pub enum TokenTag {
 
     Fun,
     Return,
+    Yield,
     End,
     Var,
     Let,
@@ -237,6 +240,7 @@ impl std::fmt::Display for TokenTag {
 
             TokenTag::Fun => "fun",
             TokenTag::Return => "return",
+            TokenTag::Yield => "yield",
             TokenTag::End => "end",
             TokenTag::Var => "var",
             TokenTag::Let => "let",
@@ -427,6 +431,7 @@ impl<'a> Lexer<'a> {
                     "false" => Ok(self.new_token(TokenKind::Bool(false), "false")),
                     "fun" => Ok(self.new_token(TokenKind::Fun, "fun")),
                     "return" => Ok(self.new_token(TokenKind::Return, "return")),
+                    "yield" => Ok(self.new_token(TokenKind::Yield, "yield")),
                     "end" => Ok(self.new_token(TokenKind::End, "end")),
                     "var" => Ok(self.new_token(TokenKind::Var, "var")),
                     "let" => Ok(self.new_token(TokenKind::Let, "let")),

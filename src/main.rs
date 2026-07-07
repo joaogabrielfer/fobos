@@ -1,6 +1,6 @@
 use clap::{Parser, Subcommand};
 use colored::Colorize;
-use rustyline::{DefaultEditor, Editor, error::ReadlineError, history::FileHistory};
+use rustyline::DefaultEditor;
 use std::{fs::read_to_string, path::PathBuf, process::exit};
 use thiserror::Error;
 use typed_arena::Arena;
@@ -8,10 +8,7 @@ use typed_arena::Arena;
 use blorp::{
     ast::Program,
     dump::dump_expected,
-    interpreter::{
-        self, Interpreter,
-        env::{self, Env},
-    },
+    interpreter::{Interpreter, env::Env},
     lexer::Lexer,
     parser::{self},
 };

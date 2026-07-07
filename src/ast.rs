@@ -11,6 +11,7 @@ pub struct Program {
 pub enum Stmt {
     Expr(Expr),
     Return(Expr),
+    Yield(Expr),
 
     Bind {
         mutable: bool,
