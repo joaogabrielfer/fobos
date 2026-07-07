@@ -123,6 +123,94 @@ Ok(
                     },
                 },
             },
+            Expr(
+                Expr {
+                    kind: Call {
+                        callee: Expr {
+                            kind: Ident(
+                                "echo",
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 7,
+                                    col: 1,
+                                    idx: 59,
+                                },
+                                end: SrcPos {
+                                    line: 7,
+                                    col: 6,
+                                    idx: 64,
+                                },
+                            },
+                        },
+                        args: [
+                            Expr {
+                                kind: Binary {
+                                    lhs: Expr {
+                                        kind: String(
+                                            "a = ",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 7,
+                                                col: 6,
+                                                idx: 64,
+                                            },
+                                            end: SrcPos {
+                                                line: 7,
+                                                col: 14,
+                                                idx: 72,
+                                            },
+                                        },
+                                    },
+                                    op: Add,
+                                    rhs: Expr {
+                                        kind: Ident(
+                                            "a",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 7,
+                                                col: 15,
+                                                idx: 73,
+                                            },
+                                            end: SrcPos {
+                                                line: 7,
+                                                col: 17,
+                                                idx: 75,
+                                            },
+                                        },
+                                    },
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 7,
+                                        col: 6,
+                                        idx: 64,
+                                    },
+                                    end: SrcPos {
+                                        line: 7,
+                                        col: 17,
+                                        idx: 75,
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                    span: Span {
+                        start: SrcPos {
+                            line: 7,
+                            col: 1,
+                            idx: 59,
+                        },
+                        end: SrcPos {
+                            line: 8,
+                            col: 1,
+                            idx: 76,
+                        },
+                    },
+                },
+            ),
             Bind {
                 mutable: false,
                 name: "b",
@@ -138,14 +226,14 @@ Ok(
                                         ),
                                         span: Span {
                                             start: SrcPos {
-                                                line: 9,
+                                                line: 10,
                                                 col: 8,
-                                                idx: 79,
+                                                idx: 96,
                                             },
                                             end: SrcPos {
-                                                line: 10,
+                                                line: 11,
                                                 col: 1,
-                                                idx: 81,
+                                                idx: 98,
                                             },
                                         },
                                     },
@@ -157,14 +245,14 @@ Ok(
                                         ),
                                         span: Span {
                                             start: SrcPos {
-                                                line: 10,
+                                                line: 11,
                                                 col: 8,
-                                                idx: 88,
+                                                idx: 105,
                                             },
                                             end: SrcPos {
-                                                line: 11,
+                                                line: 12,
                                                 col: 1,
-                                                idx: 90,
+                                                idx: 107,
                                             },
                                         },
                                     },
@@ -174,18 +262,106 @@ Ok(
                     ),
                     span: Span {
                         start: SrcPos {
-                            line: 8,
+                            line: 9,
                             col: 10,
-                            idx: 69,
+                            idx: 86,
                         },
                         end: SrcPos {
-                            line: 12,
+                            line: 13,
                             col: 1,
-                            idx: 94,
+                            idx: 111,
                         },
                     },
                 },
             },
+            Expr(
+                Expr {
+                    kind: Call {
+                        callee: Expr {
+                            kind: Ident(
+                                "echo",
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 14,
+                                    col: 1,
+                                    idx: 112,
+                                },
+                                end: SrcPos {
+                                    line: 14,
+                                    col: 6,
+                                    idx: 117,
+                                },
+                            },
+                        },
+                        args: [
+                            Expr {
+                                kind: Binary {
+                                    lhs: Expr {
+                                        kind: String(
+                                            "b = ",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 14,
+                                                col: 6,
+                                                idx: 117,
+                                            },
+                                            end: SrcPos {
+                                                line: 14,
+                                                col: 14,
+                                                idx: 125,
+                                            },
+                                        },
+                                    },
+                                    op: Add,
+                                    rhs: Expr {
+                                        kind: Ident(
+                                            "b",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 14,
+                                                col: 15,
+                                                idx: 126,
+                                            },
+                                            end: SrcPos {
+                                                line: 14,
+                                                col: 17,
+                                                idx: 128,
+                                            },
+                                        },
+                                    },
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 14,
+                                        col: 6,
+                                        idx: 117,
+                                    },
+                                    end: SrcPos {
+                                        line: 14,
+                                        col: 17,
+                                        idx: 128,
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                    span: Span {
+                        start: SrcPos {
+                            line: 14,
+                            col: 1,
+                            idx: 112,
+                        },
+                        end: SrcPos {
+                            line: 15,
+                            col: 1,
+                            idx: 129,
+                        },
+                    },
+                },
+            ),
             Bind {
                 mutable: false,
                 name: "c",
@@ -206,14 +382,14 @@ Ok(
                                                 ),
                                                 span: Span {
                                                     start: SrcPos {
-                                                        line: 14,
+                                                        line: 17,
                                                         col: 19,
-                                                        idx: 122,
+                                                        idx: 157,
                                                     },
                                                     end: SrcPos {
-                                                        line: 14,
+                                                        line: 17,
                                                         col: 26,
-                                                        idx: 129,
+                                                        idx: 164,
                                                     },
                                                 },
                                             },
@@ -228,14 +404,14 @@ Ok(
                                                                     ),
                                                                     span: Span {
                                                                         start: SrcPos {
-                                                                            line: 15,
+                                                                            line: 18,
                                                                             col: 15,
-                                                                            idx: 144,
+                                                                            idx: 179,
                                                                         },
                                                                         end: SrcPos {
-                                                                            line: 16,
+                                                                            line: 19,
                                                                             col: 1,
-                                                                            idx: 147,
+                                                                            idx: 182,
                                                                         },
                                                                     },
                                                                 },
@@ -245,14 +421,14 @@ Ok(
                                                 ),
                                                 span: Span {
                                                     start: SrcPos {
-                                                        line: 14,
+                                                        line: 17,
                                                         col: 24,
-                                                        idx: 127,
+                                                        idx: 162,
                                                     },
                                                     end: SrcPos {
-                                                        line: 17,
+                                                        line: 20,
                                                         col: 1,
-                                                        idx: 155,
+                                                        idx: 190,
                                                     },
                                                 },
                                             },
@@ -260,14 +436,14 @@ Ok(
                                         },
                                         span: Span {
                                             start: SrcPos {
-                                                line: 14,
+                                                line: 17,
                                                 col: 16,
-                                                idx: 119,
+                                                idx: 154,
                                             },
                                             end: SrcPos {
-                                                line: 17,
+                                                line: 20,
                                                 col: 1,
-                                                idx: 155,
+                                                idx: 190,
                                             },
                                         },
                                     },
@@ -281,14 +457,14 @@ Ok(
                                                 ),
                                                 span: Span {
                                                     start: SrcPos {
-                                                        line: 18,
+                                                        line: 21,
                                                         col: 5,
-                                                        idx: 160,
+                                                        idx: 195,
                                                     },
                                                     end: SrcPos {
-                                                        line: 18,
+                                                        line: 21,
                                                         col: 12,
-                                                        idx: 167,
+                                                        idx: 202,
                                                     },
                                                 },
                                             },
@@ -303,14 +479,14 @@ Ok(
                                                                     ),
                                                                     span: Span {
                                                                         start: SrcPos {
-                                                                            line: 19,
+                                                                            line: 22,
                                                                             col: 9,
-                                                                            idx: 176,
+                                                                            idx: 211,
                                                                         },
                                                                         end: SrcPos {
-                                                                            line: 20,
+                                                                            line: 23,
                                                                             col: 1,
-                                                                            idx: 179,
+                                                                            idx: 214,
                                                                         },
                                                                     },
                                                                 },
@@ -320,14 +496,14 @@ Ok(
                                                 ),
                                                 span: Span {
                                                     start: SrcPos {
-                                                        line: 18,
+                                                        line: 21,
                                                         col: 10,
-                                                        idx: 165,
+                                                        idx: 200,
                                                     },
                                                     end: SrcPos {
-                                                        line: 21,
+                                                        line: 24,
                                                         col: 1,
-                                                        idx: 184,
+                                                        idx: 219,
                                                     },
                                                 },
                                             },
@@ -335,14 +511,14 @@ Ok(
                                         },
                                         span: Span {
                                             start: SrcPos {
-                                                line: 18,
+                                                line: 21,
                                                 col: 2,
-                                                idx: 157,
+                                                idx: 192,
                                             },
                                             end: SrcPos {
-                                                line: 21,
+                                                line: 24,
                                                 col: 1,
-                                                idx: 184,
+                                                idx: 219,
                                             },
                                         },
                                     },
@@ -354,14 +530,14 @@ Ok(
                                         ),
                                         span: Span {
                                             start: SrcPos {
-                                                line: 22,
+                                                line: 25,
                                                 col: 8,
-                                                idx: 192,
+                                                idx: 227,
                                             },
                                             end: SrcPos {
-                                                line: 23,
+                                                line: 26,
                                                 col: 1,
-                                                idx: 196,
+                                                idx: 231,
                                             },
                                         },
                                     },
@@ -373,14 +549,14 @@ Ok(
                                         ),
                                         span: Span {
                                             start: SrcPos {
-                                                line: 23,
+                                                line: 26,
                                                 col: 8,
-                                                idx: 203,
+                                                idx: 238,
                                             },
                                             end: SrcPos {
-                                                line: 24,
+                                                line: 27,
                                                 col: 1,
-                                                idx: 206,
+                                                idx: 241,
                                             },
                                         },
                                     },
@@ -390,18 +566,106 @@ Ok(
                     ),
                     span: Span {
                         start: SrcPos {
-                            line: 13,
+                            line: 16,
                             col: 1,
-                            idx: 95,
+                            idx: 130,
                         },
                         end: SrcPos {
-                            line: 25,
+                            line: 28,
                             col: 1,
-                            idx: 210,
+                            idx: 245,
                         },
                     },
                 },
             },
+            Expr(
+                Expr {
+                    kind: Call {
+                        callee: Expr {
+                            kind: Ident(
+                                "echo",
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 29,
+                                    col: 1,
+                                    idx: 246,
+                                },
+                                end: SrcPos {
+                                    line: 29,
+                                    col: 6,
+                                    idx: 251,
+                                },
+                            },
+                        },
+                        args: [
+                            Expr {
+                                kind: Binary {
+                                    lhs: Expr {
+                                        kind: String(
+                                            "c = ",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 29,
+                                                col: 6,
+                                                idx: 251,
+                                            },
+                                            end: SrcPos {
+                                                line: 29,
+                                                col: 14,
+                                                idx: 259,
+                                            },
+                                        },
+                                    },
+                                    op: Add,
+                                    rhs: Expr {
+                                        kind: Ident(
+                                            "c",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 29,
+                                                col: 15,
+                                                idx: 260,
+                                            },
+                                            end: SrcPos {
+                                                line: 29,
+                                                col: 17,
+                                                idx: 262,
+                                            },
+                                        },
+                                    },
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 29,
+                                        col: 6,
+                                        idx: 251,
+                                    },
+                                    end: SrcPos {
+                                        line: 29,
+                                        col: 17,
+                                        idx: 262,
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                    span: Span {
+                        start: SrcPos {
+                            line: 29,
+                            col: 1,
+                            idx: 246,
+                        },
+                        end: SrcPos {
+                            line: 30,
+                            col: 1,
+                            idx: 263,
+                        },
+                    },
+                },
+            ),
             Bind {
                 mutable: false,
                 name: "d",
@@ -419,14 +683,14 @@ Ok(
                                                 ),
                                                 span: Span {
                                                     start: SrcPos {
-                                                        line: 28,
+                                                        line: 32,
                                                         col: 8,
-                                                        idx: 228,
+                                                        idx: 280,
                                                     },
                                                     end: SrcPos {
-                                                        line: 28,
+                                                        line: 32,
                                                         col: 15,
-                                                        idx: 235,
+                                                        idx: 287,
                                                     },
                                                 },
                                             },
@@ -441,14 +705,14 @@ Ok(
                                                                     ),
                                                                     span: Span {
                                                                         start: SrcPos {
-                                                                            line: 29,
+                                                                            line: 33,
                                                                             col: 15,
-                                                                            idx: 250,
+                                                                            idx: 302,
                                                                         },
                                                                         end: SrcPos {
-                                                                            line: 30,
+                                                                            line: 34,
                                                                             col: 1,
-                                                                            idx: 253,
+                                                                            idx: 305,
                                                                         },
                                                                     },
                                                                 },
@@ -458,14 +722,14 @@ Ok(
                                                 ),
                                                 span: Span {
                                                     start: SrcPos {
-                                                        line: 28,
+                                                        line: 32,
                                                         col: 13,
-                                                        idx: 233,
+                                                        idx: 285,
                                                     },
                                                     end: SrcPos {
-                                                        line: 31,
+                                                        line: 35,
                                                         col: 1,
-                                                        idx: 261,
+                                                        idx: 313,
                                                     },
                                                 },
                                             },
@@ -473,14 +737,14 @@ Ok(
                                         },
                                         span: Span {
                                             start: SrcPos {
-                                                line: 28,
+                                                line: 32,
                                                 col: 5,
-                                                idx: 225,
+                                                idx: 277,
                                             },
                                             end: SrcPos {
-                                                line: 31,
+                                                line: 35,
                                                 col: 1,
-                                                idx: 261,
+                                                idx: 313,
                                             },
                                         },
                                     },
@@ -492,14 +756,14 @@ Ok(
                                         ),
                                         span: Span {
                                             start: SrcPos {
-                                                line: 32,
+                                                line: 36,
                                                 col: 11,
-                                                idx: 272,
+                                                idx: 324,
                                             },
                                             end: SrcPos {
-                                                line: 33,
+                                                line: 37,
                                                 col: 1,
-                                                idx: 275,
+                                                idx: 327,
                                             },
                                         },
                                     },
@@ -509,21 +773,109 @@ Ok(
                     ),
                     span: Span {
                         start: SrcPos {
-                            line: 27,
+                            line: 31,
                             col: 1,
-                            idx: 212,
+                            idx: 264,
                         },
                         end: SrcPos {
-                            line: 34,
+                            line: 38,
                             col: 1,
-                            idx: 279,
+                            idx: 331,
                         },
                     },
                 },
             },
+            Expr(
+                Expr {
+                    kind: Call {
+                        callee: Expr {
+                            kind: Ident(
+                                "echo",
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 39,
+                                    col: 1,
+                                    idx: 332,
+                                },
+                                end: SrcPos {
+                                    line: 39,
+                                    col: 6,
+                                    idx: 337,
+                                },
+                            },
+                        },
+                        args: [
+                            Expr {
+                                kind: Binary {
+                                    lhs: Expr {
+                                        kind: String(
+                                            "d = ",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 39,
+                                                col: 6,
+                                                idx: 337,
+                                            },
+                                            end: SrcPos {
+                                                line: 39,
+                                                col: 14,
+                                                idx: 345,
+                                            },
+                                        },
+                                    },
+                                    op: Add,
+                                    rhs: Expr {
+                                        kind: Ident(
+                                            "d",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 39,
+                                                col: 15,
+                                                idx: 346,
+                                            },
+                                            end: SrcPos {
+                                                line: 39,
+                                                col: 17,
+                                                idx: 348,
+                                            },
+                                        },
+                                    },
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 39,
+                                        col: 6,
+                                        idx: 337,
+                                    },
+                                    end: SrcPos {
+                                        line: 39,
+                                        col: 17,
+                                        idx: 348,
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                    span: Span {
+                        start: SrcPos {
+                            line: 39,
+                            col: 1,
+                            idx: 332,
+                        },
+                        end: SrcPos {
+                            line: 40,
+                            col: 1,
+                            idx: 349,
+                        },
+                    },
+                },
+            ),
             Bind {
                 mutable: false,
-                name: "f",
+                name: "e",
                 type_annotation: Inferred,
                 value: Expr {
                     kind: Block(
@@ -539,14 +891,14 @@ Ok(
                                         ),
                                         span: Span {
                                             start: SrcPos {
-                                                line: 36,
+                                                line: 42,
                                                 col: 14,
-                                                idx: 302,
+                                                idx: 372,
                                             },
                                             end: SrcPos {
-                                                line: 37,
+                                                line: 43,
                                                 col: 1,
-                                                idx: 304,
+                                                idx: 374,
                                             },
                                         },
                                     },
@@ -565,14 +917,14 @@ Ok(
                                                         ),
                                                         span: Span {
                                                             start: SrcPos {
-                                                                line: 38,
+                                                                line: 44,
                                                                 col: 22,
-                                                                idx: 326,
+                                                                idx: 396,
                                                             },
                                                             end: SrcPos {
-                                                                line: 38,
+                                                                line: 44,
                                                                 col: 25,
-                                                                idx: 329,
+                                                                idx: 399,
                                                             },
                                                         },
                                                     },
@@ -583,28 +935,28 @@ Ok(
                                                         ),
                                                         span: Span {
                                                             start: SrcPos {
-                                                                line: 38,
+                                                                line: 44,
                                                                 col: 26,
-                                                                idx: 330,
+                                                                idx: 400,
                                                             },
                                                             end: SrcPos {
-                                                                line: 38,
+                                                                line: 44,
                                                                 col: 31,
-                                                                idx: 335,
+                                                                idx: 405,
                                                             },
                                                         },
                                                     },
                                                 },
                                                 span: Span {
                                                     start: SrcPos {
-                                                        line: 38,
+                                                        line: 44,
                                                         col: 22,
-                                                        idx: 326,
+                                                        idx: 396,
                                                     },
                                                     end: SrcPos {
-                                                        line: 38,
+                                                        line: 44,
                                                         col: 31,
-                                                        idx: 335,
+                                                        idx: 405,
                                                     },
                                                 },
                                             },
@@ -621,14 +973,14 @@ Ok(
                                                                             ),
                                                                             span: Span {
                                                                                 start: SrcPos {
-                                                                                    line: 39,
+                                                                                    line: 45,
                                                                                     col: 12,
-                                                                                    idx: 347,
+                                                                                    idx: 417,
                                                                                 },
                                                                                 end: SrcPos {
-                                                                                    line: 39,
+                                                                                    line: 45,
                                                                                     col: 16,
-                                                                                    idx: 351,
+                                                                                    idx: 421,
                                                                                 },
                                                                             },
                                                                         },
@@ -639,28 +991,28 @@ Ok(
                                                                             ),
                                                                             span: Span {
                                                                                 start: SrcPos {
-                                                                                    line: 39,
+                                                                                    line: 45,
                                                                                     col: 17,
-                                                                                    idx: 352,
+                                                                                    idx: 422,
                                                                                 },
                                                                                 end: SrcPos {
-                                                                                    line: 39,
+                                                                                    line: 45,
                                                                                     col: 21,
-                                                                                    idx: 356,
+                                                                                    idx: 426,
                                                                                 },
                                                                             },
                                                                         },
                                                                     },
                                                                     span: Span {
                                                                         start: SrcPos {
-                                                                            line: 39,
+                                                                            line: 45,
                                                                             col: 12,
-                                                                            idx: 347,
+                                                                            idx: 417,
                                                                         },
                                                                         end: SrcPos {
-                                                                            line: 39,
+                                                                            line: 45,
                                                                             col: 21,
-                                                                            idx: 356,
+                                                                            idx: 426,
                                                                         },
                                                                     },
                                                                 },
@@ -675,14 +1027,14 @@ Ok(
                                                                                         ),
                                                                                         span: Span {
                                                                                             start: SrcPos {
-                                                                                                line: 40,
+                                                                                                line: 46,
                                                                                                 col: 19,
-                                                                                                idx: 375,
+                                                                                                idx: 445,
                                                                                             },
                                                                                             end: SrcPos {
-                                                                                                line: 41,
+                                                                                                line: 47,
                                                                                                 col: 1,
-                                                                                                idx: 377,
+                                                                                                idx: 447,
                                                                                             },
                                                                                         },
                                                                                     },
@@ -692,14 +1044,14 @@ Ok(
                                                                     ),
                                                                     span: Span {
                                                                         start: SrcPos {
-                                                                            line: 39,
+                                                                            line: 45,
                                                                             col: 19,
-                                                                            idx: 354,
+                                                                            idx: 424,
                                                                         },
                                                                         end: SrcPos {
-                                                                            line: 42,
+                                                                            line: 48,
                                                                             col: 1,
-                                                                            idx: 389,
+                                                                            idx: 459,
                                                                         },
                                                                     },
                                                                 },
@@ -707,14 +1059,14 @@ Ok(
                                                             },
                                                             span: Span {
                                                                 start: SrcPos {
-                                                                    line: 39,
+                                                                    line: 45,
                                                                     col: 9,
-                                                                    idx: 344,
+                                                                    idx: 414,
                                                                 },
                                                                 end: SrcPos {
-                                                                    line: 42,
+                                                                    line: 48,
                                                                     col: 1,
-                                                                    idx: 389,
+                                                                    idx: 459,
                                                                 },
                                                             },
                                                         },
@@ -726,14 +1078,14 @@ Ok(
                                                             ),
                                                             span: Span {
                                                                 start: SrcPos {
-                                                                    line: 43,
+                                                                    line: 49,
                                                                     col: 9,
-                                                                    idx: 398,
+                                                                    idx: 468,
                                                                 },
                                                                 end: SrcPos {
-                                                                    line: 43,
+                                                                    line: 49,
                                                                     col: 12,
-                                                                    idx: 401,
+                                                                    idx: 471,
                                                                 },
                                                             },
                                                         },
@@ -745,14 +1097,14 @@ Ok(
                                                                     ),
                                                                     span: Span {
                                                                         start: SrcPos {
-                                                                            line: 43,
+                                                                            line: 49,
                                                                             col: 13,
-                                                                            idx: 402,
+                                                                            idx: 472,
                                                                         },
                                                                         end: SrcPos {
-                                                                            line: 43,
+                                                                            line: 49,
                                                                             col: 16,
-                                                                            idx: 405,
+                                                                            idx: 475,
                                                                         },
                                                                     },
                                                                 },
@@ -763,28 +1115,28 @@ Ok(
                                                                     ),
                                                                     span: Span {
                                                                         start: SrcPos {
-                                                                            line: 43,
+                                                                            line: 49,
                                                                             col: 17,
-                                                                            idx: 406,
+                                                                            idx: 476,
                                                                         },
                                                                         end: SrcPos {
-                                                                            line: 44,
+                                                                            line: 50,
                                                                             col: 1,
-                                                                            idx: 408,
+                                                                            idx: 478,
                                                                         },
                                                                     },
                                                                 },
                                                             },
                                                             span: Span {
                                                                 start: SrcPos {
-                                                                    line: 43,
+                                                                    line: 49,
                                                                     col: 13,
-                                                                    idx: 402,
+                                                                    idx: 472,
                                                                 },
                                                                 end: SrcPos {
-                                                                    line: 44,
+                                                                    line: 50,
                                                                     col: 1,
-                                                                    idx: 408,
+                                                                    idx: 478,
                                                                 },
                                                             },
                                                         },
@@ -794,14 +1146,14 @@ Ok(
                                         },
                                         span: Span {
                                             start: SrcPos {
-                                                line: 45,
+                                                line: 51,
                                                 col: 0,
-                                                idx: 415,
+                                                idx: 485,
                                             },
                                             end: SrcPos {
-                                                line: 45,
+                                                line: 51,
                                                 col: 1,
-                                                idx: 416,
+                                                idx: 486,
                                             },
                                         },
                                     },
@@ -813,14 +1165,14 @@ Ok(
                                         ),
                                         span: Span {
                                             start: SrcPos {
-                                                line: 46,
+                                                line: 52,
                                                 col: 8,
-                                                idx: 424,
+                                                idx: 494,
                                             },
                                             end: SrcPos {
-                                                line: 47,
+                                                line: 53,
                                                 col: 1,
-                                                idx: 428,
+                                                idx: 498,
                                             },
                                         },
                                     },
@@ -832,14 +1184,14 @@ Ok(
                                         ),
                                         span: Span {
                                             start: SrcPos {
-                                                line: 48,
+                                                line: 54,
                                                 col: 11,
-                                                idx: 439,
+                                                idx: 509,
                                             },
                                             end: SrcPos {
-                                                line: 49,
+                                                line: 55,
                                                 col: 1,
-                                                idx: 443,
+                                                idx: 513,
                                             },
                                         },
                                     },
@@ -849,21 +1201,109 @@ Ok(
                     ),
                     span: Span {
                         start: SrcPos {
-                            line: 35,
+                            line: 41,
                             col: 1,
-                            idx: 280,
+                            idx: 350,
                         },
                         end: SrcPos {
-                            line: 50,
+                            line: 56,
                             col: 1,
-                            idx: 447,
+                            idx: 517,
                         },
                     },
                 },
             },
+            Expr(
+                Expr {
+                    kind: Call {
+                        callee: Expr {
+                            kind: Ident(
+                                "echo",
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 57,
+                                    col: 1,
+                                    idx: 518,
+                                },
+                                end: SrcPos {
+                                    line: 57,
+                                    col: 6,
+                                    idx: 523,
+                                },
+                            },
+                        },
+                        args: [
+                            Expr {
+                                kind: Binary {
+                                    lhs: Expr {
+                                        kind: String(
+                                            "e = ",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 57,
+                                                col: 6,
+                                                idx: 523,
+                                            },
+                                            end: SrcPos {
+                                                line: 57,
+                                                col: 14,
+                                                idx: 531,
+                                            },
+                                        },
+                                    },
+                                    op: Add,
+                                    rhs: Expr {
+                                        kind: Ident(
+                                            "e",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 57,
+                                                col: 15,
+                                                idx: 532,
+                                            },
+                                            end: SrcPos {
+                                                line: 57,
+                                                col: 17,
+                                                idx: 534,
+                                            },
+                                        },
+                                    },
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 57,
+                                        col: 6,
+                                        idx: 523,
+                                    },
+                                    end: SrcPos {
+                                        line: 57,
+                                        col: 17,
+                                        idx: 534,
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                    span: Span {
+                        start: SrcPos {
+                            line: 57,
+                            col: 1,
+                            idx: 518,
+                        },
+                        end: SrcPos {
+                            line: 58,
+                            col: 1,
+                            idx: 535,
+                        },
+                    },
+                },
+            ),
             Bind {
                 mutable: false,
-                name: "g",
+                name: "f",
                 type_annotation: Inferred,
                 value: Expr {
                     kind: Block(
@@ -887,14 +1327,14 @@ Ok(
                                                             ),
                                                             span: Span {
                                                                 start: SrcPos {
-                                                                    line: 53,
+                                                                    line: 61,
                                                                     col: 18,
-                                                                    idx: 491,
+                                                                    idx: 579,
                                                                 },
                                                                 end: SrcPos {
-                                                                    line: 54,
+                                                                    line: 62,
                                                                     col: 1,
-                                                                    idx: 493,
+                                                                    idx: 581,
                                                                 },
                                                             },
                                                         },
@@ -908,14 +1348,14 @@ Ok(
                                                                     ),
                                                                     span: Span {
                                                                         start: SrcPos {
-                                                                            line: 54,
+                                                                            line: 62,
                                                                             col: 15,
-                                                                            idx: 507,
+                                                                            idx: 595,
                                                                         },
                                                                         end: SrcPos {
-                                                                            line: 54,
+                                                                            line: 62,
                                                                             col: 18,
-                                                                            idx: 510,
+                                                                            idx: 598,
                                                                         },
                                                                     },
                                                                 },
@@ -926,28 +1366,28 @@ Ok(
                                                                     ),
                                                                     span: Span {
                                                                         start: SrcPos {
-                                                                            line: 54,
+                                                                            line: 62,
                                                                             col: 19,
-                                                                            idx: 511,
+                                                                            idx: 599,
                                                                         },
                                                                         end: SrcPos {
-                                                                            line: 55,
+                                                                            line: 63,
                                                                             col: 1,
-                                                                            idx: 513,
+                                                                            idx: 601,
                                                                         },
                                                                     },
                                                                 },
                                                             },
                                                             span: Span {
                                                                 start: SrcPos {
-                                                                    line: 54,
+                                                                    line: 62,
                                                                     col: 15,
-                                                                    idx: 507,
+                                                                    idx: 595,
                                                                 },
                                                                 end: SrcPos {
-                                                                    line: 55,
+                                                                    line: 63,
                                                                     col: 1,
-                                                                    idx: 513,
+                                                                    idx: 601,
                                                                 },
                                                             },
                                                         },
@@ -957,14 +1397,14 @@ Ok(
                                         ),
                                         span: Span {
                                             start: SrcPos {
-                                                line: 52,
+                                                line: 60,
                                                 col: 5,
-                                                idx: 461,
+                                                idx: 549,
                                             },
                                             end: SrcPos {
-                                                line: 56,
+                                                line: 64,
                                                 col: 1,
-                                                idx: 521,
+                                                idx: 609,
                                             },
                                         },
                                     },
@@ -978,14 +1418,14 @@ Ok(
                                                 ),
                                                 span: Span {
                                                     start: SrcPos {
-                                                        line: 57,
+                                                        line: 65,
                                                         col: 11,
-                                                        idx: 532,
+                                                        idx: 620,
                                                     },
                                                     end: SrcPos {
-                                                        line: 57,
+                                                        line: 65,
                                                         col: 18,
-                                                        idx: 539,
+                                                        idx: 627,
                                                     },
                                                 },
                                             },
@@ -996,28 +1436,28 @@ Ok(
                                                 ),
                                                 span: Span {
                                                     start: SrcPos {
-                                                        line: 57,
+                                                        line: 65,
                                                         col: 19,
-                                                        idx: 540,
+                                                        idx: 628,
                                                     },
                                                     end: SrcPos {
-                                                        line: 58,
+                                                        line: 66,
                                                         col: 1,
-                                                        idx: 542,
+                                                        idx: 630,
                                                     },
                                                 },
                                             },
                                         },
                                         span: Span {
                                             start: SrcPos {
-                                                line: 57,
+                                                line: 65,
                                                 col: 11,
-                                                idx: 532,
+                                                idx: 620,
                                             },
                                             end: SrcPos {
-                                                line: 58,
+                                                line: 66,
                                                 col: 1,
-                                                idx: 542,
+                                                idx: 630,
                                             },
                                         },
                                     },
@@ -1027,18 +1467,106 @@ Ok(
                     ),
                     span: Span {
                         start: SrcPos {
-                            line: 51,
-                            col: 1,
-                            idx: 448,
-                        },
-                        end: SrcPos {
                             line: 59,
                             col: 1,
-                            idx: 546,
+                            idx: 536,
+                        },
+                        end: SrcPos {
+                            line: 67,
+                            col: 1,
+                            idx: 634,
                         },
                     },
                 },
             },
+            Expr(
+                Expr {
+                    kind: Call {
+                        callee: Expr {
+                            kind: Ident(
+                                "echo",
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 68,
+                                    col: 1,
+                                    idx: 635,
+                                },
+                                end: SrcPos {
+                                    line: 68,
+                                    col: 6,
+                                    idx: 640,
+                                },
+                            },
+                        },
+                        args: [
+                            Expr {
+                                kind: Binary {
+                                    lhs: Expr {
+                                        kind: String(
+                                            "f = ",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 68,
+                                                col: 6,
+                                                idx: 640,
+                                            },
+                                            end: SrcPos {
+                                                line: 68,
+                                                col: 14,
+                                                idx: 648,
+                                            },
+                                        },
+                                    },
+                                    op: Add,
+                                    rhs: Expr {
+                                        kind: Ident(
+                                            "f",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 68,
+                                                col: 15,
+                                                idx: 649,
+                                            },
+                                            end: SrcPos {
+                                                line: 68,
+                                                col: 17,
+                                                idx: 651,
+                                            },
+                                        },
+                                    },
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 68,
+                                        col: 6,
+                                        idx: 640,
+                                    },
+                                    end: SrcPos {
+                                        line: 68,
+                                        col: 17,
+                                        idx: 651,
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                    span: Span {
+                        start: SrcPos {
+                            line: 68,
+                            col: 1,
+                            idx: 635,
+                        },
+                        end: SrcPos {
+                            line: 69,
+                            col: 1,
+                            idx: 652,
+                        },
+                    },
+                },
+            ),
             Bind {
                 mutable: true,
                 name: "i",
@@ -1049,14 +1577,14 @@ Ok(
                     ),
                     span: Span {
                         start: SrcPos {
-                            line: 60,
+                            line: 70,
                             col: 10,
-                            idx: 556,
+                            idx: 662,
                         },
                         end: SrcPos {
-                            line: 61,
+                            line: 71,
                             col: 1,
-                            idx: 558,
+                            idx: 664,
                         },
                     },
                 },
@@ -1075,14 +1603,14 @@ Ok(
                                     ),
                                     span: Span {
                                         start: SrcPos {
-                                            line: 61,
+                                            line: 71,
                                             col: 18,
-                                            idx: 575,
+                                            idx: 681,
                                         },
                                         end: SrcPos {
-                                            line: 61,
+                                            line: 71,
                                             col: 21,
-                                            idx: 578,
+                                            idx: 684,
                                         },
                                     },
                                 },
@@ -1093,28 +1621,28 @@ Ok(
                                     ),
                                     span: Span {
                                         start: SrcPos {
-                                            line: 61,
+                                            line: 71,
                                             col: 22,
-                                            idx: 579,
+                                            idx: 685,
                                         },
                                         end: SrcPos {
-                                            line: 61,
+                                            line: 71,
                                             col: 27,
-                                            idx: 584,
+                                            idx: 690,
                                         },
                                     },
                                 },
                             },
                             span: Span {
                                 start: SrcPos {
-                                    line: 61,
+                                    line: 71,
                                     col: 18,
-                                    idx: 575,
+                                    idx: 681,
                                 },
                                 end: SrcPos {
-                                    line: 61,
+                                    line: 71,
                                     col: 27,
-                                    idx: 584,
+                                    idx: 690,
                                 },
                             },
                         },
@@ -1131,14 +1659,14 @@ Ok(
                                                         ),
                                                         span: Span {
                                                             start: SrcPos {
-                                                                line: 62,
+                                                                line: 72,
                                                                 col: 5,
-                                                                idx: 589,
+                                                                idx: 695,
                                                             },
                                                             end: SrcPos {
-                                                                line: 62,
+                                                                line: 72,
                                                                 col: 9,
-                                                                idx: 593,
+                                                                idx: 699,
                                                             },
                                                         },
                                                     },
@@ -1149,28 +1677,28 @@ Ok(
                                                         ),
                                                         span: Span {
                                                             start: SrcPos {
-                                                                line: 62,
+                                                                line: 72,
                                                                 col: 10,
-                                                                idx: 594,
+                                                                idx: 700,
                                                             },
                                                             end: SrcPos {
-                                                                line: 62,
+                                                                line: 72,
                                                                 col: 14,
-                                                                idx: 598,
+                                                                idx: 704,
                                                             },
                                                         },
                                                     },
                                                 },
                                                 span: Span {
                                                     start: SrcPos {
-                                                        line: 62,
+                                                        line: 72,
                                                         col: 5,
-                                                        idx: 589,
+                                                        idx: 695,
                                                     },
                                                     end: SrcPos {
-                                                        line: 62,
+                                                        line: 72,
                                                         col: 14,
-                                                        idx: 598,
+                                                        idx: 704,
                                                     },
                                                 },
                                             },
@@ -1185,14 +1713,14 @@ Ok(
                                                                     ),
                                                                     span: Span {
                                                                         start: SrcPos {
-                                                                            line: 63,
+                                                                            line: 73,
                                                                             col: 9,
-                                                                            idx: 607,
+                                                                            idx: 713,
                                                                         },
                                                                         end: SrcPos {
-                                                                            line: 64,
+                                                                            line: 74,
                                                                             col: 1,
-                                                                            idx: 609,
+                                                                            idx: 715,
                                                                         },
                                                                     },
                                                                 },
@@ -1202,14 +1730,14 @@ Ok(
                                                 ),
                                                 span: Span {
                                                     start: SrcPos {
-                                                        line: 62,
+                                                        line: 72,
                                                         col: 12,
-                                                        idx: 596,
+                                                        idx: 702,
                                                     },
                                                     end: SrcPos {
-                                                        line: 65,
+                                                        line: 75,
                                                         col: 1,
-                                                        idx: 614,
+                                                        idx: 720,
                                                     },
                                                 },
                                             },
@@ -1217,14 +1745,14 @@ Ok(
                                         },
                                         span: Span {
                                             start: SrcPos {
-                                                line: 62,
+                                                line: 72,
                                                 col: 2,
-                                                idx: 586,
+                                                idx: 692,
                                             },
                                             end: SrcPos {
-                                                line: 65,
+                                                line: 75,
                                                 col: 1,
-                                                idx: 614,
+                                                idx: 720,
                                             },
                                         },
                                     },
@@ -1236,14 +1764,14 @@ Ok(
                                         ),
                                         span: Span {
                                             start: SrcPos {
-                                                line: 66,
+                                                line: 76,
                                                 col: 2,
-                                                idx: 616,
+                                                idx: 722,
                                             },
                                             end: SrcPos {
-                                                line: 66,
+                                                line: 76,
                                                 col: 5,
-                                                idx: 619,
+                                                idx: 725,
                                             },
                                         },
                                     },
@@ -1255,14 +1783,14 @@ Ok(
                                                 ),
                                                 span: Span {
                                                     start: SrcPos {
-                                                        line: 66,
+                                                        line: 76,
                                                         col: 6,
-                                                        idx: 620,
+                                                        idx: 726,
                                                     },
                                                     end: SrcPos {
-                                                        line: 66,
+                                                        line: 76,
                                                         col: 9,
-                                                        idx: 623,
+                                                        idx: 729,
                                                     },
                                                 },
                                             },
@@ -1273,28 +1801,28 @@ Ok(
                                                 ),
                                                 span: Span {
                                                     start: SrcPos {
-                                                        line: 66,
+                                                        line: 76,
                                                         col: 10,
-                                                        idx: 624,
+                                                        idx: 730,
                                                     },
                                                     end: SrcPos {
-                                                        line: 67,
+                                                        line: 77,
                                                         col: 1,
-                                                        idx: 626,
+                                                        idx: 732,
                                                     },
                                                 },
                                             },
                                         },
                                         span: Span {
                                             start: SrcPos {
-                                                line: 66,
+                                                line: 76,
                                                 col: 6,
-                                                idx: 620,
+                                                idx: 726,
                                             },
                                             end: SrcPos {
-                                                line: 67,
+                                                line: 77,
                                                 col: 1,
-                                                idx: 626,
+                                                idx: 732,
                                             },
                                         },
                                     },
@@ -1304,33 +1832,102 @@ Ok(
                     },
                     span: Span {
                         start: SrcPos {
-                            line: 68,
+                            line: 78,
                             col: 0,
-                            idx: 629,
+                            idx: 735,
                         },
                         end: SrcPos {
-                            line: 68,
+                            line: 78,
                             col: 1,
-                            idx: 630,
+                            idx: 736,
                         },
                     },
                 },
             },
-            Return(
+            Expr(
                 Expr {
-                    kind: Ident(
-                        "a",
-                    ),
+                    kind: Call {
+                        callee: Expr {
+                            kind: Ident(
+                                "echo",
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 79,
+                                    col: 1,
+                                    idx: 737,
+                                },
+                                end: SrcPos {
+                                    line: 79,
+                                    col: 6,
+                                    idx: 742,
+                                },
+                            },
+                        },
+                        args: [
+                            Expr {
+                                kind: Binary {
+                                    lhs: Expr {
+                                        kind: String(
+                                            "foo = ",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 79,
+                                                col: 6,
+                                                idx: 742,
+                                            },
+                                            end: SrcPos {
+                                                line: 79,
+                                                col: 16,
+                                                idx: 752,
+                                            },
+                                        },
+                                    },
+                                    op: Add,
+                                    rhs: Expr {
+                                        kind: Ident(
+                                            "foo",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 79,
+                                                col: 17,
+                                                idx: 753,
+                                            },
+                                            end: SrcPos {
+                                                line: 79,
+                                                col: 21,
+                                                idx: 757,
+                                            },
+                                        },
+                                    },
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 79,
+                                        col: 6,
+                                        idx: 742,
+                                    },
+                                    end: SrcPos {
+                                        line: 79,
+                                        col: 21,
+                                        idx: 757,
+                                    },
+                                },
+                            },
+                        ],
+                    },
                     span: Span {
                         start: SrcPos {
-                            line: 69,
-                            col: 8,
-                            idx: 638,
+                            line: 79,
+                            col: 1,
+                            idx: 737,
                         },
                         end: SrcPos {
-                            line: 70,
+                            line: 80,
                             col: 1,
-                            idx: 640,
+                            idx: 758,
                         },
                     },
                 },

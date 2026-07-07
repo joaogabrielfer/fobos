@@ -1,5 +1,3 @@
-use std::fmt::Display;
-
 #[derive(Debug, Clone, PartialEq)]
 pub enum Value {
     Unit,
@@ -8,26 +6,60 @@ pub enum Value {
     Bool(bool),
     String(String),
     Tuple(Vec<Value>),
+
+    BuiltinFunction(BuiltinFunction),
 }
 
-impl Display for Value {
+#[derive(Debug, Clone, PartialEq)]
+pub enum BuiltinFunction {
+    Echo,
+}
+
+impl std::fmt::Display for Value {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Value::Unit => write!(f, "Unit"),
-            Value::Int(v) => write!(f, "Int '{v}'"),
-            Value::Float(v) => write!(f, "Float '{v}'"),
-            Value::Bool(v) => write!(f, "Bool '{v}'"),
-            Value::String(v) => write!(f, "String '{v}'"),
-            Value::Tuple(v) => {
-                write!(f, "Tuple '(")?;
-                for (i, item) in v.iter().enumerate() {
-                    write!(f, "{item}")?;
-                    if i < v.len() - 1 {
+            Value::Unit => write!(f, "()"),
+            Value::Int(n) => write!(f, "{n}"),
+            Value::Float(n) => write!(f, "{n}"),
+            Value::Bool(b) => write!(f, "{b}"),
+            Value::String(s) => write!(f, "{s}"),
+            Value::Tuple(values) => {
+                write!(f, "(")?;
+
+                for (i, value) in values.iter().enumerate() {
+                    if i > 0 {
                         write!(f, ", ")?;
                     }
+
+                    write!(f, "{value}")?;
                 }
-                Ok(())
+
+                write!(f, ")")
             }
+            Value::BuiltinFunction(_) => write!(f, "<builtin function>"),
+        }
+    }
+}
+
+impl Value {
+    pub fn type_name(&self) -> String {
+        match self {
+            Value::Unit => "Unit".to_string(),
+            Value::Int(v) => format!("Int '{v}'"),
+            Value::Float(v) => format!("Float '{v}'"),
+            Value::Bool(v) => format!("Bool '{v}'"),
+            Value::String(v) => format!("String '{v}'"),
+            Value::Tuple(v) => {
+                let mut s = "Tuple '(".to_string();
+                for (i, item) in v.iter().enumerate() {
+                    s = format!("{s}{item}");
+                    if i < v.len() - 1 {
+                        s = format!("{s}, ");
+                    }
+                }
+                s
+            }
+            Value::BuiltinFunction(_) => "<builtin function>".to_string(),
         }
     }
 }

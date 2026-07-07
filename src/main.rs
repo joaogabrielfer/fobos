@@ -8,7 +8,7 @@ use typed_arena::Arena;
 use blorp::{
     ast::Program,
     dump::dump_expected,
-    interpreter::{Interpreter, env::Env},
+    interpreter::Interpreter,
     lexer::Lexer,
     parser::{self},
 };
@@ -60,7 +60,7 @@ fn run() -> anyhow::Result<()> {
         None => {
             let mut editor = DefaultEditor::new()?;
             let path = &PathBuf::from("repl");
-            let mut interpreter = Interpreter::new(path, Env::default());
+            let mut interpreter = Interpreter::new(path);
             let ast_arena = Arena::new();
             let mut c_c_pressed = false;
             loop {
@@ -102,7 +102,7 @@ fn run() -> anyhow::Result<()> {
             let content = read_to_string(path)?;
             let tokens = Lexer::new(path, &content).tokenize()?;
             let ast = parser::Parser::new(tokens, path).parse_program()?;
-            let value = Interpreter::new(path, Env::default()).eval_program(&ast)?;
+            let value = Interpreter::new(path).eval_program(&ast)?;
             println!("{value}");
             Ok(())
         }

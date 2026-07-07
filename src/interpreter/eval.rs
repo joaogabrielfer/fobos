@@ -8,7 +8,7 @@ use crate::{
     interpreter::{
         Interpreter,
         errors::{RuntimeError, RuntimeErrorKind},
-        values::Value,
+        values::{BuiltinFunction, Value},
     },
     source::Span,
 };
@@ -193,7 +193,7 @@ impl<'a> Interpreter<'a> {
                             expr.span,
                             RuntimeErrorKind::InvalidUnaryOp {
                                 op: *op,
-                                operand: other.to_string(),
+                                operand: other.type_name(),
                             },
                         )),
                     },
@@ -203,7 +203,7 @@ impl<'a> Interpreter<'a> {
                             expr.span,
                             RuntimeErrorKind::InvalidUnaryOp {
                                 op: *op,
-                                operand: other.to_string(),
+                                operand: other.type_name(),
                             },
                         )),
                     },
@@ -227,8 +227,8 @@ impl<'a> Interpreter<'a> {
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
                                 op: *op,
-                                lhs: other_lhs.to_string(),
-                                rhs: other_rhs.to_string(),
+                                lhs: other_lhs.type_name(),
+                                rhs: other_rhs.type_name(),
                             },
                         )),
                     },
@@ -243,8 +243,8 @@ impl<'a> Interpreter<'a> {
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
                                 op: *op,
-                                lhs: other_lhs.to_string(),
-                                rhs: other_rhs.to_string(),
+                                lhs: other_lhs.type_name(),
+                                rhs: other_rhs.type_name(),
                             },
                         )),
                     },
@@ -259,8 +259,8 @@ impl<'a> Interpreter<'a> {
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
                                 op: *op,
-                                lhs: other_lhs.to_string(),
-                                rhs: other_rhs.to_string(),
+                                lhs: other_lhs.type_name(),
+                                rhs: other_rhs.type_name(),
                             },
                         )),
                     },
@@ -275,8 +275,8 @@ impl<'a> Interpreter<'a> {
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
                                 op: *op,
-                                lhs: other_lhs.to_string(),
-                                rhs: other_rhs.to_string(),
+                                lhs: other_lhs.type_name(),
+                                rhs: other_rhs.type_name(),
                             },
                         )),
                     },
@@ -301,8 +301,8 @@ impl<'a> Interpreter<'a> {
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
                                 op: *op,
-                                lhs: other_lhs.to_string(),
-                                rhs: other_rhs.to_string(),
+                                lhs: other_lhs.type_name(),
+                                rhs: other_rhs.type_name(),
                             },
                         )),
                     },
@@ -327,8 +327,8 @@ impl<'a> Interpreter<'a> {
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
                                 op: *op,
-                                lhs: other_lhs.to_string(),
-                                rhs: other_rhs.to_string(),
+                                lhs: other_lhs.type_name(),
+                                rhs: other_rhs.type_name(),
                             },
                         )),
                     },
@@ -343,8 +343,8 @@ impl<'a> Interpreter<'a> {
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
                                 op: *op,
-                                lhs: other_lhs.to_string(),
-                                rhs: other_rhs.to_string(),
+                                lhs: other_lhs.type_name(),
+                                rhs: other_rhs.type_name(),
                             },
                         )),
                     },
@@ -359,8 +359,8 @@ impl<'a> Interpreter<'a> {
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
                                 op: *op,
-                                lhs: other_lhs.to_string(),
-                                rhs: other_rhs.to_string(),
+                                lhs: other_lhs.type_name(),
+                                rhs: other_rhs.type_name(),
                             },
                         )),
                     },
@@ -375,8 +375,8 @@ impl<'a> Interpreter<'a> {
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
                                 op: *op,
-                                lhs: other_lhs.to_string(),
-                                rhs: other_rhs.to_string(),
+                                lhs: other_lhs.type_name(),
+                                rhs: other_rhs.type_name(),
                             },
                         )),
                     },
@@ -391,15 +391,34 @@ impl<'a> Interpreter<'a> {
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
                                 op: *op,
-                                lhs: other_lhs.to_string(),
-                                rhs: other_rhs.to_string(),
+                                lhs: other_lhs.type_name(),
+                                rhs: other_rhs.type_name(),
                             },
                         )),
                     },
                 }
             }
             #[allow(unused_variables)]
-            ExprKind::Call { callee, args } => todo!(),
+            ExprKind::Call { callee, args } => {
+                let callee_value = value_or_flow!(self.eval_expr(callee, YieldMode::Capture)?);
+
+                let mut args_values = vec![];
+                for arg in args {
+                    let value = value_or_flow!(self.eval_expr(arg, YieldMode::Capture)?);
+                    args_values.push(value);
+                }
+
+                match callee_value {
+                    Value::BuiltinFunction(builtin) => {
+                        self.call_builtin(builtin, args_values, expr.span)
+                    }
+
+                    other => Err(self.error_at(
+                        callee.span,
+                        RuntimeErrorKind::NotCallable(other.type_name().to_string()),
+                    )),
+                }
+            }
             ExprKind::If {
                 condition,
                 then_branch,
@@ -426,7 +445,7 @@ impl<'a> Interpreter<'a> {
                 return Err(self.error_at(
                     condition.span,
                     RuntimeErrorKind::ExpectedBool {
-                        found: other.to_string(),
+                        found: other.type_name(),
                     },
                 ));
             }
@@ -465,11 +484,11 @@ impl<'a> Interpreter<'a> {
 
             let condition_bool = match condition_value {
                 Value::Bool(b) => b,
-                _ => {
+                other => {
                     return Err(self.error_at(
                         condition.span,
                         RuntimeErrorKind::ExpectedBool {
-                            found: condition.kind.to_string(),
+                            found: other.type_name(),
                         },
                     ));
                 }
@@ -506,5 +525,29 @@ impl<'a> Interpreter<'a> {
             span,
             file_path: self.file_path.clone(),
         })
+    }
+
+    fn call_builtin(
+        &self,
+        builtin: BuiltinFunction,
+        args_values: Vec<Value>,
+        span: crate::source::Span,
+    ) -> Result<EvalFlow, Box<RuntimeError>> {
+        match builtin {
+            BuiltinFunction::Echo => {
+                if args_values.len() != 1 {
+                    Err(self.error_at(
+                        span,
+                        RuntimeErrorKind::ArityMismatch {
+                            expected: 1,
+                            found: args_values.len(),
+                        },
+                    ))
+                } else {
+                    println!("{}", args_values[0]);
+                    Ok(EvalFlow::Continue(Value::Unit))
+                }
+            }
+        }
     }
 }

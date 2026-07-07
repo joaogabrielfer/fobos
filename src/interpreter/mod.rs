@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use crate::interpreter::env::Env;
+use crate::interpreter::{env::Env, values::BuiltinFunction};
 
 pub mod builtins;
 pub mod env;
@@ -14,7 +14,16 @@ pub struct Interpreter<'a> {
 }
 
 impl<'a> Interpreter<'a> {
-    pub fn new(file_path: &'a PathBuf, env: Env<'a>) -> Self {
+    pub fn new(file_path: &'a PathBuf) -> Self {
+        let mut env = Env::default();
+        env.define(
+            "echo",
+            false,
+            values::Value::BuiltinFunction(BuiltinFunction::Echo),
+        );
+        Self { env, file_path }
+    }
+    pub fn new_with_env(file_path: &'a PathBuf, env: Env<'a>) -> Self {
         Self { env, file_path }
     }
 }
