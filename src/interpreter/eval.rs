@@ -5,9 +5,9 @@ use crate::{
         BinaryOp, Block, Expr, ExprKind, Program,
         Stmt::{self},
     },
+    errors::{RuntimeError, RuntimeErrorKind},
     interpreter::{
         Interpreter,
-        errors::{RuntimeError, RuntimeErrorKind},
         values::{BuiltinFunction, Value},
     },
     source::Span,

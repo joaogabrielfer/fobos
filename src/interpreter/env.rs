@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use anyhow::Result;
 
-use crate::interpreter::{errors::RuntimeErrorKind, values::Value};
+use crate::{errors::RuntimeErrorKind, interpreter::values::Value};
 
 #[derive(Debug, Clone)]
 pub struct Env<'a> {

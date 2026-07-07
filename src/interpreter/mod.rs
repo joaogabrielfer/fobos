@@ -4,7 +4,6 @@ use crate::interpreter::{env::Env, values::BuiltinFunction};
 
 pub mod builtins;
 pub mod env;
-pub mod errors;
 pub mod eval;
 pub mod values;
 

@@ -1,81 +1,20 @@
-use std::fmt::Display;
-use std::path::PathBuf;
-
+use crate::{
+    ast::{self, Expr, ExprKind},
+    errors::{ParserError, ParserErrorKind},
+    lexer::{
+        Token, TokenKind,
+        TokenTag::{self, RParen},
+    },
+    source::Span,
+};
 use anyhow::Result;
-use colored::Colorize;
-use thiserror::Error;
-
-use crate::ast::{self, Expr, ExprKind};
-use crate::diagnostic::render_source_span;
-use crate::lexer::TokenTag::RParen;
-use crate::lexer::{Token, TokenKind, TokenTag};
-use crate::source::Span;
+use std::path::PathBuf;
 
 #[derive(Debug, Clone)]
 pub struct Parser<'a> {
     tokens: Vec<Token<'a>>,
     index: usize,
     file_path: &'a PathBuf,
-}
-
-#[derive(Error, Debug)]
-pub struct ParserError {
-    pub kind: ParserErrorKind,
-    pub file_path: PathBuf,
-    pub pos: Span,
-}
-
-impl Display for ParserError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match render_source_span(&self.file_path, self.pos) {
-            Ok((line, col, snippet)) => {
-                let spaces = (0..line.to_string().len()).map(|_| ' ').collect::<String>();
-                let pipe = "|".cyan();
-                let arrow = "-->".cyan();
-                let error_red = "error".red();
-                write!(
-                    f,
-                    "{error_red}: {}\n{spaces}{arrow} {}:{line}:{col}:\n{spaces} {pipe}\n{} {pipe}   {snippet}",
-                    self.kind,
-                    self.file_path.display(),
-                    line.to_string().cyan(),
-                )
-            }
-            Err(_) => {
-                write!(
-                    f,
-                    "error: {}\n --> {}:{}:{}",
-                    self.kind,
-                    self.file_path.display(),
-                    self.pos.start.line,
-                    self.pos.start.col,
-                )
-            }
-        }
-    }
-}
-
-#[derive(Error, Debug)]
-pub enum ParserErrorKind {
-    #[error("expected token '{expected}', found '{found}'")]
-    ExpectedToken { expected: String, found: String },
-    #[error("expected tokens '{expected:?}', found '{found}'")]
-    ExpectedTokens {
-        expected: Vec<String>,
-        found: String,
-    },
-    #[error("expected identifier, found '{found}'")]
-    ExpectedIdentifier { found: String },
-    #[error("expected expression, found '{found}'")]
-    ExpectedExpression { found: String },
-    #[error("unexpected token '{found}'")]
-    UnexpectedToken { found: String },
-    #[error("unexpected EOF")]
-    UnexpectedEof,
-    #[error("{expr} is not a valid assignment target")]
-    InvalidAssignmentTarget { expr: String },
-    #[error("{expr} is not a valid lamda parameter")]
-    InvalidParameter { expr: String },
 }
 
 impl<'a> Parser<'a> {

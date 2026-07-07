@@ -7,8 +7,8 @@ fun mult(a: Int, b: Int): Int =
 end
 
 //higher order functions
-fun [A, B] map(arr: Arr<A>, fn: A -> B): Arr<B> =
-	var new_array: Arr<B>
+fun [A, B] map(arr: Arr(A), fn: A -> B): Arr(B) =
+	var new_array: Arr(B)
 	for item in arr do
 		let mapped := fn(item)
 		new_array.push(mapped)
@@ -17,8 +17,8 @@ fun [A, B] map(arr: Arr<A>, fn: A -> B): Arr<B> =
 end
 
 //joins 2 arrays with a mapping function
-fun [A, B, C] join(arr_a: Arr<A>, arr_b: Arr<B>, fn: (A, B) -> C): Arr<C> =
-	var new_array: Arr<C>
+fun [A, B, C] join(arr_a: Arr(A), arr_b: Arr(B), fn: (A, B) -> C): Arr(C) =
+	var new_array: Arr(C)
 	for (a, b) in (arr_a, arr_b) do
 		let mapped := fn(a, b)
 		new_array.push(mapped)
@@ -53,6 +53,6 @@ fun main() :=
 		other => println("i dont know what this is: {}", other)
 	end
 
-	if str.len() > 5 do print("big")
-	else             do print("small")
+	if str.len() > 5 do println("big")
+	else             do println("small")
 end

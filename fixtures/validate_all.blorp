@@ -21,7 +21,6 @@ let comparison_6 := arithmetic <= 7
 
 let if_expr_1 := if true "yes" else "no"
 let if_expr_2 := if false "yes" else "no"
-let if_expr_without_else := if false "unused"
 
 let if_block := if arithmetic > 5 do
     return "big"

@@ -1,12 +1,9 @@
 use crate::{
     ast::BinaryOp,
-    diagnostic::render_source_span,
-    lexer::LexerErrorKind::UnterminatedString,
+    errors::{LexerError, LexerErrorKind},
     source::{Span, SrcPos},
 };
-use colored::Colorize;
-use std::{fmt::Display, iter::Peekable, path::PathBuf, str::Chars};
-use thiserror::Error;
+use std::{iter::Peekable, path::PathBuf, str::Chars};
 
 #[derive(Debug, Clone)]
 pub struct Lexer<'a> {
@@ -265,55 +262,6 @@ impl std::fmt::Display for TokenTag {
     }
 }
 
-#[derive(Error, Debug)]
-pub struct LexerError {
-    pub kind: LexerErrorKind,
-    pub file_path: PathBuf,
-    pub pos: Span,
-}
-
-impl Display for LexerError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match render_source_span(&self.file_path, self.pos) {
-            Ok((line, col, snippet)) => {
-                let spaces = (0..line.to_string().len()).map(|_| ' ').collect::<String>();
-                let pipe = "|".cyan();
-                let arrow = "-->".cyan();
-                let error_red = "error".red();
-                write!(
-                    f,
-                    "{error_red}: {}\n{spaces}{arrow} {}:{line}:{col}:\n{spaces} {pipe}\n{} {pipe}   {snippet}",
-                    self.kind,
-                    self.file_path.display(),
-                    line.to_string().cyan(),
-                )
-            }
-            Err(_) => {
-                write!(
-                    f,
-                    "error: {}\n --> {}:{}:{}",
-                    self.kind,
-                    self.file_path.display(),
-                    self.pos.start.line,
-                    self.pos.start.col,
-                )
-            }
-        }
-    }
-}
-
-#[derive(Error, Debug)]
-pub enum LexerErrorKind {
-    #[error("Unrecognized char '{0}'")]
-    UnknownChar(char),
-    #[error("Unrecognized Token '{0}'")]
-    UnknownToken(String),
-    #[error("Invalid number '{0}'")]
-    InvalidNumber(String),
-    #[error("Unterminated String")]
-    UnterminatedString,
-}
-
 impl<'a> Lexer<'a> {
     pub fn new(file_path: &'a PathBuf, source: &'a str) -> Self {
         Self {
@@ -508,7 +456,7 @@ impl<'a> Lexer<'a> {
                         Ok(self.new_token(TokenKind::String(s), origin))
                     }
                     _ => Err(LexerError {
-                        kind: UnterminatedString,
+                        kind: LexerErrorKind::UnterminatedString,
                         file_path: self.file_path.clone(),
                         pos: Span {
                             start: string_start_pos,
