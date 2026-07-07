@@ -103,7 +103,7 @@ fn run() -> anyhow::Result<()> {
             let tokens = Lexer::new(path, &content).tokenize()?;
             let ast = parser::Parser::new(tokens, path).parse_program()?;
             let value = Interpreter::new(path).eval_program(&ast)?;
-            println!("{value}");
+            println!("exit code = {value}");
             Ok(())
         }
         Some(Commands::Tokens { path, only_kinds }) => {

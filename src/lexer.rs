@@ -40,12 +40,13 @@ pub enum TokenKind<'a> {
     RArrow,   // ->
     FatArrow, // =>
 
-    Equals, // =
-    Plus,   // +
-    Minus,  // -
-    Slash,  // /
-    Star,   // *
-    Bang,   // !
+    Equals,  // =
+    Plus,    // +
+    Minus,   // -
+    Slash,   // /
+    Star,    // *
+    Bang,    // !
+    Combine, // <>
 
     BangEquals,    // !=
     EqualsEquals,  // ==
@@ -100,6 +101,7 @@ impl<'a> TokenKind<'a> {
             TokenKind::Slash => TokenTag::Slash,
             TokenKind::Star => TokenTag::Star,
             TokenKind::Bang => TokenTag::Bang,
+            TokenKind::Combine => TokenTag::Combine,
 
             TokenKind::BangEquals => TokenTag::BangEquals,
             TokenKind::EqualsEquals => TokenTag::EqualsEquals,
@@ -155,6 +157,7 @@ pub enum TokenTag {
     Slash,
     Star,
     Bang,
+    Combine,
 
     BangEquals,
     EqualsEquals,
@@ -194,6 +197,7 @@ impl TokenTag {
             TokenTag::GreaterEquals => Some((BinaryOp::GreaterEq, 2)),
             TokenTag::LAngle => Some((BinaryOp::Less, 2)),
             TokenTag::LessEquals => Some((BinaryOp::LessEq, 2)),
+            TokenTag::Combine => Some((BinaryOp::Combine, 3)),
             TokenTag::Plus => Some((BinaryOp::Add, 3)),
             TokenTag::Minus => Some((BinaryOp::Sub, 3)),
             TokenTag::Star => Some((BinaryOp::Mul, 4)),
@@ -227,6 +231,7 @@ impl std::fmt::Display for TokenTag {
             TokenTag::Slash => "/",
             TokenTag::Star => "*",
             TokenTag::Bang => "!",
+            TokenTag::Combine => "<>",
 
             TokenTag::BangEquals => "!=",
             TokenTag::EqualsEquals => "==",
@@ -381,6 +386,10 @@ impl<'a> Lexer<'a> {
                 Some('=') => {
                     self.advance();
                     Ok(self.new_token(TokenKind::LessEquals, "<="))
+                }
+                Some('>') => {
+                    self.advance();
+                    Ok(self.new_token(TokenKind::Combine, "<>"))
                 }
                 _ => Ok(self.new_token(TokenKind::LAngle, "<")),
             },

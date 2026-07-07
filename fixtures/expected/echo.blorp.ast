@@ -72,7 +72,7 @@ Ok(
                                         kind: Binary {
                                             lhs: Expr {
                                                 kind: String(
-                                                    "s1 + s2 = ",
+                                                    "s1 <> s2 = ",
                                                 ),
                                                 span: Span {
                                                     start: SrcPos {
@@ -82,12 +82,12 @@ Ok(
                                                     },
                                                     end: SrcPos {
                                                         line: 4,
-                                                        col: 20,
-                                                        idx: 52,
+                                                        col: 22,
+                                                        idx: 54,
                                                     },
                                                 },
                                             },
-                                            op: Add,
+                                            op: Combine,
                                             rhs: Expr {
                                                 kind: Ident(
                                                     "s1",
@@ -95,13 +95,13 @@ Ok(
                                                 span: Span {
                                                     start: SrcPos {
                                                         line: 4,
-                                                        col: 21,
-                                                        idx: 53,
+                                                        col: 23,
+                                                        idx: 55,
                                                     },
                                                     end: SrcPos {
                                                         line: 4,
-                                                        col: 25,
-                                                        idx: 57,
+                                                        col: 28,
+                                                        idx: 60,
                                                     },
                                                 },
                                             },
@@ -114,12 +114,12 @@ Ok(
                                             },
                                             end: SrcPos {
                                                 line: 4,
-                                                col: 25,
-                                                idx: 57,
+                                                col: 28,
+                                                idx: 60,
                                             },
                                         },
                                     },
-                                    op: Add,
+                                    op: Combine,
                                     rhs: Expr {
                                         kind: Ident(
                                             "s2",
@@ -127,13 +127,13 @@ Ok(
                                         span: Span {
                                             start: SrcPos {
                                                 line: 4,
-                                                col: 26,
-                                                idx: 58,
+                                                col: 29,
+                                                idx: 61,
                                             },
                                             end: SrcPos {
                                                 line: 4,
-                                                col: 29,
-                                                idx: 61,
+                                                col: 32,
+                                                idx: 64,
                                             },
                                         },
                                     },
@@ -146,8 +146,8 @@ Ok(
                                     },
                                     end: SrcPos {
                                         line: 4,
-                                        col: 29,
-                                        idx: 61,
+                                        col: 32,
+                                        idx: 64,
                                     },
                                 },
                             },
@@ -162,7 +162,7 @@ Ok(
                         end: SrcPos {
                             line: 5,
                             col: 1,
-                            idx: 62,
+                            idx: 65,
                         },
                     },
                 },

@@ -214,9 +214,6 @@ impl<'a> Interpreter<'a> {
                 let rhs = value_or_flow!(self.eval_expr(rhs, YieldMode::Capture)?);
                 match op {
                     BinaryOp::Add => match (lhs, rhs) {
-                        (Value::String(s1), Value::String(s2)) => Ok(EvalFlow::Continue(
-                            Value::String(format!("{s1}{s2}").to_string()),
-                        )),
                         (Value::Int(i1), Value::Int(i2)) => {
                             Ok(EvalFlow::Continue(Value::Int(i1 + i2)))
                         }
@@ -387,6 +384,22 @@ impl<'a> Interpreter<'a> {
                         (Value::Int(a), Value::Int(b)) => {
                             Ok(EvalFlow::Continue(Value::Bool(a <= b)))
                         }
+                        (other_lhs, other_rhs) => Err(self.error_at(
+                            expr.span,
+                            RuntimeErrorKind::InvalidBinaryOp {
+                                op: *op,
+                                lhs: other_lhs.type_name(),
+                                rhs: other_rhs.type_name(),
+                            },
+                        )),
+                    },
+                    BinaryOp::Combine => match (lhs, rhs) {
+                        (Value::String(s1), s2) => Ok(EvalFlow::Continue(Value::String(
+                            format!("{s1}{s2}").to_string(),
+                        ))),
+                        (s1, Value::String(s2)) => Ok(EvalFlow::Continue(Value::String(
+                            format!("{s1}{s2}").to_string(),
+                        ))),
                         (other_lhs, other_rhs) => Err(self.error_at(
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {

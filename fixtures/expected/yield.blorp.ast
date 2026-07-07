@@ -158,12 +158,12 @@ Ok(
                                             },
                                             end: SrcPos {
                                                 line: 7,
-                                                col: 14,
-                                                idx: 72,
+                                                col: 15,
+                                                idx: 73,
                                             },
                                         },
                                     },
-                                    op: Add,
+                                    op: Combine,
                                     rhs: Expr {
                                         kind: Ident(
                                             "a",
@@ -171,13 +171,13 @@ Ok(
                                         span: Span {
                                             start: SrcPos {
                                                 line: 7,
-                                                col: 15,
-                                                idx: 73,
+                                                col: 16,
+                                                idx: 74,
                                             },
                                             end: SrcPos {
                                                 line: 7,
-                                                col: 17,
-                                                idx: 75,
+                                                col: 18,
+                                                idx: 76,
                                             },
                                         },
                                     },
@@ -190,8 +190,8 @@ Ok(
                                     },
                                     end: SrcPos {
                                         line: 7,
-                                        col: 17,
-                                        idx: 75,
+                                        col: 18,
+                                        idx: 76,
                                     },
                                 },
                             },
@@ -206,7 +206,7 @@ Ok(
                         end: SrcPos {
                             line: 8,
                             col: 1,
-                            idx: 76,
+                            idx: 77,
                         },
                     },
                 },
@@ -228,12 +228,12 @@ Ok(
                                             start: SrcPos {
                                                 line: 10,
                                                 col: 8,
-                                                idx: 96,
+                                                idx: 97,
                                             },
                                             end: SrcPos {
                                                 line: 11,
                                                 col: 1,
-                                                idx: 98,
+                                                idx: 99,
                                             },
                                         },
                                     },
@@ -247,12 +247,12 @@ Ok(
                                             start: SrcPos {
                                                 line: 11,
                                                 col: 8,
-                                                idx: 105,
+                                                idx: 106,
                                             },
                                             end: SrcPos {
                                                 line: 12,
                                                 col: 1,
-                                                idx: 107,
+                                                idx: 108,
                                             },
                                         },
                                     },
@@ -264,12 +264,12 @@ Ok(
                         start: SrcPos {
                             line: 9,
                             col: 10,
-                            idx: 86,
+                            idx: 87,
                         },
                         end: SrcPos {
                             line: 13,
                             col: 1,
-                            idx: 111,
+                            idx: 112,
                         },
                     },
                 },
@@ -285,12 +285,12 @@ Ok(
                                 start: SrcPos {
                                     line: 14,
                                     col: 1,
-                                    idx: 112,
+                                    idx: 113,
                                 },
                                 end: SrcPos {
                                     line: 14,
                                     col: 6,
-                                    idx: 117,
+                                    idx: 118,
                                 },
                             },
                         },
@@ -305,16 +305,16 @@ Ok(
                                             start: SrcPos {
                                                 line: 14,
                                                 col: 6,
-                                                idx: 117,
+                                                idx: 118,
                                             },
                                             end: SrcPos {
                                                 line: 14,
-                                                col: 14,
-                                                idx: 125,
+                                                col: 15,
+                                                idx: 127,
                                             },
                                         },
                                     },
-                                    op: Add,
+                                    op: Combine,
                                     rhs: Expr {
                                         kind: Ident(
                                             "b",
@@ -322,13 +322,13 @@ Ok(
                                         span: Span {
                                             start: SrcPos {
                                                 line: 14,
-                                                col: 15,
-                                                idx: 126,
+                                                col: 16,
+                                                idx: 128,
                                             },
                                             end: SrcPos {
                                                 line: 14,
-                                                col: 17,
-                                                idx: 128,
+                                                col: 18,
+                                                idx: 130,
                                             },
                                         },
                                     },
@@ -337,12 +337,12 @@ Ok(
                                     start: SrcPos {
                                         line: 14,
                                         col: 6,
-                                        idx: 117,
+                                        idx: 118,
                                     },
                                     end: SrcPos {
                                         line: 14,
-                                        col: 17,
-                                        idx: 128,
+                                        col: 18,
+                                        idx: 130,
                                     },
                                 },
                             },
@@ -352,12 +352,12 @@ Ok(
                         start: SrcPos {
                             line: 14,
                             col: 1,
-                            idx: 112,
+                            idx: 113,
                         },
                         end: SrcPos {
                             line: 15,
                             col: 1,
-                            idx: 129,
+                            idx: 131,
                         },
                     },
                 },
@@ -384,12 +384,12 @@ Ok(
                                                     start: SrcPos {
                                                         line: 17,
                                                         col: 19,
-                                                        idx: 157,
+                                                        idx: 159,
                                                     },
                                                     end: SrcPos {
                                                         line: 17,
                                                         col: 26,
-                                                        idx: 164,
+                                                        idx: 166,
                                                     },
                                                 },
                                             },
@@ -406,12 +406,12 @@ Ok(
                                                                         start: SrcPos {
                                                                             line: 18,
                                                                             col: 15,
-                                                                            idx: 179,
+                                                                            idx: 181,
                                                                         },
                                                                         end: SrcPos {
                                                                             line: 19,
                                                                             col: 1,
-                                                                            idx: 182,
+                                                                            idx: 184,
                                                                         },
                                                                     },
                                                                 },
@@ -423,12 +423,12 @@ Ok(
                                                     start: SrcPos {
                                                         line: 17,
                                                         col: 24,
-                                                        idx: 162,
+                                                        idx: 164,
                                                     },
                                                     end: SrcPos {
                                                         line: 20,
                                                         col: 1,
-                                                        idx: 190,
+                                                        idx: 192,
                                                     },
                                                 },
                                             },
@@ -438,12 +438,12 @@ Ok(
                                             start: SrcPos {
                                                 line: 17,
                                                 col: 16,
-                                                idx: 154,
+                                                idx: 156,
                                             },
                                             end: SrcPos {
                                                 line: 20,
                                                 col: 1,
-                                                idx: 190,
+                                                idx: 192,
                                             },
                                         },
                                     },
@@ -459,12 +459,12 @@ Ok(
                                                     start: SrcPos {
                                                         line: 21,
                                                         col: 5,
-                                                        idx: 195,
+                                                        idx: 197,
                                                     },
                                                     end: SrcPos {
                                                         line: 21,
                                                         col: 12,
-                                                        idx: 202,
+                                                        idx: 204,
                                                     },
                                                 },
                                             },
@@ -481,12 +481,12 @@ Ok(
                                                                         start: SrcPos {
                                                                             line: 22,
                                                                             col: 9,
-                                                                            idx: 211,
+                                                                            idx: 213,
                                                                         },
                                                                         end: SrcPos {
                                                                             line: 23,
                                                                             col: 1,
-                                                                            idx: 214,
+                                                                            idx: 216,
                                                                         },
                                                                     },
                                                                 },
@@ -498,12 +498,12 @@ Ok(
                                                     start: SrcPos {
                                                         line: 21,
                                                         col: 10,
-                                                        idx: 200,
+                                                        idx: 202,
                                                     },
                                                     end: SrcPos {
                                                         line: 24,
                                                         col: 1,
-                                                        idx: 219,
+                                                        idx: 221,
                                                     },
                                                 },
                                             },
@@ -513,12 +513,12 @@ Ok(
                                             start: SrcPos {
                                                 line: 21,
                                                 col: 2,
-                                                idx: 192,
+                                                idx: 194,
                                             },
                                             end: SrcPos {
                                                 line: 24,
                                                 col: 1,
-                                                idx: 219,
+                                                idx: 221,
                                             },
                                         },
                                     },
@@ -532,12 +532,12 @@ Ok(
                                             start: SrcPos {
                                                 line: 25,
                                                 col: 8,
-                                                idx: 227,
+                                                idx: 229,
                                             },
                                             end: SrcPos {
                                                 line: 26,
                                                 col: 1,
-                                                idx: 231,
+                                                idx: 233,
                                             },
                                         },
                                     },
@@ -551,12 +551,12 @@ Ok(
                                             start: SrcPos {
                                                 line: 26,
                                                 col: 8,
-                                                idx: 238,
+                                                idx: 240,
                                             },
                                             end: SrcPos {
                                                 line: 27,
                                                 col: 1,
-                                                idx: 241,
+                                                idx: 243,
                                             },
                                         },
                                     },
@@ -568,12 +568,12 @@ Ok(
                         start: SrcPos {
                             line: 16,
                             col: 1,
-                            idx: 130,
+                            idx: 132,
                         },
                         end: SrcPos {
                             line: 28,
                             col: 1,
-                            idx: 245,
+                            idx: 247,
                         },
                     },
                 },
@@ -589,12 +589,12 @@ Ok(
                                 start: SrcPos {
                                     line: 29,
                                     col: 1,
-                                    idx: 246,
+                                    idx: 248,
                                 },
                                 end: SrcPos {
                                     line: 29,
                                     col: 6,
-                                    idx: 251,
+                                    idx: 253,
                                 },
                             },
                         },
@@ -609,16 +609,16 @@ Ok(
                                             start: SrcPos {
                                                 line: 29,
                                                 col: 6,
-                                                idx: 251,
+                                                idx: 253,
                                             },
                                             end: SrcPos {
                                                 line: 29,
-                                                col: 14,
-                                                idx: 259,
+                                                col: 15,
+                                                idx: 262,
                                             },
                                         },
                                     },
-                                    op: Add,
+                                    op: Combine,
                                     rhs: Expr {
                                         kind: Ident(
                                             "c",
@@ -626,13 +626,13 @@ Ok(
                                         span: Span {
                                             start: SrcPos {
                                                 line: 29,
-                                                col: 15,
-                                                idx: 260,
+                                                col: 16,
+                                                idx: 263,
                                             },
                                             end: SrcPos {
                                                 line: 29,
-                                                col: 17,
-                                                idx: 262,
+                                                col: 18,
+                                                idx: 265,
                                             },
                                         },
                                     },
@@ -641,12 +641,12 @@ Ok(
                                     start: SrcPos {
                                         line: 29,
                                         col: 6,
-                                        idx: 251,
+                                        idx: 253,
                                     },
                                     end: SrcPos {
                                         line: 29,
-                                        col: 17,
-                                        idx: 262,
+                                        col: 18,
+                                        idx: 265,
                                     },
                                 },
                             },
@@ -656,12 +656,12 @@ Ok(
                         start: SrcPos {
                             line: 29,
                             col: 1,
-                            idx: 246,
+                            idx: 248,
                         },
                         end: SrcPos {
                             line: 30,
                             col: 1,
-                            idx: 263,
+                            idx: 266,
                         },
                     },
                 },
@@ -685,12 +685,12 @@ Ok(
                                                     start: SrcPos {
                                                         line: 32,
                                                         col: 8,
-                                                        idx: 280,
+                                                        idx: 283,
                                                     },
                                                     end: SrcPos {
                                                         line: 32,
                                                         col: 15,
-                                                        idx: 287,
+                                                        idx: 290,
                                                     },
                                                 },
                                             },
@@ -707,12 +707,12 @@ Ok(
                                                                         start: SrcPos {
                                                                             line: 33,
                                                                             col: 15,
-                                                                            idx: 302,
+                                                                            idx: 305,
                                                                         },
                                                                         end: SrcPos {
                                                                             line: 34,
                                                                             col: 1,
-                                                                            idx: 305,
+                                                                            idx: 308,
                                                                         },
                                                                     },
                                                                 },
@@ -724,12 +724,12 @@ Ok(
                                                     start: SrcPos {
                                                         line: 32,
                                                         col: 13,
-                                                        idx: 285,
+                                                        idx: 288,
                                                     },
                                                     end: SrcPos {
                                                         line: 35,
                                                         col: 1,
-                                                        idx: 313,
+                                                        idx: 316,
                                                     },
                                                 },
                                             },
@@ -739,12 +739,12 @@ Ok(
                                             start: SrcPos {
                                                 line: 32,
                                                 col: 5,
-                                                idx: 277,
+                                                idx: 280,
                                             },
                                             end: SrcPos {
                                                 line: 35,
                                                 col: 1,
-                                                idx: 313,
+                                                idx: 316,
                                             },
                                         },
                                     },
@@ -758,12 +758,12 @@ Ok(
                                             start: SrcPos {
                                                 line: 36,
                                                 col: 11,
-                                                idx: 324,
+                                                idx: 327,
                                             },
                                             end: SrcPos {
                                                 line: 37,
                                                 col: 1,
-                                                idx: 327,
+                                                idx: 330,
                                             },
                                         },
                                     },
@@ -775,12 +775,12 @@ Ok(
                         start: SrcPos {
                             line: 31,
                             col: 1,
-                            idx: 264,
+                            idx: 267,
                         },
                         end: SrcPos {
                             line: 38,
                             col: 1,
-                            idx: 331,
+                            idx: 334,
                         },
                     },
                 },
@@ -796,12 +796,12 @@ Ok(
                                 start: SrcPos {
                                     line: 39,
                                     col: 1,
-                                    idx: 332,
+                                    idx: 335,
                                 },
                                 end: SrcPos {
                                     line: 39,
                                     col: 6,
-                                    idx: 337,
+                                    idx: 340,
                                 },
                             },
                         },
@@ -816,16 +816,16 @@ Ok(
                                             start: SrcPos {
                                                 line: 39,
                                                 col: 6,
-                                                idx: 337,
+                                                idx: 340,
                                             },
                                             end: SrcPos {
                                                 line: 39,
-                                                col: 14,
-                                                idx: 345,
+                                                col: 15,
+                                                idx: 349,
                                             },
                                         },
                                     },
-                                    op: Add,
+                                    op: Combine,
                                     rhs: Expr {
                                         kind: Ident(
                                             "d",
@@ -833,13 +833,13 @@ Ok(
                                         span: Span {
                                             start: SrcPos {
                                                 line: 39,
-                                                col: 15,
-                                                idx: 346,
+                                                col: 16,
+                                                idx: 350,
                                             },
                                             end: SrcPos {
                                                 line: 39,
-                                                col: 17,
-                                                idx: 348,
+                                                col: 18,
+                                                idx: 352,
                                             },
                                         },
                                     },
@@ -848,12 +848,12 @@ Ok(
                                     start: SrcPos {
                                         line: 39,
                                         col: 6,
-                                        idx: 337,
+                                        idx: 340,
                                     },
                                     end: SrcPos {
                                         line: 39,
-                                        col: 17,
-                                        idx: 348,
+                                        col: 18,
+                                        idx: 352,
                                     },
                                 },
                             },
@@ -863,12 +863,12 @@ Ok(
                         start: SrcPos {
                             line: 39,
                             col: 1,
-                            idx: 332,
+                            idx: 335,
                         },
                         end: SrcPos {
                             line: 40,
                             col: 1,
-                            idx: 349,
+                            idx: 353,
                         },
                     },
                 },
@@ -893,12 +893,12 @@ Ok(
                                             start: SrcPos {
                                                 line: 42,
                                                 col: 14,
-                                                idx: 372,
+                                                idx: 376,
                                             },
                                             end: SrcPos {
                                                 line: 43,
                                                 col: 1,
-                                                idx: 374,
+                                                idx: 378,
                                             },
                                         },
                                     },
@@ -919,12 +919,12 @@ Ok(
                                                             start: SrcPos {
                                                                 line: 44,
                                                                 col: 22,
-                                                                idx: 396,
+                                                                idx: 400,
                                                             },
                                                             end: SrcPos {
                                                                 line: 44,
                                                                 col: 25,
-                                                                idx: 399,
+                                                                idx: 403,
                                                             },
                                                         },
                                                     },
@@ -937,12 +937,12 @@ Ok(
                                                             start: SrcPos {
                                                                 line: 44,
                                                                 col: 26,
-                                                                idx: 400,
+                                                                idx: 404,
                                                             },
                                                             end: SrcPos {
                                                                 line: 44,
                                                                 col: 31,
-                                                                idx: 405,
+                                                                idx: 409,
                                                             },
                                                         },
                                                     },
@@ -951,12 +951,12 @@ Ok(
                                                     start: SrcPos {
                                                         line: 44,
                                                         col: 22,
-                                                        idx: 396,
+                                                        idx: 400,
                                                     },
                                                     end: SrcPos {
                                                         line: 44,
                                                         col: 31,
-                                                        idx: 405,
+                                                        idx: 409,
                                                     },
                                                 },
                                             },
@@ -975,12 +975,12 @@ Ok(
                                                                                 start: SrcPos {
                                                                                     line: 45,
                                                                                     col: 12,
-                                                                                    idx: 417,
+                                                                                    idx: 421,
                                                                                 },
                                                                                 end: SrcPos {
                                                                                     line: 45,
                                                                                     col: 16,
-                                                                                    idx: 421,
+                                                                                    idx: 425,
                                                                                 },
                                                                             },
                                                                         },
@@ -993,12 +993,12 @@ Ok(
                                                                                 start: SrcPos {
                                                                                     line: 45,
                                                                                     col: 17,
-                                                                                    idx: 422,
+                                                                                    idx: 426,
                                                                                 },
                                                                                 end: SrcPos {
                                                                                     line: 45,
                                                                                     col: 21,
-                                                                                    idx: 426,
+                                                                                    idx: 430,
                                                                                 },
                                                                             },
                                                                         },
@@ -1007,12 +1007,12 @@ Ok(
                                                                         start: SrcPos {
                                                                             line: 45,
                                                                             col: 12,
-                                                                            idx: 417,
+                                                                            idx: 421,
                                                                         },
                                                                         end: SrcPos {
                                                                             line: 45,
                                                                             col: 21,
-                                                                            idx: 426,
+                                                                            idx: 430,
                                                                         },
                                                                     },
                                                                 },
@@ -1029,12 +1029,12 @@ Ok(
                                                                                             start: SrcPos {
                                                                                                 line: 46,
                                                                                                 col: 19,
-                                                                                                idx: 445,
+                                                                                                idx: 449,
                                                                                             },
                                                                                             end: SrcPos {
                                                                                                 line: 47,
                                                                                                 col: 1,
-                                                                                                idx: 447,
+                                                                                                idx: 451,
                                                                                             },
                                                                                         },
                                                                                     },
@@ -1046,12 +1046,12 @@ Ok(
                                                                         start: SrcPos {
                                                                             line: 45,
                                                                             col: 19,
-                                                                            idx: 424,
+                                                                            idx: 428,
                                                                         },
                                                                         end: SrcPos {
                                                                             line: 48,
                                                                             col: 1,
-                                                                            idx: 459,
+                                                                            idx: 463,
                                                                         },
                                                                     },
                                                                 },
@@ -1061,12 +1061,12 @@ Ok(
                                                                 start: SrcPos {
                                                                     line: 45,
                                                                     col: 9,
-                                                                    idx: 414,
+                                                                    idx: 418,
                                                                 },
                                                                 end: SrcPos {
                                                                     line: 48,
                                                                     col: 1,
-                                                                    idx: 459,
+                                                                    idx: 463,
                                                                 },
                                                             },
                                                         },
@@ -1080,12 +1080,12 @@ Ok(
                                                                 start: SrcPos {
                                                                     line: 49,
                                                                     col: 9,
-                                                                    idx: 468,
+                                                                    idx: 472,
                                                                 },
                                                                 end: SrcPos {
                                                                     line: 49,
                                                                     col: 12,
-                                                                    idx: 471,
+                                                                    idx: 475,
                                                                 },
                                                             },
                                                         },
@@ -1099,12 +1099,12 @@ Ok(
                                                                         start: SrcPos {
                                                                             line: 49,
                                                                             col: 13,
-                                                                            idx: 472,
+                                                                            idx: 476,
                                                                         },
                                                                         end: SrcPos {
                                                                             line: 49,
                                                                             col: 16,
-                                                                            idx: 475,
+                                                                            idx: 479,
                                                                         },
                                                                     },
                                                                 },
@@ -1117,12 +1117,12 @@ Ok(
                                                                         start: SrcPos {
                                                                             line: 49,
                                                                             col: 17,
-                                                                            idx: 476,
+                                                                            idx: 480,
                                                                         },
                                                                         end: SrcPos {
                                                                             line: 50,
                                                                             col: 1,
-                                                                            idx: 478,
+                                                                            idx: 482,
                                                                         },
                                                                     },
                                                                 },
@@ -1131,12 +1131,12 @@ Ok(
                                                                 start: SrcPos {
                                                                     line: 49,
                                                                     col: 13,
-                                                                    idx: 472,
+                                                                    idx: 476,
                                                                 },
                                                                 end: SrcPos {
                                                                     line: 50,
                                                                     col: 1,
-                                                                    idx: 478,
+                                                                    idx: 482,
                                                                 },
                                                             },
                                                         },
@@ -1148,12 +1148,12 @@ Ok(
                                             start: SrcPos {
                                                 line: 51,
                                                 col: 0,
-                                                idx: 485,
+                                                idx: 489,
                                             },
                                             end: SrcPos {
                                                 line: 51,
                                                 col: 1,
-                                                idx: 486,
+                                                idx: 490,
                                             },
                                         },
                                     },
@@ -1167,12 +1167,12 @@ Ok(
                                             start: SrcPos {
                                                 line: 52,
                                                 col: 8,
-                                                idx: 494,
+                                                idx: 498,
                                             },
                                             end: SrcPos {
                                                 line: 53,
                                                 col: 1,
-                                                idx: 498,
+                                                idx: 502,
                                             },
                                         },
                                     },
@@ -1186,12 +1186,12 @@ Ok(
                                             start: SrcPos {
                                                 line: 54,
                                                 col: 11,
-                                                idx: 509,
+                                                idx: 513,
                                             },
                                             end: SrcPos {
                                                 line: 55,
                                                 col: 1,
-                                                idx: 513,
+                                                idx: 517,
                                             },
                                         },
                                     },
@@ -1203,12 +1203,12 @@ Ok(
                         start: SrcPos {
                             line: 41,
                             col: 1,
-                            idx: 350,
+                            idx: 354,
                         },
                         end: SrcPos {
                             line: 56,
                             col: 1,
-                            idx: 517,
+                            idx: 521,
                         },
                     },
                 },
@@ -1224,12 +1224,12 @@ Ok(
                                 start: SrcPos {
                                     line: 57,
                                     col: 1,
-                                    idx: 518,
+                                    idx: 522,
                                 },
                                 end: SrcPos {
                                     line: 57,
                                     col: 6,
-                                    idx: 523,
+                                    idx: 527,
                                 },
                             },
                         },
@@ -1244,16 +1244,16 @@ Ok(
                                             start: SrcPos {
                                                 line: 57,
                                                 col: 6,
-                                                idx: 523,
+                                                idx: 527,
                                             },
                                             end: SrcPos {
                                                 line: 57,
-                                                col: 14,
-                                                idx: 531,
+                                                col: 15,
+                                                idx: 536,
                                             },
                                         },
                                     },
-                                    op: Add,
+                                    op: Combine,
                                     rhs: Expr {
                                         kind: Ident(
                                             "e",
@@ -1261,13 +1261,13 @@ Ok(
                                         span: Span {
                                             start: SrcPos {
                                                 line: 57,
-                                                col: 15,
-                                                idx: 532,
+                                                col: 16,
+                                                idx: 537,
                                             },
                                             end: SrcPos {
                                                 line: 57,
-                                                col: 17,
-                                                idx: 534,
+                                                col: 18,
+                                                idx: 539,
                                             },
                                         },
                                     },
@@ -1276,12 +1276,12 @@ Ok(
                                     start: SrcPos {
                                         line: 57,
                                         col: 6,
-                                        idx: 523,
+                                        idx: 527,
                                     },
                                     end: SrcPos {
                                         line: 57,
-                                        col: 17,
-                                        idx: 534,
+                                        col: 18,
+                                        idx: 539,
                                     },
                                 },
                             },
@@ -1291,12 +1291,12 @@ Ok(
                         start: SrcPos {
                             line: 57,
                             col: 1,
-                            idx: 518,
+                            idx: 522,
                         },
                         end: SrcPos {
                             line: 58,
                             col: 1,
-                            idx: 535,
+                            idx: 540,
                         },
                     },
                 },
@@ -1329,12 +1329,12 @@ Ok(
                                                                 start: SrcPos {
                                                                     line: 61,
                                                                     col: 18,
-                                                                    idx: 579,
+                                                                    idx: 584,
                                                                 },
                                                                 end: SrcPos {
                                                                     line: 62,
                                                                     col: 1,
-                                                                    idx: 581,
+                                                                    idx: 586,
                                                                 },
                                                             },
                                                         },
@@ -1350,12 +1350,12 @@ Ok(
                                                                         start: SrcPos {
                                                                             line: 62,
                                                                             col: 15,
-                                                                            idx: 595,
+                                                                            idx: 600,
                                                                         },
                                                                         end: SrcPos {
                                                                             line: 62,
                                                                             col: 18,
-                                                                            idx: 598,
+                                                                            idx: 603,
                                                                         },
                                                                     },
                                                                 },
@@ -1368,12 +1368,12 @@ Ok(
                                                                         start: SrcPos {
                                                                             line: 62,
                                                                             col: 19,
-                                                                            idx: 599,
+                                                                            idx: 604,
                                                                         },
                                                                         end: SrcPos {
                                                                             line: 63,
                                                                             col: 1,
-                                                                            idx: 601,
+                                                                            idx: 606,
                                                                         },
                                                                     },
                                                                 },
@@ -1382,12 +1382,12 @@ Ok(
                                                                 start: SrcPos {
                                                                     line: 62,
                                                                     col: 15,
-                                                                    idx: 595,
+                                                                    idx: 600,
                                                                 },
                                                                 end: SrcPos {
                                                                     line: 63,
                                                                     col: 1,
-                                                                    idx: 601,
+                                                                    idx: 606,
                                                                 },
                                                             },
                                                         },
@@ -1399,12 +1399,12 @@ Ok(
                                             start: SrcPos {
                                                 line: 60,
                                                 col: 5,
-                                                idx: 549,
+                                                idx: 554,
                                             },
                                             end: SrcPos {
                                                 line: 64,
                                                 col: 1,
-                                                idx: 609,
+                                                idx: 614,
                                             },
                                         },
                                     },
@@ -1420,12 +1420,12 @@ Ok(
                                                     start: SrcPos {
                                                         line: 65,
                                                         col: 11,
-                                                        idx: 620,
+                                                        idx: 625,
                                                     },
                                                     end: SrcPos {
                                                         line: 65,
                                                         col: 18,
-                                                        idx: 627,
+                                                        idx: 632,
                                                     },
                                                 },
                                             },
@@ -1438,12 +1438,12 @@ Ok(
                                                     start: SrcPos {
                                                         line: 65,
                                                         col: 19,
-                                                        idx: 628,
+                                                        idx: 633,
                                                     },
                                                     end: SrcPos {
                                                         line: 66,
                                                         col: 1,
-                                                        idx: 630,
+                                                        idx: 635,
                                                     },
                                                 },
                                             },
@@ -1452,12 +1452,12 @@ Ok(
                                             start: SrcPos {
                                                 line: 65,
                                                 col: 11,
-                                                idx: 620,
+                                                idx: 625,
                                             },
                                             end: SrcPos {
                                                 line: 66,
                                                 col: 1,
-                                                idx: 630,
+                                                idx: 635,
                                             },
                                         },
                                     },
@@ -1469,12 +1469,12 @@ Ok(
                         start: SrcPos {
                             line: 59,
                             col: 1,
-                            idx: 536,
+                            idx: 541,
                         },
                         end: SrcPos {
                             line: 67,
                             col: 1,
-                            idx: 634,
+                            idx: 639,
                         },
                     },
                 },
@@ -1490,12 +1490,12 @@ Ok(
                                 start: SrcPos {
                                     line: 68,
                                     col: 1,
-                                    idx: 635,
+                                    idx: 640,
                                 },
                                 end: SrcPos {
                                     line: 68,
                                     col: 6,
-                                    idx: 640,
+                                    idx: 645,
                                 },
                             },
                         },
@@ -1510,16 +1510,16 @@ Ok(
                                             start: SrcPos {
                                                 line: 68,
                                                 col: 6,
-                                                idx: 640,
+                                                idx: 645,
                                             },
                                             end: SrcPos {
                                                 line: 68,
-                                                col: 14,
-                                                idx: 648,
+                                                col: 15,
+                                                idx: 654,
                                             },
                                         },
                                     },
-                                    op: Add,
+                                    op: Combine,
                                     rhs: Expr {
                                         kind: Ident(
                                             "f",
@@ -1527,13 +1527,13 @@ Ok(
                                         span: Span {
                                             start: SrcPos {
                                                 line: 68,
-                                                col: 15,
-                                                idx: 649,
+                                                col: 16,
+                                                idx: 655,
                                             },
                                             end: SrcPos {
                                                 line: 68,
-                                                col: 17,
-                                                idx: 651,
+                                                col: 18,
+                                                idx: 657,
                                             },
                                         },
                                     },
@@ -1542,12 +1542,12 @@ Ok(
                                     start: SrcPos {
                                         line: 68,
                                         col: 6,
-                                        idx: 640,
+                                        idx: 645,
                                     },
                                     end: SrcPos {
                                         line: 68,
-                                        col: 17,
-                                        idx: 651,
+                                        col: 18,
+                                        idx: 657,
                                     },
                                 },
                             },
@@ -1557,12 +1557,12 @@ Ok(
                         start: SrcPos {
                             line: 68,
                             col: 1,
-                            idx: 635,
+                            idx: 640,
                         },
                         end: SrcPos {
                             line: 69,
                             col: 1,
-                            idx: 652,
+                            idx: 658,
                         },
                     },
                 },
@@ -1579,12 +1579,12 @@ Ok(
                         start: SrcPos {
                             line: 70,
                             col: 10,
-                            idx: 662,
+                            idx: 668,
                         },
                         end: SrcPos {
                             line: 71,
                             col: 1,
-                            idx: 664,
+                            idx: 670,
                         },
                     },
                 },
@@ -1605,12 +1605,12 @@ Ok(
                                         start: SrcPos {
                                             line: 71,
                                             col: 18,
-                                            idx: 681,
+                                            idx: 687,
                                         },
                                         end: SrcPos {
                                             line: 71,
                                             col: 21,
-                                            idx: 684,
+                                            idx: 690,
                                         },
                                     },
                                 },
@@ -1623,12 +1623,12 @@ Ok(
                                         start: SrcPos {
                                             line: 71,
                                             col: 22,
-                                            idx: 685,
+                                            idx: 691,
                                         },
                                         end: SrcPos {
                                             line: 71,
                                             col: 27,
-                                            idx: 690,
+                                            idx: 696,
                                         },
                                     },
                                 },
@@ -1637,12 +1637,12 @@ Ok(
                                 start: SrcPos {
                                     line: 71,
                                     col: 18,
-                                    idx: 681,
+                                    idx: 687,
                                 },
                                 end: SrcPos {
                                     line: 71,
                                     col: 27,
-                                    idx: 690,
+                                    idx: 696,
                                 },
                             },
                         },
@@ -1661,12 +1661,12 @@ Ok(
                                                             start: SrcPos {
                                                                 line: 72,
                                                                 col: 5,
-                                                                idx: 695,
+                                                                idx: 701,
                                                             },
                                                             end: SrcPos {
                                                                 line: 72,
                                                                 col: 9,
-                                                                idx: 699,
+                                                                idx: 705,
                                                             },
                                                         },
                                                     },
@@ -1679,12 +1679,12 @@ Ok(
                                                             start: SrcPos {
                                                                 line: 72,
                                                                 col: 10,
-                                                                idx: 700,
+                                                                idx: 706,
                                                             },
                                                             end: SrcPos {
                                                                 line: 72,
                                                                 col: 14,
-                                                                idx: 704,
+                                                                idx: 710,
                                                             },
                                                         },
                                                     },
@@ -1693,12 +1693,12 @@ Ok(
                                                     start: SrcPos {
                                                         line: 72,
                                                         col: 5,
-                                                        idx: 695,
+                                                        idx: 701,
                                                     },
                                                     end: SrcPos {
                                                         line: 72,
                                                         col: 14,
-                                                        idx: 704,
+                                                        idx: 710,
                                                     },
                                                 },
                                             },
@@ -1715,12 +1715,12 @@ Ok(
                                                                         start: SrcPos {
                                                                             line: 73,
                                                                             col: 9,
-                                                                            idx: 713,
+                                                                            idx: 719,
                                                                         },
                                                                         end: SrcPos {
                                                                             line: 74,
                                                                             col: 1,
-                                                                            idx: 715,
+                                                                            idx: 721,
                                                                         },
                                                                     },
                                                                 },
@@ -1732,12 +1732,12 @@ Ok(
                                                     start: SrcPos {
                                                         line: 72,
                                                         col: 12,
-                                                        idx: 702,
+                                                        idx: 708,
                                                     },
                                                     end: SrcPos {
                                                         line: 75,
                                                         col: 1,
-                                                        idx: 720,
+                                                        idx: 726,
                                                     },
                                                 },
                                             },
@@ -1747,12 +1747,12 @@ Ok(
                                             start: SrcPos {
                                                 line: 72,
                                                 col: 2,
-                                                idx: 692,
+                                                idx: 698,
                                             },
                                             end: SrcPos {
                                                 line: 75,
                                                 col: 1,
-                                                idx: 720,
+                                                idx: 726,
                                             },
                                         },
                                     },
@@ -1766,12 +1766,12 @@ Ok(
                                             start: SrcPos {
                                                 line: 76,
                                                 col: 2,
-                                                idx: 722,
+                                                idx: 728,
                                             },
                                             end: SrcPos {
                                                 line: 76,
                                                 col: 5,
-                                                idx: 725,
+                                                idx: 731,
                                             },
                                         },
                                     },
@@ -1785,12 +1785,12 @@ Ok(
                                                     start: SrcPos {
                                                         line: 76,
                                                         col: 6,
-                                                        idx: 726,
+                                                        idx: 732,
                                                     },
                                                     end: SrcPos {
                                                         line: 76,
                                                         col: 9,
-                                                        idx: 729,
+                                                        idx: 735,
                                                     },
                                                 },
                                             },
@@ -1803,12 +1803,12 @@ Ok(
                                                     start: SrcPos {
                                                         line: 76,
                                                         col: 10,
-                                                        idx: 730,
+                                                        idx: 736,
                                                     },
                                                     end: SrcPos {
                                                         line: 77,
                                                         col: 1,
-                                                        idx: 732,
+                                                        idx: 738,
                                                     },
                                                 },
                                             },
@@ -1817,12 +1817,12 @@ Ok(
                                             start: SrcPos {
                                                 line: 76,
                                                 col: 6,
-                                                idx: 726,
+                                                idx: 732,
                                             },
                                             end: SrcPos {
                                                 line: 77,
                                                 col: 1,
-                                                idx: 732,
+                                                idx: 738,
                                             },
                                         },
                                     },
@@ -1834,12 +1834,12 @@ Ok(
                         start: SrcPos {
                             line: 78,
                             col: 0,
-                            idx: 735,
+                            idx: 741,
                         },
                         end: SrcPos {
                             line: 78,
                             col: 1,
-                            idx: 736,
+                            idx: 742,
                         },
                     },
                 },
@@ -1855,12 +1855,12 @@ Ok(
                                 start: SrcPos {
                                     line: 79,
                                     col: 1,
-                                    idx: 737,
+                                    idx: 743,
                                 },
                                 end: SrcPos {
                                     line: 79,
                                     col: 6,
-                                    idx: 742,
+                                    idx: 748,
                                 },
                             },
                         },
@@ -1875,16 +1875,16 @@ Ok(
                                             start: SrcPos {
                                                 line: 79,
                                                 col: 6,
-                                                idx: 742,
+                                                idx: 748,
                                             },
                                             end: SrcPos {
                                                 line: 79,
-                                                col: 16,
-                                                idx: 752,
+                                                col: 17,
+                                                idx: 759,
                                             },
                                         },
                                     },
-                                    op: Add,
+                                    op: Combine,
                                     rhs: Expr {
                                         kind: Ident(
                                             "foo",
@@ -1892,13 +1892,13 @@ Ok(
                                         span: Span {
                                             start: SrcPos {
                                                 line: 79,
-                                                col: 17,
-                                                idx: 753,
+                                                col: 18,
+                                                idx: 760,
                                             },
                                             end: SrcPos {
                                                 line: 79,
-                                                col: 21,
-                                                idx: 757,
+                                                col: 22,
+                                                idx: 764,
                                             },
                                         },
                                     },
@@ -1907,12 +1907,12 @@ Ok(
                                     start: SrcPos {
                                         line: 79,
                                         col: 6,
-                                        idx: 742,
+                                        idx: 748,
                                     },
                                     end: SrcPos {
                                         line: 79,
-                                        col: 21,
-                                        idx: 757,
+                                        col: 22,
+                                        idx: 764,
                                     },
                                 },
                             },
@@ -1922,12 +1922,12 @@ Ok(
                         start: SrcPos {
                             line: 79,
                             col: 1,
-                            idx: 737,
+                            idx: 743,
                         },
                         end: SrcPos {
                             line: 80,
                             col: 1,
-                            idx: 758,
+                            idx: 765,
                         },
                     },
                 },

@@ -143,6 +143,7 @@ pub enum BinaryOp {
     GreaterEq,
     Less,
     LessEq,
+    Combine,
 }
 
 impl Display for BinaryOp {
@@ -158,6 +159,7 @@ impl Display for BinaryOp {
             BinaryOp::GreaterEq => write!(f, ">="),
             BinaryOp::Less => write!(f, "<"),
             BinaryOp::LessEq => write!(f, "<="),
+            BinaryOp::Combine => write!(f, "<>"),
         }
     }
 }

@@ -252,9 +252,9 @@ Ok(
         },
         Token {
             kind: String(
-                "s1 + s2 = ",
+                "s1 <> s2 = ",
             ),
-            origin: "\"s1 + s2 = \"",
+            origin: "\"s1 <> s2 = \"",
             span: Span {
                 start: SrcPos {
                     line: 4,
@@ -263,24 +263,24 @@ Ok(
                 },
                 end: SrcPos {
                     line: 4,
-                    col: 18,
-                    idx: 50,
+                    col: 19,
+                    idx: 51,
                 },
             },
         },
         Token {
-            kind: Plus,
-            origin: "+",
+            kind: Combine,
+            origin: "<>",
             span: Span {
                 start: SrcPos {
                     line: 4,
-                    col: 19,
-                    idx: 51,
+                    col: 20,
+                    idx: 52,
                 },
                 end: SrcPos {
                     line: 4,
-                    col: 20,
-                    idx: 52,
+                    col: 22,
+                    idx: 54,
                 },
             },
         },
@@ -292,24 +292,8 @@ Ok(
             span: Span {
                 start: SrcPos {
                     line: 4,
-                    col: 21,
-                    idx: 53,
-                },
-                end: SrcPos {
-                    line: 4,
                     col: 23,
                     idx: 55,
-                },
-            },
-        },
-        Token {
-            kind: Plus,
-            origin: "+",
-            span: Span {
-                start: SrcPos {
-                    line: 4,
-                    col: 24,
-                    idx: 56,
                 },
                 end: SrcPos {
                     line: 4,
@@ -319,10 +303,8 @@ Ok(
             },
         },
         Token {
-            kind: Ident(
-                "s2",
-            ),
-            origin: "s2",
+            kind: Combine,
+            origin: "<>",
             span: Span {
                 start: SrcPos {
                     line: 4,
@@ -337,18 +319,36 @@ Ok(
             },
         },
         Token {
+            kind: Ident(
+                "s2",
+            ),
+            origin: "s2",
+            span: Span {
+                start: SrcPos {
+                    line: 4,
+                    col: 29,
+                    idx: 61,
+                },
+                end: SrcPos {
+                    line: 4,
+                    col: 31,
+                    idx: 63,
+                },
+            },
+        },
+        Token {
             kind: RParen,
             origin: ")",
             span: Span {
                 start: SrcPos {
                     line: 4,
-                    col: 28,
-                    idx: 60,
+                    col: 31,
+                    idx: 63,
                 },
                 end: SrcPos {
                     line: 4,
-                    col: 29,
-                    idx: 61,
+                    col: 32,
+                    idx: 64,
                 },
             },
         },
@@ -359,12 +359,12 @@ Ok(
                 start: SrcPos {
                     line: 5,
                     col: 0,
-                    idx: 61,
+                    idx: 64,
                 },
                 end: SrcPos {
                     line: 5,
                     col: 1,
-                    idx: 62,
+                    idx: 65,
                 },
             },
         },
@@ -375,12 +375,12 @@ Ok(
                 start: SrcPos {
                     line: 5,
                     col: 1,
-                    idx: 62,
+                    idx: 65,
                 },
                 end: SrcPos {
                     line: 5,
                     col: 1,
-                    idx: 62,
+                    idx: 65,
                 },
             },
         },

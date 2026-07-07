@@ -4,14 +4,14 @@ let a :=
 	yield foo + bar
 end
 
-echo("a = " + a)
+echo("a = " <> a)
 
 let b := do
 	yield 6
 	yield 5
 end
 
-echo("b = " + b)
+echo("b = " <> b)
 
 let c :=
     let foo := if true do
@@ -26,7 +26,7 @@ let c :=
 	yield 20
 end
 
-echo("c = " + c)
+echo("c = " <> c)
 
 let d :=
     if true do
@@ -36,7 +36,7 @@ let d :=
     yield 20
 end
 
-echo("d = " + d)
+echo("d = " <> d)
 
 let e :=
     var i := 0
@@ -54,7 +54,7 @@ let e :=
     yield 999
 end
 
-echo("e = " + e)
+echo("e = " <> e)
 
 let f :=
     let inner :=
@@ -65,7 +65,7 @@ let f :=
     yield inner + 1
 end
 
-echo("f = " + f)
+echo("f = " <> f)
 
 var i := 0
 let foo := while i < 10 do
@@ -76,4 +76,4 @@ let foo := while i < 10 do
 	i = i + 1
 end
 
-echo("foo = " + foo)
+echo("foo = " <> foo)
