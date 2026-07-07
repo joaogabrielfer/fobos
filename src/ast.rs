@@ -43,6 +43,11 @@ pub enum TypeAnnotation {
 #[derive(Debug, Clone, PartialEq)]
 pub enum Type {
     Named(String),
+    Tuple(Vec<String>),
+    Function {
+        parameters: Vec<String>,
+        return_type: Box<Type>,
+    },
     Unit,
 }
 

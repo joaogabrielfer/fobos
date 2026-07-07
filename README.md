@@ -11,6 +11,14 @@ Use `cargo run -- generate-expected` to compile all .blorp programs in tests/ to
 
 Use `cargo test` to run the unit tests and ensure the result is the expected
 
+## Todo
+
+- [x] variable definition
+- [x] blocks
+- [x] yield and return
+- [x] function declaration
+- [ ] functions as values
+
 ## Langage syntax
 
 ### Variable definition

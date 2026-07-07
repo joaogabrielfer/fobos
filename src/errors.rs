@@ -99,7 +99,7 @@ impl Display for ParserError {
 pub enum ParserErrorKind {
     #[error("expected token '{expected}', found '{found}'")]
     ExpectedToken { expected: String, found: String },
-    #[error("expected tokens '{expected:?}', found '{found}'")]
+    #[error("expected tokens {} but found '{found}'", render_vec_tokens(expected.clone()))]
     ExpectedTokens {
         expected: Vec<String>,
         found: String,
@@ -116,6 +116,21 @@ pub enum ParserErrorKind {
     InvalidAssignmentTarget { expr: String },
     #[error("{expr} is not a valid lamda parameter")]
     InvalidParameter { expr: String },
+    #[error("expected type annotation, got nothing")]
+    ExpectedTypeAnnotation,
+}
+
+fn render_vec_tokens(tks: Vec<String>) -> String {
+    let mut s = String::new();
+    for (i, tk) in tks.iter().enumerate() {
+        s = format!("{s}'");
+        s = format!("{s}{tk}");
+        s = format!("{s}'");
+        if i < tks.len() - 1 {
+            s = format!("{s} or ");
+        }
+    }
+    s
 }
 
 #[derive(Debug, Error)]

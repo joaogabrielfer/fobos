@@ -1,0 +1,23 @@
+Program {
+    statements: [
+        Return(
+            Expr {
+                kind: String(
+                    "foo",
+                ),
+                span: Span {
+                    start: SrcPos {
+                        line: 1,
+                        col: 8,
+                        idx: 7,
+                    },
+                    end: SrcPos {
+                        line: 2,
+                        col: 1,
+                        idx: 13,
+                    },
+                },
+            },
+        ),
+    ],
+}

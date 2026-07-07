@@ -1,0 +1,23 @@
+Program {
+    statements: [
+        Yield(
+            Expr {
+                kind: String(
+                    "foo",
+                ),
+                span: Span {
+                    start: SrcPos {
+                        line: 1,
+                        col: 7,
+                        idx: 6,
+                    },
+                    end: SrcPos {
+                        line: 2,
+                        col: 1,
+                        idx: 12,
+                    },
+                },
+            },
+        ),
+    ],
+}

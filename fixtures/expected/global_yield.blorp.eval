@@ -1,0 +1,16 @@
+RuntimeError {
+    kind: YieldOutsideHandler,
+    span: Span {
+        start: SrcPos {
+            line: 1,
+            col: 7,
+            idx: 6,
+        },
+        end: SrcPos {
+            line: 2,
+            col: 1,
+            idx: 12,
+        },
+    },
+    file_path: "/home/joaogabriel/personal/programming/projects/blorp/fixtures/global_yield.blorp",
+}

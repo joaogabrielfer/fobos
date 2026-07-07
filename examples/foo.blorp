@@ -1,0 +1,13 @@
+let add := (a, b) ->
+	return a + b
+end
+
+fun sub(a: Int, b: Int): Int =
+	return a - b
+end
+
+fun apply(values: (Int, Int), fn: (Int, Int) -> Int): Int =
+	return values.fn()
+end
+
+echo(add(1, 2))

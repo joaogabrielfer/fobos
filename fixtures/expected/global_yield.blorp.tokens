@@ -1,0 +1,70 @@
+Ok(
+    [
+        Token {
+            kind: Yield,
+            origin: "yield",
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 1,
+                    idx: 0,
+                },
+                end: SrcPos {
+                    line: 1,
+                    col: 6,
+                    idx: 5,
+                },
+            },
+        },
+        Token {
+            kind: String(
+                "foo",
+            ),
+            origin: "\"foo\"",
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 7,
+                    idx: 6,
+                },
+                end: SrcPos {
+                    line: 1,
+                    col: 12,
+                    idx: 11,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 2,
+                    col: 0,
+                    idx: 11,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 12,
+                },
+            },
+        },
+        Token {
+            kind: Eof,
+            origin: "EOF",
+            span: Span {
+                start: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 12,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 12,
+                },
+            },
+        },
+    ],
+)

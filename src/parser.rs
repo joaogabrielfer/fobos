@@ -1,5 +1,5 @@
 use crate::{
-    ast::{self, Expr, ExprKind, Parameter, TypeAnnotation},
+    ast::{self, Expr, ExprKind, Parameter, Type, TypeAnnotation},
     errors::{ParserError, ParserErrorKind},
     lexer::{
         Token, TokenKind,
@@ -88,6 +88,7 @@ impl<'a> Parser<'a> {
             self.expect(TokenTag::Let)?;
         }
         let name = self.expect_ident()?;
+        self.expect(TokenTag::Colon)?;
         let type_annotation = self.parse_option_type()?;
         self.expect(TokenTag::Equals)?;
         let value = if self.check(TokenTag::NewLine) {
@@ -137,7 +138,9 @@ impl<'a> Parser<'a> {
             }
             let name = self.expect_ident()?;
             self.expect(TokenTag::Colon)?;
-            let t = ast::Type::Named(self.expect_ident()?);
+            let TypeAnnotation::Explicit(t) = self.parse_option_type()? else {
+                return Err(self.error(ParserErrorKind::ExpectedTypeAnnotation));
+            };
             parameters.push(ast::Parameter {
                 name,
                 t: TypeAnnotation::Explicit(t),
@@ -158,6 +161,7 @@ impl<'a> Parser<'a> {
                 }
             }
         }
+        self.expect(TokenTag::Colon)?;
         let return_type = self.parse_option_type()?;
         self.expect(TokenTag::Equals)?;
         let body = self.parse_block()?;
@@ -206,7 +210,13 @@ impl<'a> Parser<'a> {
                 }
             }
             self.expect(TokenTag::RArrow)?;
-            let body = Box::new(self.parse_expr()?);
+            let span = self.current().span;
+            let body = if self.check(TokenTag::NewLine) {
+                let block = self.parse_block()?;
+                Box::new(self.new_expr(span, ExprKind::Block(block)))
+            } else {
+                Box::new(self.parse_expr()?)
+            };
             Ok(self.new_expr(start_span, ExprKind::Lambda { parameters, body }))
         } else {
             Ok(expr)
@@ -434,7 +444,6 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_option_type(&mut self) -> Result<ast::TypeAnnotation, Box<ParserError>> {
-        self.expect(TokenTag::Colon)?;
         match self.current_tag() {
             TokenTag::Equals => Ok(ast::TypeAnnotation::Inferred),
             TokenTag::Ident => {
@@ -445,8 +454,38 @@ impl<'a> Parser<'a> {
             }
             TokenTag::LParen => {
                 self.expect(TokenTag::LParen)?;
-                self.expect(TokenTag::RParen)?;
-                Ok(ast::TypeAnnotation::Explicit(ast::Type::Unit))
+                match self.current_tag() {
+                    TokenTag::RParen => {
+                        self.expect(TokenTag::RParen)?;
+                        Ok(ast::TypeAnnotation::Explicit(ast::Type::Unit))
+                    }
+                    TokenTag::Ident => {
+                        let i = self.expect_ident()?;
+                        let mut idents = vec![i];
+                        while let TokenTag::Comma = self.current_tag() {
+                            self.advance();
+                            idents.push(self.expect_ident()?);
+                        }
+                        self.expect(TokenTag::RParen)?;
+                        if self.check(TokenTag::RArrow) {
+                            self.expect(TokenTag::RArrow)?;
+                            let TypeAnnotation::Explicit(return_type) = self.parse_option_type()?
+                            else {
+                                return Err(self.error(ParserErrorKind::ExpectedTypeAnnotation));
+                            };
+                            Ok(TypeAnnotation::Explicit(Type::Function {
+                                parameters: idents,
+                                return_type: Box::new(return_type),
+                            }))
+                        } else {
+                            Ok(TypeAnnotation::Explicit(Type::Tuple(idents)))
+                        }
+                    }
+                    other => Err(self.error(ParserErrorKind::ExpectedTokens {
+                        expected: vec![")".to_string(), "type".to_string()],
+                        found: other.to_string(),
+                    })),
+                }
             }
             other => Err(self.error(ParserErrorKind::ExpectedTokens {
                 expected: vec!["=".to_string(), "type".to_string()],
