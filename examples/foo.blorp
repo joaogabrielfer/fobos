@@ -6,8 +6,8 @@ fun sub(a: Int, b: Int): Int =
 	return a - b
 end
 
-fun apply(values: (Int, Int), fn: (Int, Int) -> Int): Int =
-	return values.fn()
+fun apply(a: Int, b: Int, fn: (Int, Int) -> Int): Int =
+	return fn(a, b)
 end
 
-echo(add(1, 2))
+apply(1, 2, add).echo()

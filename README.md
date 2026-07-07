@@ -17,7 +17,20 @@ Use `cargo test` to run the unit tests and ensure the result is the expected
 - [x] blocks
 - [x] yield and return
 - [x] function declaration
-- [ ] functions as values
+- [x] functions as values
+- [x] function calling
+- [x] while loops
+- [x] if statements
+- [ ] arrays
+- [ ] for loops
+- [ ] type checking
+- [ ] custom types (adts)
+- [ ] interfaces
+- [ ] pattern matching
+- [ ] generic
+- [ ] ranges
+- [ ] patterns
+- [ ] effects
 
 ## Langage syntax
 
