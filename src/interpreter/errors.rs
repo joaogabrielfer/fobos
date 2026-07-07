@@ -1,5 +1,6 @@
 use std::{fmt::Display, path::PathBuf};
 
+use colored::Colorize;
 use thiserror::Error;
 
 use crate::{
@@ -19,15 +20,16 @@ impl Display for RuntimeError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match render_source_span(&self.file_path, self.span) {
             Ok((line, col, snippet)) => {
+                let spaces = (0..line.to_string().len()).map(|_| ' ').collect::<String>();
+                let pipe = "|".cyan();
+                let arrow = "-->".cyan();
+                let error_red = "error".red();
                 write!(
                     f,
-                    "error: {}\n --> {}:{}:{}:\n  |\n{} |   {}",
+                    "{error_red}: {}\n{spaces}{arrow} {}:{line}:{col}:\n{spaces} {pipe}\n{} {pipe}   {snippet}",
                     self.kind,
                     self.file_path.display(),
-                    line,
-                    col,
-                    line,
-                    snippet,
+                    line.to_string().cyan(),
                 )
             }
             Err(_) => {
@@ -66,4 +68,6 @@ pub enum RuntimeErrorKind {
     NotCallable(String),
     #[error("expected {expected} function parameters, found {found}")]
     ArityMismatch { expected: usize, found: usize },
+    #[error("missing 'else' branch for 'if' condition that yields a value")]
+    ElseBranchMissing,
 }

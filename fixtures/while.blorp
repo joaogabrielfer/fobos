@@ -1,7 +1,8 @@
 var a := 0
-while true do
+while a < 10 do
 	a = a + 1
 end
+return a
 
 var b := 10
 while b > 0 do b = b - 1

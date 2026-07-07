@@ -10,7 +10,21 @@ let b := do
 	yield 5
 end
 
-let c := // this one has value of 20, but i think it is the expected result, since it doesnt have implicit returns
+let c :=
+    let foo := if true do
+        yield 10
+    end
+
+	if true do
+		yield 15
+	end
+
+	yield foo
+	yield 20
+end
+
+
+let d :=
     if true do
         yield 10
     end
@@ -18,37 +32,18 @@ let c := // this one has value of 20, but i think it is the expected result, sin
     yield 20
 end
 
-
-let d :=
-    yield if true do // we have to do something like this to 'capture' the result of the if expression and bubble it up
-        yield 10
-    end
-
-    yield 20
-end
-
-let e := if true 10 else do 20 // this works fine
-// let e := if true do yield 10 else do 20 // this too
-
 let f :=
     var i := 0
 
-    while i < 10 do
-        if i == 3 do
-            yield i // this yield does not return from the statement, instead 'e' has value of 999
+    let foo := while i < 10 do
+        if i == 4 do
+            yield i
         end
 
         i = i + 1
     end
 
-
-    // yield while i < 10 do // parsing error: while is not an expression
-    //     if i == 3 do
-    //         yield i
-    //     end
-    //
-    //     i = i + 1
-    // end
+	yield foo
 
     yield 999
 end
@@ -62,4 +57,13 @@ let g :=
     yield inner + 1
 end
 
-return e
+var i := 0
+let foo := while i < 10 do
+	if i == 4 do
+		yield i
+	end
+
+	i = i + 1
+end
+
+return a

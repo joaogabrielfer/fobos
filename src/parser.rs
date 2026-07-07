@@ -2,6 +2,7 @@ use std::fmt::Display;
 use std::path::PathBuf;
 
 use anyhow::Result;
+use colored::Colorize;
 use thiserror::Error;
 
 use crate::ast::{self, Expr, ExprKind};
@@ -28,15 +29,16 @@ impl Display for ParserError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match render_source_span(&self.file_path, self.pos) {
             Ok((line, col, snippet)) => {
+                let spaces = (0..line.to_string().len()).map(|_| ' ').collect::<String>();
+                let pipe = "|".cyan();
+                let arrow = "-->".cyan();
+                let error_red = "error".red();
                 write!(
                     f,
-                    "error: {}\n --> {}:{}:{}:\n  |\n{} |   {}",
+                    "{error_red}: {}\n{spaces}{arrow} {}:{line}:{col}:\n{spaces} {pipe}\n{} {pipe}   {snippet}",
                     self.kind,
                     self.file_path.display(),
-                    line,
-                    col,
-                    line,
-                    snippet,
+                    line.to_string().cyan(),
                 )
             }
             Err(_) => {
@@ -103,7 +105,7 @@ impl<'a> Parser<'a> {
         match self.current().kind {
             TokenKind::Let => self.parse_binding(false),
             TokenKind::Var => self.parse_binding(true),
-            TokenKind::While => self.parse_while(),
+            // TokenKind::While => self.parse_while(),
             TokenKind::Fun => self.parse_fun_decl(),
             TokenKind::Return => {
                 self.advance();
@@ -164,12 +166,12 @@ impl<'a> Parser<'a> {
         })
     }
 
-    fn parse_while(&mut self) -> Result<ast::Stmt, Box<ParserError>> {
+    fn parse_while(&mut self) -> Result<Expr, Box<ParserError>> {
         self.expect(TokenTag::While)?;
-        let condition = self.parse_expr()?;
+        let condition = Box::new(self.parse_expr()?);
         self.expect(TokenTag::Do)?;
         let block = self.parse_block()?;
-        Ok(ast::Stmt::While { condition, block })
+        Ok(self.new_expr(self.current().span, ExprKind::While { condition, block }))
     }
 
     fn parse_fun_decl(&mut self) -> Result<ast::Stmt, Box<ParserError>> {
@@ -450,6 +452,7 @@ impl<'a> Parser<'a> {
                 Ok(self.new_expr(start_span, ExprKind::Ident(i.to_string())))
             }
             TokenKind::If => self.parse_if_expr(),
+            TokenKind::While => self.parse_while(),
             TokenKind::Do => {
                 self.expect(TokenTag::Do)?;
                 let block = self.parse_block()?;

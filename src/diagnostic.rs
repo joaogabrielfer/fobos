@@ -1,5 +1,7 @@
 use std::path::Path;
 
+use colored::Colorize;
+
 use crate::source::Span;
 
 pub fn render_source_span(file_path: &Path, span: Span) -> anyhow::Result<(usize, usize, String)> {
@@ -33,17 +35,22 @@ pub fn render_source_span(file_path: &Path, span: Span) -> anyhow::Result<(usize
     result.push('\n');
 
     result.push(' ');
-    result.push(' ');
-    result.push('|');
+    (0..span.start.line.to_string().len()).for_each(|_| result.push(' '));
+    result = format!("{result}{}", "|".cyan());
     result.push_str("   ");
 
     for _ in 1..start_col {
         result.push(' ');
     }
 
-    for _ in 0..width {
-        result.push('^');
-    }
+    result = format!(
+        "{result}{}",
+        &(0..width)
+            .map(|_| '^')
+            .collect::<String>()
+            .red()
+            .to_string()
+    );
 
     Ok((span.start.line, span.start.col, result))
 }

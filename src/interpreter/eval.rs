@@ -19,6 +19,12 @@ pub enum EvalFlow {
     Yield(Value),
 }
 
+#[derive(Debug, Clone, Copy)]
+enum YieldMode {
+    Bubble,
+    Capture,
+}
+
 macro_rules! value_or_flow {
     ($flow:expr) => {
         match $flow {
@@ -47,15 +53,15 @@ impl<'a> Interpreter<'a> {
     fn eval_statement(&mut self, statement: &'a Stmt) -> Result<EvalFlow, Box<RuntimeError>> {
         match statement {
             Stmt::Expr(expr) => {
-                let value = self.eval_expr(expr)?;
+                let value = self.eval_expr(expr, YieldMode::Bubble)?;
                 Ok(EvalFlow::Continue(value_or_flow!(value)))
             }
             Stmt::Return(expr) => {
-                let value = self.eval_expr(expr)?;
+                let value = self.eval_expr(expr, YieldMode::Capture)?;
                 Ok(EvalFlow::Return(value_or_flow!(value)))
             }
             Stmt::Yield(expr) => {
-                let value = self.eval_expr(expr)?;
+                let value = self.eval_expr(expr, YieldMode::Capture)?;
                 Ok(EvalFlow::Yield(value_or_flow!(value)))
             }
             Stmt::Bind {
@@ -64,13 +70,13 @@ impl<'a> Interpreter<'a> {
                 value,
                 ..
             } => {
-                let value = self.eval_expr(value)?;
-                self.env.define(name, *mutable, value_or_flow!(value));
+                let value = value_or_flow!(self.eval_expr(value, YieldMode::Capture)?);
+                self.env.define(name, *mutable, value);
                 Ok(EvalFlow::Continue(Value::Unit))
             }
             Stmt::Assignment { target, value } => {
                 let value_span = value.span;
-                let value = self.eval_expr(value)?;
+                let value = self.eval_expr(value, YieldMode::Capture)?;
                 if let ExprKind::Ident(name) = &target.kind {
                     self.env
                         .assign(name, value_or_flow!(value))
@@ -91,37 +97,7 @@ impl<'a> Interpreter<'a> {
                     ))
                 }
             }
-            Stmt::While { condition, block } => {
-                loop {
-                    let condition_bool = match value_or_flow!(self.eval_expr(condition)?) {
-                        Value::Bool(b) => b,
-                        other => {
-                            return Err(self.error_at(
-                                condition.span,
-                                RuntimeErrorKind::ExpectedBool {
-                                    found: other.to_string(),
-                                },
-                            ));
-                        }
-                    };
-
-                    if !condition_bool {
-                        break;
-                    }
-
-                    match self.eval_block(block)? {
-                        EvalFlow::Continue(_) => {}
-                        EvalFlow::Return(value) => {
-                            return Ok(EvalFlow::Return(value));
-                        }
-                        EvalFlow::Yield(value) => {
-                            return Ok(EvalFlow::Yield(value));
-                        }
-                    }
-                }
-
-                Ok(EvalFlow::Continue(Value::Unit))
-            }
+            #[allow(unused_variables)]
             Stmt::FunDecl {
                 name,
                 generics,
@@ -132,9 +108,25 @@ impl<'a> Interpreter<'a> {
         }
     }
 
-    fn eval_block(&mut self, block: &'a Block) -> Result<EvalFlow, Box<RuntimeError>> {
+    fn eval_block(
+        &mut self,
+        block: &'a Block,
+        yield_mode: YieldMode,
+    ) -> Result<EvalFlow, Box<RuntimeError>> {
         self.env.push_scope();
 
+        let result = self.eval_block_inner(block, yield_mode);
+
+        self.env.pop_scope();
+
+        result
+    }
+
+    fn eval_block_inner(
+        &mut self,
+        block: &'a Block,
+        yield_mode: YieldMode,
+    ) -> Result<EvalFlow, Box<RuntimeError>> {
         let mut last_value = Value::Unit;
 
         for stmt in &block.statements {
@@ -142,29 +134,28 @@ impl<'a> Interpreter<'a> {
                 EvalFlow::Continue(value) => {
                     last_value = value;
                 }
+
                 EvalFlow::Return(value) => {
-                    self.env.pop_scope();
                     return Ok(EvalFlow::Return(value));
                 }
+
                 EvalFlow::Yield(value) => {
-                    self.env.pop_scope();
-                    return Ok(EvalFlow::Yield(value));
+                    return match yield_mode {
+                        YieldMode::Capture => Ok(EvalFlow::Continue(value)),
+                        YieldMode::Bubble => Ok(EvalFlow::Yield(value)),
+                    };
                 }
             }
         }
-        self.env.pop_scope();
+
         Ok(EvalFlow::Continue(last_value))
     }
 
-    fn eval_block_expr(&mut self, block: &'a Block) -> Result<EvalFlow, Box<RuntimeError>> {
-        match self.eval_block(block)? {
-            EvalFlow::Continue(value) => Ok(EvalFlow::Continue(value)),
-            EvalFlow::Return(value) => Ok(EvalFlow::Return(value)),
-            EvalFlow::Yield(value) => Ok(EvalFlow::Continue(value)),
-        }
-    }
-
-    fn eval_expr(&mut self, expr: &'a Expr) -> Result<EvalFlow, Box<RuntimeError>> {
+    fn eval_expr(
+        &mut self,
+        expr: &'a Expr,
+        yield_mode: YieldMode,
+    ) -> Result<EvalFlow, Box<RuntimeError>> {
         match &expr.kind {
             ExprKind::Int(val) => Ok(EvalFlow::Continue(Value::Int(*val))),
             ExprKind::Float(val) => Ok(EvalFlow::Continue(Value::Float(*val))),
@@ -181,19 +172,19 @@ impl<'a> Interpreter<'a> {
                 Ok(EvalFlow::Continue(value))
             }
             ExprKind::Unit => Ok(EvalFlow::Continue(Value::Unit)),
-            ExprKind::Block(block) => self.eval_block_expr(block),
+            ExprKind::Block(block) => self.eval_block(block, yield_mode),
             ExprKind::Tuple(exprs) => {
                 let mut values = vec![];
 
                 for expr in exprs {
-                    let value = value_or_flow!(self.eval_expr(expr)?);
+                    let value = value_or_flow!(self.eval_expr(expr, YieldMode::Capture)?);
                     values.push(value);
                 }
 
                 Ok(EvalFlow::Continue(Value::Tuple(values)))
             }
             ExprKind::Unary { op, operand } => {
-                let value = value_or_flow!(self.eval_expr(operand)?);
+                let value = value_or_flow!(self.eval_expr(operand, YieldMode::Capture)?);
                 match op {
                     crate::ast::UnaryOp::Negate => match value {
                         Value::Int(val) => Ok(EvalFlow::Continue(Value::Int(-val))),
@@ -219,8 +210,8 @@ impl<'a> Interpreter<'a> {
                 }
             }
             ExprKind::Binary { lhs, op, rhs } => {
-                let lhs = value_or_flow!(self.eval_expr(lhs)?);
-                let rhs = value_or_flow!(self.eval_expr(rhs)?);
+                let lhs = value_or_flow!(self.eval_expr(lhs, YieldMode::Capture)?);
+                let rhs = value_or_flow!(self.eval_expr(rhs, YieldMode::Capture)?);
                 match op {
                     BinaryOp::Add => match (lhs, rhs) {
                         (Value::String(s1), Value::String(s2)) => Ok(EvalFlow::Continue(
@@ -407,40 +398,106 @@ impl<'a> Interpreter<'a> {
                     },
                 }
             }
+            #[allow(unused_variables)]
             ExprKind::Call { callee, args } => todo!(),
             ExprKind::If {
                 condition,
                 then_branch,
                 else_branch,
-            } => {
-                let condition_value = match self.eval_expr(condition)? {
-                    EvalFlow::Continue(value) => value,
-                    EvalFlow::Return(value) => return Ok(EvalFlow::Return(value)),
-                    EvalFlow::Yield(value) => return Ok(EvalFlow::Yield(value)),
-                };
-
-                let condition_bool = match condition_value {
-                    Value::Bool(b) => b,
-                    other => {
-                        return Err(self.error_at(
-                            condition.span,
-                            RuntimeErrorKind::ExpectedBool {
-                                found: other.to_string(),
-                            },
-                        ));
-                    }
-                };
-
-                if condition_bool {
-                    self.eval_expr(then_branch)
-                } else if let Some(else_branch) = else_branch {
-                    self.eval_expr(else_branch)
-                } else {
-                    Ok(EvalFlow::Continue(Value::Unit))
-                }
-            }
+            } => self.eval_if(condition, then_branch, else_branch, yield_mode),
+            ExprKind::While { condition, block } => self.eval_while(condition, block, yield_mode),
+            #[allow(unused_variables)]
             ExprKind::Lambda { params, body } => todo!(),
         }
+    }
+
+    fn eval_if(
+        &mut self,
+        condition: &'a Expr,
+        then_branch: &'a Expr,
+        else_branch: &'a Option<Box<Expr>>,
+        yield_mode: YieldMode,
+    ) -> Result<EvalFlow, Box<RuntimeError>> {
+        let condition_bool = value_or_flow!(self.eval_expr(condition, YieldMode::Capture)?);
+
+        let condition_bool = match condition_bool {
+            Value::Bool(b) => b,
+            other => {
+                return Err(self.error_at(
+                    condition.span,
+                    RuntimeErrorKind::ExpectedBool {
+                        found: other.to_string(),
+                    },
+                ));
+            }
+        };
+
+        let flow = if condition_bool {
+            self.eval_expr(then_branch, yield_mode)?
+        } else if let Some(else_branch) = else_branch {
+            self.eval_expr(else_branch, yield_mode)?
+        } else if let YieldMode::Capture = yield_mode {
+            return Err(self.error_at(
+                Span {
+                    start: condition.span.start,
+                    end: then_branch.span.end,
+                },
+                RuntimeErrorKind::ElseBranchMissing,
+            ));
+        } else {
+            EvalFlow::Continue(Value::Unit)
+        };
+
+        match (yield_mode, flow) {
+            (YieldMode::Capture, EvalFlow::Yield(value)) => Ok(EvalFlow::Continue(value)),
+            (_, other) => Ok(other),
+        }
+    }
+
+    fn eval_while(
+        &mut self,
+        condition: &'a Expr,
+        block: &'a Block,
+        yield_mode: YieldMode,
+    ) -> Result<EvalFlow, Box<RuntimeError>> {
+        loop {
+            let condition_value = value_or_flow!(self.eval_expr(condition, YieldMode::Capture)?);
+
+            let condition_bool = match condition_value {
+                Value::Bool(b) => b,
+                _ => {
+                    return Err(self.error_at(
+                        condition.span,
+                        RuntimeErrorKind::ExpectedBool {
+                            found: condition.kind.to_string(),
+                        },
+                    ));
+                }
+            };
+
+            if !condition_bool {
+                break;
+            }
+
+            let flow = self.eval_block(block, YieldMode::Bubble)?;
+
+            match flow {
+                EvalFlow::Continue(_) => {}
+
+                EvalFlow::Return(value) => {
+                    return Ok(EvalFlow::Return(value));
+                }
+
+                EvalFlow::Yield(value) => {
+                    return match yield_mode {
+                        YieldMode::Capture => Ok(EvalFlow::Continue(value)),
+                        YieldMode::Bubble => Ok(EvalFlow::Yield(value)),
+                    };
+                }
+            }
+        }
+
+        Ok(EvalFlow::Continue(Value::Unit))
     }
 
     fn error_at(&self, span: Span, kind: RuntimeErrorKind) -> Box<RuntimeError> {

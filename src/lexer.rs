@@ -4,6 +4,7 @@ use crate::{
     lexer::LexerErrorKind::UnterminatedString,
     source::{Span, SrcPos},
 };
+use colored::Colorize;
 use std::{fmt::Display, iter::Peekable, path::PathBuf, str::Chars};
 use thiserror::Error;
 
@@ -270,15 +271,16 @@ impl Display for LexerError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match render_source_span(&self.file_path, self.pos) {
             Ok((line, col, snippet)) => {
+                let spaces = (0..line.to_string().len()).map(|_| ' ').collect::<String>();
+                let pipe = "|".cyan();
+                let arrow = "-->".cyan();
+                let error_red = "error".red();
                 write!(
                     f,
-                    "error: {}\n --> {}:{}:{}:\n  |\n{} |   {}",
+                    "{error_red}: {}\n{spaces}{arrow} {}:{line}:{col}:\n{spaces} {pipe}\n{} {pipe}   {snippet}",
                     self.kind,
                     self.file_path.display(),
-                    line,
-                    col,
-                    line,
-                    snippet,
+                    line.to_string().cyan(),
                 )
             }
             Err(_) => {

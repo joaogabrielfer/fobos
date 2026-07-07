@@ -60,4 +60,10 @@ impl<'a> Env<'a> {
         }
         Err(RuntimeErrorKind::UndefinedVariable(name.to_string()))
     }
+    pub fn debug_scopes(&self) {
+        eprintln!("scopes:");
+        for (i, scope) in self.scopes.iter().enumerate() {
+            eprintln!("  scope {i}: {:?}", scope.keys().collect::<Vec<_>>());
+        }
+    }
 }

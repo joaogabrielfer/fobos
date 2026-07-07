@@ -25,11 +25,6 @@ pub enum Stmt {
         value: Expr,
     },
 
-    While {
-        condition: Expr,
-        block: Block,
-    },
-
     FunDecl {
         name: String,
         generics: Vec<String>,
@@ -99,6 +94,11 @@ pub enum ExprKind {
         else_branch: Option<Box<Expr>>,
     },
 
+    While {
+        condition: Box<Expr>,
+        block: Block,
+    },
+
     Lambda {
         params: Vec<String>,
         body: Box<Expr>,
@@ -120,6 +120,7 @@ impl Display for ExprKind {
             ExprKind::Binary { .. } => write!(f, "binary operation"),
             ExprKind::Call { .. } => write!(f, "function calling"),
             ExprKind::If { .. } => write!(f, "if condition"),
+            ExprKind::While { .. } => write!(f, "while loop"),
             ExprKind::Lambda { .. } => write!(f, "lambda"),
         }
     }
