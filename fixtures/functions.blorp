@@ -1,0 +1,5 @@
+fun add(x: Int, y: Int) :=
+	return x + y
+end
+
+(10, 5).add().echo()

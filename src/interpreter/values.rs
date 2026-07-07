@@ -1,3 +1,8 @@
+use crate::{
+    ast::{Block, Expr, Parameter, TypeAnnotation},
+    interpreter::env::EnvRef,
+};
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Value {
     Unit,
@@ -8,11 +13,27 @@ pub enum Value {
     Tuple(Vec<Value>),
 
     BuiltinFunction(BuiltinFunction),
+    Function(FunctionValue),
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum BuiltinFunction {
     Echo,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct FunctionValue {
+    pub name: Option<String>,
+    pub parameters: Vec<Parameter>,
+    pub body: FunctionBody,
+    pub captured_env: EnvRef,
+    pub return_type: TypeAnnotation,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum FunctionBody {
+    Block(Block),
+    Expr(Expr),
 }
 
 impl std::fmt::Display for Value {
@@ -37,6 +58,7 @@ impl std::fmt::Display for Value {
                 write!(f, ")")
             }
             Value::BuiltinFunction(_) => write!(f, "<builtin function>"),
+            Value::Function(_) => write!(f, "<function>"),
         }
     }
 }
@@ -60,6 +82,7 @@ impl Value {
                 s
             }
             Value::BuiltinFunction(_) => "<builtin function>".to_string(),
+            Value::Function(_) => "<function>".to_string(),
         }
     }
 }

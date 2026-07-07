@@ -3,10 +3,8 @@ use colored::Colorize;
 use rustyline::DefaultEditor;
 use std::{fs::read_to_string, path::PathBuf, process::exit};
 use thiserror::Error;
-use typed_arena::Arena;
 
 use blorp::{
-    ast::Program,
     dump::dump_expected,
     interpreter::Interpreter,
     lexer::Lexer,
@@ -62,7 +60,7 @@ fn run() -> anyhow::Result<()> {
             let path = &PathBuf::from("repl");
             let stdout = std::io::stdout();
             let mut interpreter = Interpreter::new(path, stdout.lock());
-            let ast_arena = Arena::new();
+            // let ast_arena = Arena::new();
             let mut c_c_pressed = false;
             loop {
                 let prompt = if !c_c_pressed {
@@ -94,7 +92,7 @@ fn run() -> anyhow::Result<()> {
                 source.push('\n');
                 let tokens = Lexer::new(path, &source).tokenize()?;
                 let ast = parser::Parser::new(tokens, path).parse_program()?;
-                let ast: &Program = ast_arena.alloc(ast);
+                // let ast: Program = ast_arena.alloc(ast);
                 let value = interpreter.eval_program(ast)?;
                 println!("{value}");
             }
@@ -104,7 +102,7 @@ fn run() -> anyhow::Result<()> {
             let tokens = Lexer::new(path, &content).tokenize()?;
             let ast = parser::Parser::new(tokens, path).parse_program()?;
             let stdout = std::io::stdout();
-            Interpreter::new(path, stdout.lock()).eval_program(&ast)?;
+            Interpreter::new(path, stdout.lock()).eval_program(ast)?;
             Ok(())
         }
         Some(Commands::Tokens { path, only_kinds }) => {

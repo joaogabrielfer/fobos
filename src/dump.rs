@@ -55,7 +55,7 @@ pub fn dump_expected() -> anyhow::Result<()> {
 
                         let mut interpreter = Interpreter::new_buffered(&current_file_path);
 
-                        let eval_result = interpreter.eval_program(&program);
+                        let eval_result = interpreter.eval_program(program);
                         let output = interpreter.into_output_string();
 
                         let eval_str = match eval_result {

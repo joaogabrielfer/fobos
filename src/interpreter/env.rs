@@ -1,21 +1,23 @@
-use std::collections::HashMap;
+use std::{cell::RefCell, collections::HashMap, rc::Rc};
 
 use anyhow::Result;
 
 use crate::{errors::RuntimeErrorKind, interpreter::values::Value};
 
-#[derive(Debug, Clone)]
-pub struct Env<'a> {
-    scopes: Vec<HashMap<&'a str, Binding>>,
+#[derive(Debug, Clone, PartialEq)]
+pub struct Env {
+    scopes: Vec<HashMap<String, Binding>>,
 }
 
-#[derive(Debug, Clone)]
+pub type EnvRef = Rc<RefCell<Env>>;
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct Binding {
     pub mutable: bool,
     pub value: Value,
 }
 
-impl<'a> Default for Env<'a> {
+impl Default for Env {
     fn default() -> Self {
         Self {
             scopes: vec![HashMap::new()],
@@ -23,7 +25,7 @@ impl<'a> Default for Env<'a> {
     }
 }
 
-impl<'a> Env<'a> {
+impl Env {
     pub fn push_scope(&mut self) {
         self.scopes.push(HashMap::new());
     }
@@ -32,7 +34,7 @@ impl<'a> Env<'a> {
             self.scopes.pop();
         }
     }
-    pub fn get(&self, name: &str) -> Result<Value, RuntimeErrorKind> {
+    pub fn get(&self, name: String) -> Result<Value, RuntimeErrorKind> {
         for scope in self.scopes.iter().rev() {
             if scope.contains_key(&name) {
                 return Ok(scope.get(&name).unwrap().clone().value);
@@ -40,16 +42,16 @@ impl<'a> Env<'a> {
         }
         Err(RuntimeErrorKind::UndefinedVariable(name.to_string()))
     }
-    pub fn define(&mut self, name: &'a str, mutable: bool, value: Value) {
+    pub fn define(&mut self, name: String, mutable: bool, value: Value) {
         self.scopes
             .last_mut()
             .expect("scopes should always have at least one entry")
             .insert(name, Binding { mutable, value });
     }
 
-    pub fn assign(&mut self, name: &'a str, value: Value) -> Result<(), RuntimeErrorKind> {
+    pub fn assign(&mut self, name: String, value: Value) -> Result<(), RuntimeErrorKind> {
         for scope in self.scopes.iter_mut().rev() {
-            if let Some(key) = scope.get_mut(name) {
+            if let Some(key) = scope.get_mut(&name) {
                 if !key.mutable {
                     return Err(RuntimeErrorKind::CannotAssignImmutable(name.to_string()));
                 } else {

@@ -1516,14 +1516,18 @@ Program {
             parameters: [
                 Parameter {
                     name: "x",
-                    t: Named(
-                        "Int",
+                    t: Explicit(
+                        Named(
+                            "Int",
+                        ),
                     ),
                 },
                 Parameter {
                     name: "y",
-                    t: Named(
-                        "Int",
+                    t: Explicit(
+                        Named(
+                            "Int",
+                        ),
                     ),
                 },
             ],
@@ -1625,14 +1629,18 @@ Program {
             parameters: [
                 Parameter {
                     name: "x",
-                    t: Named(
-                        "Int",
+                    t: Explicit(
+                        Named(
+                            "Int",
+                        ),
                     ),
                 },
                 Parameter {
                     name: "y",
-                    t: Named(
-                        "Int",
+                    t: Explicit(
+                        Named(
+                            "Int",
+                        ),
                     ),
                 },
             ],
@@ -1703,8 +1711,10 @@ Program {
             parameters: [
                 Parameter {
                     name: "x",
-                    t: Named(
-                        "T",
+                    t: Explicit(
+                        Named(
+                            "T",
+                        ),
                     ),
                 },
             ],
@@ -2005,8 +2015,11 @@ Program {
             type_annotation: Inferred,
             value: Expr {
                 kind: Lambda {
-                    params: [
-                        "x",
+                    parameters: [
+                        Parameter {
+                            name: "x",
+                            t: Inferred,
+                        },
                     ],
                     body: Expr {
                         kind: Binary {
@@ -2137,9 +2150,15 @@ Program {
             type_annotation: Inferred,
             value: Expr {
                 kind: Lambda {
-                    params: [
-                        "x",
-                        "y",
+                    parameters: [
+                        Parameter {
+                            name: "x",
+                            t: Inferred,
+                        },
+                        Parameter {
+                            name: "y",
+                            t: Inferred,
+                        },
                     ],
                     body: Expr {
                         kind: Binary {
@@ -2287,9 +2306,15 @@ Program {
             type_annotation: Inferred,
             value: Expr {
                 kind: Lambda {
-                    params: [
-                        "x",
-                        "y",
+                    parameters: [
+                        Parameter {
+                            name: "x",
+                            t: Inferred,
+                        },
+                        Parameter {
+                            name: "y",
+                            t: Inferred,
+                        },
                     ],
                     body: Expr {
                         kind: Block(
@@ -2515,13 +2540,19 @@ Program {
             type_annotation: Inferred,
             value: Expr {
                 kind: Lambda {
-                    params: [
-                        "x",
+                    parameters: [
+                        Parameter {
+                            name: "x",
+                            t: Inferred,
+                        },
                     ],
                     body: Expr {
                         kind: Lambda {
-                            params: [
-                                "y",
+                            parameters: [
+                                Parameter {
+                                    name: "y",
+                                    t: Inferred,
+                                },
                             ],
                             body: Expr {
                                 kind: Binary {
@@ -2723,8 +2754,11 @@ Program {
             type_annotation: Inferred,
             value: Expr {
                 kind: Lambda {
-                    params: [
-                        "x",
+                    parameters: [
+                        Parameter {
+                            name: "x",
+                            t: Inferred,
+                        },
                     ],
                     body: Expr {
                         kind: If {

@@ -6,9 +6,15 @@ Program {
             type_annotation: Inferred,
             value: Expr {
                 kind: Lambda {
-                    params: [
-                        "x",
-                        "y",
+                    parameters: [
+                        Parameter {
+                            name: "x",
+                            t: Inferred,
+                        },
+                        Parameter {
+                            name: "y",
+                            t: Inferred,
+                        },
                     ],
                     body: Expr {
                         kind: Block(
@@ -178,8 +184,11 @@ Program {
             type_annotation: Inferred,
             value: Expr {
                 kind: Lambda {
-                    params: [
-                        "x",
+                    parameters: [
+                        Parameter {
+                            name: "x",
+                            t: Inferred,
+                        },
                     ],
                     body: Expr {
                         kind: Binary {
@@ -290,8 +299,11 @@ Program {
                         },
                         Expr {
                             kind: Lambda {
-                                params: [
-                                    "x",
+                                parameters: [
+                                    Parameter {
+                                        name: "x",
+                                        t: Inferred,
+                                    },
                                 ],
                                 body: Expr {
                                     kind: Binary {
@@ -380,13 +392,19 @@ Program {
             type_annotation: Inferred,
             value: Expr {
                 kind: Lambda {
-                    params: [
-                        "x",
+                    parameters: [
+                        Parameter {
+                            name: "x",
+                            t: Inferred,
+                        },
                     ],
                     body: Expr {
                         kind: Lambda {
-                            params: [
-                                "y",
+                            parameters: [
+                                Parameter {
+                                    name: "y",
+                                    t: Inferred,
+                                },
                             ],
                             body: Expr {
                                 kind: Binary {
@@ -474,8 +492,11 @@ Program {
             type_annotation: Inferred,
             value: Expr {
                 kind: Lambda {
-                    params: [
-                        "s",
+                    parameters: [
+                        Parameter {
+                            name: "s",
+                            t: Inferred,
+                        },
                     ],
                     body: Expr {
                         kind: Call {
@@ -550,8 +571,11 @@ Program {
             type_annotation: Inferred,
             value: Expr {
                 kind: Lambda {
-                    params: [
-                        "x",
+                    parameters: [
+                        Parameter {
+                            name: "x",
+                            t: Inferred,
+                        },
                     ],
                     body: Expr {
                         kind: If {
@@ -677,9 +701,15 @@ Program {
             type_annotation: Inferred,
             value: Expr {
                 kind: Lambda {
-                    params: [
-                        "x",
-                        "y",
+                    parameters: [
+                        Parameter {
+                            name: "x",
+                            t: Inferred,
+                        },
+                        Parameter {
+                            name: "y",
+                            t: Inferred,
+                        },
                     ],
                     body: Expr {
                         kind: Block(

@@ -1,10 +1,13 @@
-use std::path::PathBuf;
+use std::{cell::RefCell, path::PathBuf, rc::Rc};
 
 use anyhow::Result;
 
 use crate::{
     errors::{RuntimeError, RuntimeErrorKind},
-    interpreter::{env::Env, values::BuiltinFunction},
+    interpreter::{
+        env::{Env, EnvRef},
+        values::BuiltinFunction,
+    },
     source::Span,
 };
 
@@ -14,16 +17,16 @@ pub mod eval;
 pub mod values;
 
 pub struct Interpreter<'a, W: std::io::Write> {
-    env: Env<'a>,
+    env: EnvRef,
     file_path: &'a PathBuf,
     output: W,
 }
 
 impl<'a, W: std::io::Write> Interpreter<'a, W> {
     pub fn new(file_path: &'a PathBuf, output: W) -> Self {
-        let mut env = Env::default();
-        env.define(
-            "echo",
+        let env = Rc::new(RefCell::new(Env::default()));
+        env.borrow_mut().define(
+            "echo".to_string(),
             false,
             values::Value::BuiltinFunction(BuiltinFunction::Echo),
         );
@@ -33,7 +36,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
             output,
         }
     }
-    pub fn new_with_env(file_path: &'a PathBuf, env: Env<'a>, output: W) -> Self {
+    pub fn new_with_env(file_path: &'a PathBuf, env: EnvRef, output: W) -> Self {
         Self {
             env,
             file_path,

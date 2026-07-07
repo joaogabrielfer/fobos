@@ -1,14 +1,17 @@
+use std::rc::Rc;
+
 use anyhow::Result;
 
 use crate::{
     ast::{
         BinaryOp, Block, Expr, ExprKind, Program,
         Stmt::{self},
+        TypeAnnotation,
     },
     errors::{RuntimeError, RuntimeErrorKind},
     interpreter::{
         Interpreter,
-        values::{BuiltinFunction, Value},
+        values::{BuiltinFunction, FunctionBody, FunctionValue, Value},
     },
     source::Span,
 };
@@ -36,13 +39,13 @@ macro_rules! value_or_flow {
 }
 
 impl<'a, W: std::io::Write> Interpreter<'a, W> {
-    pub fn eval_program(&mut self, program: &'a Program) -> Result<Value, Box<RuntimeError>> {
-        for stmt in &program.statements {
+    pub fn eval_program(&mut self, program: Program) -> Result<Value, Box<RuntimeError>> {
+        for stmt in program.statements {
             match self.eval_statement(stmt)? {
                 EvalFlow::Continue(_value) => {}
                 EvalFlow::Yield(_value) => {}
                 EvalFlow::Return(value) => {
-                    self.env.pop_scope();
+                    self.env.borrow_mut().pop_scope();
                     return Ok(value);
                 }
             }
@@ -50,7 +53,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
         Ok(Value::Unit)
     }
 
-    fn eval_statement(&mut self, statement: &'a Stmt) -> Result<EvalFlow, Box<RuntimeError>> {
+    fn eval_statement(&mut self, statement: Stmt) -> Result<EvalFlow, Box<RuntimeError>> {
         match statement {
             Stmt::Expr(expr) => {
                 let value = self.eval_expr(expr, YieldMode::Bubble)?;
@@ -71,14 +74,15 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 ..
             } => {
                 let value = value_or_flow!(self.eval_expr(value, YieldMode::Capture)?);
-                self.env.define(name, *mutable, value);
+                self.env.borrow_mut().define(name, mutable, value);
                 Ok(EvalFlow::Continue(Value::Unit))
             }
             Stmt::Assignment { target, value } => {
                 let value_span = value.span;
                 let value = self.eval_expr(value, YieldMode::Capture)?;
-                if let ExprKind::Ident(name) = &target.kind {
+                if let ExprKind::Ident(name) = target.kind {
                     self.env
+                        .borrow_mut()
                         .assign(name, value_or_flow!(value))
                         .map_err(|kind| {
                             self.error_at(
@@ -97,39 +101,53 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                     ))
                 }
             }
-            #[allow(unused_variables)]
             Stmt::FunDecl {
                 name,
-                generics,
+                generics: _,
                 parameters,
                 return_type,
                 body,
-            } => Err(self.error_at(Span::dummy(), RuntimeErrorKind::NotImplemented)),
+            } => {
+                // let return_type = match return_type {
+                //     TypeAnnotation::Explicit(t) => t,
+                //     TypeAnnotation::Inferred => todo!("type inference is not implemented yet"),
+                // };
+                let fun = Value::Function(FunctionValue {
+                    name: Some(name.clone()),
+                    parameters,
+                    body: FunctionBody::Block(body),
+                    return_type,
+                    captured_env: Rc::clone(&self.env),
+                });
+
+                self.env.borrow_mut().define(name, false, fun);
+                Ok(EvalFlow::Continue(Value::Unit))
+            }
         }
     }
 
     fn eval_block(
         &mut self,
-        block: &'a Block,
+        block: Block,
         yield_mode: YieldMode,
     ) -> Result<EvalFlow, Box<RuntimeError>> {
-        self.env.push_scope();
+        self.env.borrow_mut().push_scope();
 
         let result = self.eval_block_inner(block, yield_mode);
 
-        self.env.pop_scope();
+        self.env.borrow_mut().pop_scope();
 
         result
     }
 
     fn eval_block_inner(
         &mut self,
-        block: &'a Block,
+        block: Block,
         yield_mode: YieldMode,
     ) -> Result<EvalFlow, Box<RuntimeError>> {
         let mut last_value = Value::Unit;
 
-        for stmt in &block.statements {
+        for stmt in block.statements {
             match self.eval_statement(stmt)? {
                 EvalFlow::Continue(value) => {
                     last_value = value;
@@ -153,16 +171,16 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
 
     fn eval_expr(
         &mut self,
-        expr: &'a Expr,
+        expr: Expr,
         yield_mode: YieldMode,
     ) -> Result<EvalFlow, Box<RuntimeError>> {
-        match &expr.kind {
-            ExprKind::Int(val) => Ok(EvalFlow::Continue(Value::Int(*val))),
-            ExprKind::Float(val) => Ok(EvalFlow::Continue(Value::Float(*val))),
-            ExprKind::String(val) => Ok(EvalFlow::Continue(Value::String(val.clone()))),
-            ExprKind::Bool(val) => Ok(EvalFlow::Continue(Value::Bool(*val))),
+        match expr.kind {
+            ExprKind::Int(val) => Ok(EvalFlow::Continue(Value::Int(val))),
+            ExprKind::Float(val) => Ok(EvalFlow::Continue(Value::Float(val))),
+            ExprKind::String(val) => Ok(EvalFlow::Continue(Value::String(val))),
+            ExprKind::Bool(val) => Ok(EvalFlow::Continue(Value::Bool(val))),
             ExprKind::Ident(i) => {
-                let value = self.env.get(i).map_err(|kind| {
+                let value = self.env.borrow_mut().get(i).map_err(|kind| {
                     Box::new(RuntimeError {
                         kind,
                         span: expr.span,
@@ -184,7 +202,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 Ok(EvalFlow::Continue(Value::Tuple(values)))
             }
             ExprKind::Unary { op, operand } => {
-                let value = value_or_flow!(self.eval_expr(operand, YieldMode::Capture)?);
+                let value = value_or_flow!(self.eval_expr(*operand, YieldMode::Capture)?);
                 match op {
                     crate::ast::UnaryOp::Negate => match value {
                         Value::Int(val) => Ok(EvalFlow::Continue(Value::Int(-val))),
@@ -192,7 +210,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                         other => Err(self.error_at(
                             expr.span,
                             RuntimeErrorKind::InvalidUnaryOp {
-                                op: *op,
+                                op,
                                 operand: other.type_name(),
                             },
                         )),
@@ -202,7 +220,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                         other => Err(self.error_at(
                             expr.span,
                             RuntimeErrorKind::InvalidUnaryOp {
-                                op: *op,
+                                op,
                                 operand: other.type_name(),
                             },
                         )),
@@ -210,8 +228,8 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 }
             }
             ExprKind::Binary { lhs, op, rhs } => {
-                let lhs = value_or_flow!(self.eval_expr(lhs, YieldMode::Capture)?);
-                let rhs = value_or_flow!(self.eval_expr(rhs, YieldMode::Capture)?);
+                let lhs = value_or_flow!(self.eval_expr(*lhs, YieldMode::Capture)?);
+                let rhs = value_or_flow!(self.eval_expr(*rhs, YieldMode::Capture)?);
                 match op {
                     BinaryOp::Add => match (lhs, rhs) {
                         (Value::Int(i1), Value::Int(i2)) => {
@@ -223,7 +241,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                         (other_lhs, other_rhs) => Err(self.error_at(
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
-                                op: *op,
+                                op,
                                 lhs: other_lhs.type_name(),
                                 rhs: other_rhs.type_name(),
                             },
@@ -239,7 +257,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                         (other_lhs, other_rhs) => Err(self.error_at(
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
-                                op: *op,
+                                op,
                                 lhs: other_lhs.type_name(),
                                 rhs: other_rhs.type_name(),
                             },
@@ -255,7 +273,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                         (other_lhs, other_rhs) => Err(self.error_at(
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
-                                op: *op,
+                                op,
                                 lhs: other_lhs.type_name(),
                                 rhs: other_rhs.type_name(),
                             },
@@ -271,7 +289,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                         (other_lhs, other_rhs) => Err(self.error_at(
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
-                                op: *op,
+                                op,
                                 lhs: other_lhs.type_name(),
                                 rhs: other_rhs.type_name(),
                             },
@@ -297,7 +315,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                         (other_lhs, other_rhs) => Err(self.error_at(
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
-                                op: *op,
+                                op,
                                 lhs: other_lhs.type_name(),
                                 rhs: other_rhs.type_name(),
                             },
@@ -323,7 +341,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                         (other_lhs, other_rhs) => Err(self.error_at(
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
-                                op: *op,
+                                op,
                                 lhs: other_lhs.type_name(),
                                 rhs: other_rhs.type_name(),
                             },
@@ -339,7 +357,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                         (other_lhs, other_rhs) => Err(self.error_at(
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
-                                op: *op,
+                                op,
                                 lhs: other_lhs.type_name(),
                                 rhs: other_rhs.type_name(),
                             },
@@ -355,7 +373,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                         (other_lhs, other_rhs) => Err(self.error_at(
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
-                                op: *op,
+                                op,
                                 lhs: other_lhs.type_name(),
                                 rhs: other_rhs.type_name(),
                             },
@@ -371,7 +389,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                         (other_lhs, other_rhs) => Err(self.error_at(
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
-                                op: *op,
+                                op,
                                 lhs: other_lhs.type_name(),
                                 rhs: other_rhs.type_name(),
                             },
@@ -387,7 +405,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                         (other_lhs, other_rhs) => Err(self.error_at(
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
-                                op: *op,
+                                op,
                                 lhs: other_lhs.type_name(),
                                 rhs: other_rhs.type_name(),
                             },
@@ -403,7 +421,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                         (other_lhs, other_rhs) => Err(self.error_at(
                             expr.span,
                             RuntimeErrorKind::InvalidBinaryOp {
-                                op: *op,
+                                op,
                                 lhs: other_lhs.type_name(),
                                 rhs: other_rhs.type_name(),
                             },
@@ -411,9 +429,9 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                     },
                 }
             }
-            #[allow(unused_variables)]
             ExprKind::Call { callee, args } => {
-                let callee_value = value_or_flow!(self.eval_expr(callee, YieldMode::Capture)?);
+                let callee_span = callee.span;
+                let callee = value_or_flow!(self.eval_expr(*callee, YieldMode::Capture)?);
 
                 let mut args_values = vec![];
                 for arg in args {
@@ -421,13 +439,15 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                     args_values.push(value);
                 }
 
-                match callee_value {
+                match callee {
                     Value::BuiltinFunction(builtin) => {
                         self.call_builtin(builtin, args_values, expr.span)
                     }
 
+                    Value::Function(fun) => self.call_function(fun, args_values, expr.span),
+
                     other => Err(self.error_at(
-                        callee.span,
+                        callee_span,
                         RuntimeErrorKind::NotCallable(other.type_name().to_string()),
                     )),
                 }
@@ -436,29 +456,36 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 condition,
                 then_branch,
                 else_branch,
-            } => self.eval_if(condition, then_branch, else_branch, yield_mode),
-            ExprKind::While { condition, block } => self.eval_while(condition, block, yield_mode),
-            #[allow(unused_variables)]
-            ExprKind::Lambda { params, body } => {
-                Err(self.error_at(body.span, RuntimeErrorKind::NotImplemented))
+            } => self.eval_if(*condition, *then_branch, else_branch, yield_mode),
+            ExprKind::While { condition, block } => self.eval_while(*condition, block, yield_mode),
+            ExprKind::Lambda { parameters, body } => {
+                let fun = FunctionValue {
+                    name: None,
+                    parameters,
+                    body: FunctionBody::Expr(*body),
+                    captured_env: Rc::clone(&self.env),
+                    return_type: TypeAnnotation::Inferred,
+                };
+                Ok(EvalFlow::Continue(Value::Function(fun)))
             }
         }
     }
 
     fn eval_if(
         &mut self,
-        condition: &'a Expr,
-        then_branch: &'a Expr,
-        else_branch: &'a Option<Box<Expr>>,
+        condition: Expr,
+        then_branch: Expr,
+        else_branch: Option<Box<Expr>>,
         yield_mode: YieldMode,
     ) -> Result<EvalFlow, Box<RuntimeError>> {
-        let condition_bool = value_or_flow!(self.eval_expr(condition, YieldMode::Capture)?);
+        let condition_span = condition.span;
+        let condition = value_or_flow!(self.eval_expr(condition, YieldMode::Capture)?);
 
-        let condition_bool = match condition_bool {
+        let condition_bool = match condition {
             Value::Bool(b) => b,
             other => {
                 return Err(self.error_at(
-                    condition.span,
+                    condition_span,
                     RuntimeErrorKind::ExpectedBool {
                         found: other.type_name(),
                     },
@@ -469,11 +496,11 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
         let flow = if condition_bool {
             self.eval_expr(then_branch, yield_mode)?
         } else if let Some(else_branch) = else_branch {
-            self.eval_expr(else_branch, yield_mode)?
+            self.eval_expr(*else_branch, yield_mode)?
         } else if let YieldMode::Capture = yield_mode {
             return Err(self.error_at(
                 Span {
-                    start: condition.span.start,
+                    start: condition_span.start,
                     end: then_branch.span.end,
                 },
                 RuntimeErrorKind::ElseBranchMissing,
@@ -490,18 +517,20 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
 
     fn eval_while(
         &mut self,
-        condition: &'a Expr,
-        block: &'a Block,
+        condition: Expr,
+        block: Block,
         yield_mode: YieldMode,
     ) -> Result<EvalFlow, Box<RuntimeError>> {
         loop {
-            let condition_value = value_or_flow!(self.eval_expr(condition, YieldMode::Capture)?);
+            let condition_span = condition.span;
+            let condition_value =
+                value_or_flow!(self.eval_expr(condition.clone(), YieldMode::Capture)?);
 
             let condition_bool = match condition_value {
                 Value::Bool(b) => b,
                 other => {
                     return Err(self.error_at(
-                        condition.span,
+                        condition_span,
                         RuntimeErrorKind::ExpectedBool {
                             found: other.type_name(),
                         },
@@ -513,7 +542,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 break;
             }
 
-            let flow = self.eval_block(block, YieldMode::Bubble)?;
+            let flow = self.eval_block(block.clone(), YieldMode::Bubble)?;
 
             match flow {
                 EvalFlow::Continue(_) => {}
@@ -565,6 +594,35 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
             }
         }
     }
+
+    fn call_function(
+        &mut self,
+        fun: FunctionValue,
+        args: Vec<Value>,
+        span: Span,
+    ) -> Result<EvalFlow, Box<RuntimeError>> {
+        let previous_env = Rc::clone(&self.env);
+        self.env = Rc::clone(&fun.captured_env);
+
+        self.env.borrow_mut().push_scope();
+
+        for (param, arg) in fun.parameters.iter().zip(args) {
+            self.env.borrow_mut().define(param.name.clone(), false, arg);
+        }
+
+        let flow = match fun.body {
+            FunctionBody::Block(block) => self.eval_block(block, YieldMode::Bubble)?,
+            FunctionBody::Expr(expr) => self.eval_expr(expr, YieldMode::Capture)?,
+        };
+
+        self.env.borrow_mut().pop_scope();
+        self.env = previous_env;
+        match flow {
+            EvalFlow::Continue(value) => Ok(EvalFlow::Continue(value)),
+            EvalFlow::Return(value) => Ok(EvalFlow::Continue(value)),
+            EvalFlow::Yield(_) => Err(self.error_at(span, RuntimeErrorKind::YieldOutsideHandler)),
+        }
+    }
 }
 
 #[cfg(test)]
@@ -612,7 +670,7 @@ mod tests {
                             Ok(program) => {
                                 let mut interpreter = Interpreter::new_buffered(&current_file_path);
 
-                                let eval_result = interpreter.eval_program(&program);
+                                let eval_result = interpreter.eval_program(program);
                                 let output = interpreter.into_output_string();
 
                                 match eval_result {

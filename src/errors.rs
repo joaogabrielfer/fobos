@@ -183,4 +183,6 @@ pub enum RuntimeErrorKind {
     IoError(String),
     #[error("not implemented")]
     NotImplemented,
+    #[error("yield used outside of an effect handler")]
+    YieldOutsideHandler,
 }

@@ -1,5 +1,5 @@
 use crate::{
-    ast::{self, Expr, ExprKind},
+    ast::{self, Expr, ExprKind, Parameter, TypeAnnotation},
     errors::{ParserError, ParserErrorKind},
     lexer::{
         Token, TokenKind,
@@ -138,7 +138,10 @@ impl<'a> Parser<'a> {
             let name = self.expect_ident()?;
             self.expect(TokenTag::Colon)?;
             let t = ast::Type::Named(self.expect_ident()?);
-            parameters.push(ast::Parameter { name, t });
+            parameters.push(ast::Parameter {
+                name,
+                t: TypeAnnotation::Explicit(t),
+            });
             match self.current_tag() {
                 TokenTag::Comma => {
                     self.expect(TokenTag::Comma)?;
@@ -175,13 +178,19 @@ impl<'a> Parser<'a> {
         let start_span = self.current().span;
         let expr = self.parse_binary_expr(0)?;
         if let TokenTag::RArrow = self.current_tag() {
-            let mut params = vec![];
+            let mut parameters = vec![];
             match expr.kind {
-                ExprKind::Ident(i) => params.push(i),
+                ExprKind::Ident(name) => parameters.push(Parameter {
+                    name,
+                    t: TypeAnnotation::Inferred,
+                }),
                 ExprKind::Tuple(t) => {
                     for e in t {
                         match e.kind {
-                            ExprKind::Ident(i) => params.push(i),
+                            ExprKind::Ident(name) => parameters.push(Parameter {
+                                name,
+                                t: TypeAnnotation::Inferred,
+                            }),
                             other => {
                                 return Err(self.error(ParserErrorKind::InvalidParameter {
                                     expr: other.to_string(),
@@ -198,7 +207,7 @@ impl<'a> Parser<'a> {
             }
             self.expect(TokenTag::RArrow)?;
             let body = Box::new(self.parse_expr()?);
-            Ok(self.new_expr(start_span, ExprKind::Lambda { params, body }))
+            Ok(self.new_expr(start_span, ExprKind::Lambda { parameters, body }))
         } else {
             Ok(expr)
         }
