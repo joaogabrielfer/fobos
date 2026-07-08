@@ -207,17 +207,19 @@ pub enum TokenTag {
 impl TokenTag {
     pub fn precedence_level(&self) -> Option<(BinaryOp, u8)> {
         match self {
-            TokenTag::EqualsEquals => Some((BinaryOp::Eq, 1)),
-            TokenTag::BangEquals => Some((BinaryOp::NotEq, 1)),
-            TokenTag::RAngle => Some((BinaryOp::Greater, 2)),
-            TokenTag::GreaterEquals => Some((BinaryOp::GreaterEq, 2)),
-            TokenTag::LAngle => Some((BinaryOp::Less, 2)),
-            TokenTag::LessEquals => Some((BinaryOp::LessEq, 2)),
-            TokenTag::Combine => Some((BinaryOp::Combine, 3)),
-            TokenTag::Plus => Some((BinaryOp::Add, 3)),
-            TokenTag::Minus => Some((BinaryOp::Sub, 3)),
-            TokenTag::Star => Some((BinaryOp::Mul, 4)),
-            TokenTag::Slash => Some((BinaryOp::Div, 4)),
+            TokenTag::DotDotEqual => Some((BinaryOp::InclusiveRange, 1)),
+            TokenTag::DotDotLess => Some((BinaryOp::ExclusiveRange, 1)),
+            TokenTag::EqualsEquals => Some((BinaryOp::Eq, 2)),
+            TokenTag::BangEquals => Some((BinaryOp::NotEq, 2)),
+            TokenTag::RAngle => Some((BinaryOp::Greater, 3)),
+            TokenTag::GreaterEquals => Some((BinaryOp::GreaterEq, 3)),
+            TokenTag::LAngle => Some((BinaryOp::Less, 3)),
+            TokenTag::LessEquals => Some((BinaryOp::LessEq, 3)),
+            TokenTag::Combine => Some((BinaryOp::Combine, 4)),
+            TokenTag::Plus => Some((BinaryOp::Add, 4)),
+            TokenTag::Minus => Some((BinaryOp::Sub, 4)),
+            TokenTag::Star => Some((BinaryOp::Mul, 5)),
+            TokenTag::Slash => Some((BinaryOp::Div, 5)),
             _ => None,
         }
     }

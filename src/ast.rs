@@ -157,6 +157,8 @@ pub enum BinaryOp {
     Less,
     LessEq,
     Combine,
+    InclusiveRange,
+    ExclusiveRange,
 }
 
 impl Display for BinaryOp {
@@ -173,6 +175,8 @@ impl Display for BinaryOp {
             BinaryOp::Less => write!(f, "<"),
             BinaryOp::LessEq => write!(f, "<="),
             BinaryOp::Combine => write!(f, "<>"),
+            BinaryOp::InclusiveRange => write!(f, "..="),
+            BinaryOp::ExclusiveRange => write!(f, "..<"),
         }
     }
 }

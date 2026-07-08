@@ -1,5 +1,5 @@
 use crate::{
-    ast::{self, Expr, ExprKind, Parameter, Type, TypeAnnotation},
+    ast::{self, BinaryOp, Expr, ExprKind, Parameter, Type, TypeAnnotation},
     errors::{ParserError, ParserErrorKind},
     lexer::{
         Token, TokenKind,
@@ -230,6 +230,17 @@ impl<'a> Parser<'a> {
         {
             self.advance();
             let rhs = self.parse_binary_expr(level + 1)?;
+            if matches!(op, BinaryOp::InclusiveRange | BinaryOp::ExclusiveRange)
+                && matches!(
+                    rhs.kind,
+                    ExprKind::Binary {
+                        op: BinaryOp::InclusiveRange | BinaryOp::ExclusiveRange,
+                        ..
+                    }
+                )
+            {
+                return Err(self.error(ParserErrorKind::ChainingRanges));
+            }
             lhs = self.new_expr(
                 start_span,
                 ExprKind::Binary {

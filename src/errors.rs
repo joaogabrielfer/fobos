@@ -127,6 +127,8 @@ pub enum ParserErrorKind {
     InvalidParameter { expr: String },
     #[error("expected type annotation, got nothing")]
     ExpectedTypeAnnotation,
+    #[error("cannot chain more than one range operations")]
+    ChainingRanges,
 }
 
 fn render_vec_tokens(tks: Vec<String>) -> String {
@@ -193,6 +195,8 @@ pub enum RuntimeErrorKind {
     },
     #[error("invalid unary operation '{op}{operand}'")]
     InvalidUnaryOp { op: UnaryOp, operand: String },
+    #[error("invalid range parameter '{0}'")]
+    InvalidRangeParameter(String),
     #[error("expected boolean, found '{found}'")]
     ExpectedBool { found: String },
     #[error("'{0}' is not callable")]

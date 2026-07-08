@@ -12,7 +12,7 @@ use crate::{
     interpreter::{
         Interpreter,
         env::{Env, EnvFrame},
-        values::{BuiltinFunction, FunctionBody, FunctionValue, Value},
+        values::{BuiltinFunction, FunctionBody, FunctionValue, RangeValue, Value},
     },
     source::{Span, SrcPos},
 };
@@ -623,6 +623,46 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                         },
                     )),
                 },
+                BinaryOp::InclusiveRange => {
+                    let Value::Int(start) = lhs else {
+                        return Err(self.error_at(
+                            span,
+                            RuntimeErrorKind::InvalidRangeParameter(lhs.to_string()),
+                        ));
+                    };
+                    let Value::Int(end) = rhs else {
+                        return Err(self.error_at(
+                            span,
+                            RuntimeErrorKind::InvalidRangeParameter(rhs.to_string()),
+                        ));
+                    };
+                    Ok(EvalFlow::Continue(Value::Range(RangeValue {
+                        start,
+                        end,
+                        inclusive: true,
+                        step: 1,
+                    })))
+                }
+                BinaryOp::ExclusiveRange => {
+                    let Value::Int(start) = lhs else {
+                        return Err(self.error_at(
+                            span,
+                            RuntimeErrorKind::InvalidRangeParameter(lhs.to_string()),
+                        ));
+                    };
+                    let Value::Int(end) = rhs else {
+                        return Err(self.error_at(
+                            span,
+                            RuntimeErrorKind::InvalidRangeParameter(rhs.to_string()),
+                        ));
+                    };
+                    Ok(EvalFlow::Continue(Value::Range(RangeValue {
+                        start,
+                        end,
+                        inclusive: false,
+                        step: 1,
+                    })))
+                }
             }
         }
     }

@@ -15,6 +15,16 @@ pub enum Value {
 
     BuiltinFunction(BuiltinFunction),
     Function(FunctionValue),
+
+    Range(RangeValue),
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct RangeValue {
+    pub start: i64,
+    pub end: i64,
+    pub inclusive: bool,
+    pub step: i64,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -73,6 +83,13 @@ impl std::fmt::Display for Value {
             }
             Value::BuiltinFunction(_) => write!(f, "<builtin function>"),
             Value::Function(_) => write!(f, "<function>"),
+            Value::Range(r) => write!(
+                f,
+                "{}..{}{}",
+                r.start,
+                if r.inclusive { "=" } else { "<" },
+                r.end
+            ),
         }
     }
 }
@@ -107,6 +124,12 @@ impl Value {
             }
             Value::BuiltinFunction(_) => "<builtin function>".to_string(),
             Value::Function(_) => "<function>".to_string(),
+            Value::Range(r) => format!(
+                "Range '{}..{}{}'",
+                r.start,
+                if r.inclusive { "=" } else { "<" },
+                r.end
+            ),
         }
     }
 }
