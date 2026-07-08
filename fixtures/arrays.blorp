@@ -1,3 +1,66 @@
-let array := [1, 2, 3, 4, 5]
-echo("array " <> array)
-echo("array[0] = " <> array[7])
+let empty := []
+let nums := [10, 20, 30]
+let mixed := [1, "hello", true, ()]
+let nested := [[1, 2], [3, 4], [5, 6]]
+
+echo("empty: " <> empty)
+echo("nums: " <> nums)
+echo("mixed: " <> mixed)
+echo("nested: " <> nested)
+
+let first := nums[0]
+let middle := nums[1]
+let last := nums[2]
+
+echo("first: " <> first)
+echo("middle: " <> middle)
+echo("last: " <> last)
+
+let nested_first := nested[0]
+let nested_value := nested[1][0]
+
+echo("nested_first: " <> nested_first)
+echo("nested_value: " <> nested_value)
+
+let expr_array := [1 + 2, 3 * 4, 10 - 5]
+echo("expr_array: " <> expr_array)
+echo("expr_array[0]: " <> expr_array[0])
+echo("expr_array[1]: " <> expr_array[1])
+echo("expr_array[2]: " <> expr_array[2])
+
+let array_from_block := do
+    yield [7, 8, 9]
+end
+
+echo("array_from_block: " <> array_from_block)
+echo("array_from_block[1]: " <> array_from_block[1])
+
+let array_with_yield_value := [ do
+	yield 100
+end, 200, 300]
+
+echo("array_with_yield_value: " <> array_with_yield_value)
+
+echo("for nums:")
+for x in nums do
+    echo("item: " <> x)
+end
+
+echo("for nested:")
+for pair in nested do
+    echo("pair: " <> pair)
+end
+
+let first_over_15 := for x in nums do
+    if x > 15 do
+        yield x
+    end
+end
+
+echo("first_over_15: " <> first_over_15)
+
+let array_for_without_yield := for x in [1, 2, 3] do
+    echo("loop: " <> x)
+end
+
+echo("array_for_without_yield: " <> array_for_without_yield)

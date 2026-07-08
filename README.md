@@ -34,7 +34,7 @@ Use `cargo test` to run the unit tests and ensure the result is the expected
 - [x] if statements
 - [x] arrays
 - [x] ranges
-- [ ] for loops
+- [x] for loops
 - [ ] type checking
 - [ ] custom types (adts)
 - [ ] interfaces
@@ -42,6 +42,7 @@ Use `cargo test` to run the unit tests and ensure the result is the expected
 - [ ] generic
 - [ ] patterns
 - [ ] effects
+- [ ] trailing commas
 
 ## Langage syntax
 
@@ -433,3 +434,32 @@ end
 ```
 
 The difference from both is that stream are lazy list while collections are normal arrays
+
+### Trailing commas
+
+Allow trailing commas for multi-line array and tuple literals as well as function call
+
+```blorp
+let my_arr := [
+    1,
+    2,
+    3,
+]
+```
+
+```blorp
+let my_tuple := (
+    1,
+    true,
+    "foo",
+)
+```
+
+```blorp
+foo(
+    1,
+    2,
+    true,
+    false,
+)
+```

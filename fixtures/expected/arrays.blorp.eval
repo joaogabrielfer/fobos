@@ -1,18 +1,33 @@
-RuntimeError {
-    kind: OutOfBounds(
-        7,
-    ),
-    span: Span {
-        start: SrcPos {
-            line: 3,
-            col: 29,
-            idx: 81,
-        },
-        end: SrcPos {
-            line: 3,
-            col: 30,
-            idx: 82,
-        },
-    },
-    file_path: "/home/joaogabriel/personal/programming/projects/blorp/fixtures/arrays.blorp",
-}
+output:
+empty: []
+nums: [10, 20, 30]
+mixed: [1, hello, true, ()]
+nested: [[1, 2], [3, 4], [5, 6]]
+first: 10
+middle: 20
+last: 30
+nested_first: [1, 2]
+nested_value: 3
+expr_array: [3, 12, 5]
+expr_array[0]: 3
+expr_array[1]: 12
+expr_array[2]: 5
+array_from_block: [7, 8, 9]
+array_from_block[1]: 8
+array_with_yield_value: [100, 200, 300]
+for nums:
+item: 10
+item: 20
+item: 30
+for nested:
+pair: [1, 2]
+pair: [3, 4]
+pair: [5, 6]
+first_over_15: 20
+loop: 1
+loop: 2
+loop: 3
+array_for_without_yield: ()
+
+result:
+Unit

@@ -33,7 +33,7 @@ impl<'a> Parser<'a> {
         while !self.is_at_end() {
             let stmt = self.parse_statement()?;
             statements.push(stmt);
-            self.expect_many(vec![TokenTag::NewLine])?;
+            self.expect(TokenTag::NewLine)?;
             self.consume_newlines();
         }
         Ok(ast::Program { statements })
@@ -334,13 +334,15 @@ impl<'a> Parser<'a> {
                     self.expect(TokenTag::LBrace)?;
                     let index = Box::new(self.parse_expr()?);
                     self.expect(TokenTag::RBrace)?;
-                    return Ok(self.new_expr(
+                    expr = self.new_expr(
                         start_span,
                         ExprKind::Index {
                             target: Box::new(expr),
                             index,
                         },
-                    ));
+                    );
+
+                    continue;
                 }
                 TokenTag::LParen => {
                     let args = self.parse_call_args()?;
@@ -479,6 +481,10 @@ impl<'a> Parser<'a> {
             TokenKind::LBrace => {
                 self.expect(TokenTag::LBrace)?;
                 let mut exprs = vec![];
+                if self.check(TokenTag::RBrace) {
+                    self.advance();
+                    return Ok(self.new_expr(start_span, ExprKind::Array(exprs)));
+                }
                 exprs.push(self.parse_expr()?);
                 while self.check(TokenTag::Comma) {
                     self.advance();
