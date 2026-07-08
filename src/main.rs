@@ -6,8 +6,8 @@ use thiserror::Error;
 
 use blorp::{
     dump::dump_expected,
-    interpreter::Interpreter,
-    lexer::Lexer,
+    interpreter::{self, Interpreter},
+    lexer::{self, Lexer},
     parser::{self},
 };
 
@@ -63,11 +63,7 @@ fn run() -> anyhow::Result<()> {
             // let ast_arena = Arena::new();
             let mut c_c_pressed = false;
             loop {
-                let prompt = if !c_c_pressed {
-                    ">> ".green().to_string()
-                } else {
-                    "".to_string()
-                };
+                let prompt = ">> ".green().to_string();
                 let mut line = match editor.readline(&prompt) {
                     Ok(line) => {
                         c_c_pressed = false;
@@ -77,7 +73,7 @@ fn run() -> anyhow::Result<()> {
                         if c_c_pressed {
                             return Ok(());
                         } else {
-                            println!("press 'C-c' again to exit the repl");
+                            println!("(press 'C-c' again to exit the repl)");
                             c_c_pressed = true;
                             continue;
                         }
@@ -90,11 +86,32 @@ fn run() -> anyhow::Result<()> {
 
                 let mut source = std::mem::take(&mut line);
                 source.push('\n');
-                let tokens = Lexer::new(path, &source).tokenize()?;
-                let ast = parser::Parser::new(tokens, path).parse_program()?;
+                let mut tokens = match Lexer::new(path, &source).tokenize() {
+                    Ok(t) => t,
+                    Err(e) => {
+                        eprintln!("{e}");
+                        continue;
+                    }
+                };
+                tokens.insert(0, lexer::Token::new(lexer::TokenKind::Return));
+                let ast = match parser::Parser::new(tokens, path).parse_program() {
+                    Ok(a) => a,
+                    Err(e) => {
+                        eprintln!("{e}");
+                        continue;
+                    }
+                };
                 // let ast: Program = ast_arena.alloc(ast);
-                let value = interpreter.eval_program(ast)?;
-                println!("{value}");
+                let value = match interpreter.eval_program(ast) {
+                    Ok(v) => v,
+                    Err(e) => {
+                        eprintln!("{e}");
+                        continue;
+                    }
+                };
+                if interpreter::values::Value::Unit != value {
+                    println!("{value}");
+                }
             }
         }
         Some(Commands::Run { path }) => {

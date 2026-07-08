@@ -33,9 +33,11 @@ impl Display for LexerError {
                 )
             }
             Err(_) => {
+                let arrow = "-->".cyan();
+                let error_red = "error".red();
                 write!(
                     f,
-                    "error: {}\n --> {}:{}:{}",
+                    "{error_red}: {}\n {arrow} {}:{}:{}",
                     self.kind,
                     self.file_path.display(),
                     self.pos.start.line,
@@ -82,9 +84,11 @@ impl Display for ParserError {
                 )
             }
             Err(_) => {
+                let arrow = "-->".cyan();
+                let error_red = "error".red();
                 write!(
                     f,
-                    "error: {}\n --> {}:{}:{}",
+                    "{error_red}: {}\n {arrow} {}:{}:{}",
                     self.kind,
                     self.file_path.display(),
                     self.pos.start.line,
@@ -157,14 +161,8 @@ impl Display for RuntimeError {
                 )
             }
             Err(_) => {
-                write!(
-                    f,
-                    "error: {}\n --> {}:{}:{}",
-                    self.kind,
-                    self.file_path.display(),
-                    self.span.start.line,
-                    self.span.start.col,
-                )
+                let error_red = "error".red();
+                write!(f, "{error_red}: {}", self.kind)
             }
         }
     }

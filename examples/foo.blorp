@@ -10,4 +10,15 @@ fun apply(a: Int, b: Int, fn: (Int, Int) -> Int): Int =
 	return fn(a, b)
 end
 
-apply(1, 2, add).echo()
+var a := 1
+echo(a + do
+	a = a + 1
+	yield a
+end)
+
+a = 1
+fun inc_a(): Int =
+	a = a + 1
+	return a
+end
+echo(inc_a() + a)

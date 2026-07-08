@@ -20,6 +20,16 @@ pub struct Token<'a> {
     pub span: Span,
 }
 
+impl<'a> Token<'a> {
+    pub fn new(kind: TokenKind<'a>) -> Self {
+        Self {
+            kind,
+            origin: "",
+            span: Span::dummy(),
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum TokenKind<'a> {
     LParen, // (
