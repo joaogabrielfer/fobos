@@ -105,6 +105,12 @@ pub enum ExprKind {
         block: Block,
     },
 
+    For {
+        binding: Box<Expr>,
+        iterable: Box<Expr>,
+        block: Block,
+    },
+
     Lambda {
         parameters: Vec<Parameter>,
         body: Box<Expr>,
@@ -133,6 +139,7 @@ impl Display for ExprKind {
             ExprKind::Call { .. } => write!(f, "function calling"),
             ExprKind::If { .. } => write!(f, "if condition"),
             ExprKind::While { .. } => write!(f, "while loop"),
+            ExprKind::For { .. } => write!(f, "for loop"),
             ExprKind::Lambda { .. } => write!(f, "lambda"),
             ExprKind::Index { .. } => write!(f, "index"),
         }

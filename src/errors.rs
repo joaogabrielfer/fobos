@@ -205,6 +205,8 @@ pub enum RuntimeErrorKind {
     OutOfBounds(i64),
     #[error("expected {expected} function parameters, found {found}")]
     ArityMismatch { expected: usize, found: usize },
+    #[error("expected {} function parameters, found {found}", render_vec_tokens(expected.iter().map(|i| i.to_string()).collect()) )]
+    ArityMismatchMany { expected: Vec<usize>, found: usize },
     #[error("missing 'else' branch for 'if' condition that yields a value")]
     ElseBranchMissing,
     #[error("IO error: {0}")]
@@ -213,4 +215,6 @@ pub enum RuntimeErrorKind {
     NotImplemented,
     #[error("yield used outside of an effect handler")]
     YieldOutsideHandler,
+    #[error("{found} is not an iterable value")]
+    NotIterable { found: String },
 }

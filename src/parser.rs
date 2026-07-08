@@ -112,6 +112,23 @@ impl<'a> Parser<'a> {
         Ok(self.new_expr(self.current().span, ExprKind::While { condition, block }))
     }
 
+    fn parse_for(&mut self) -> Result<Expr, Box<ParserError>> {
+        self.expect(TokenTag::For)?;
+        let binding = Box::new(self.parse_expr()?);
+        self.expect(TokenTag::In)?;
+        let iterable = Box::new(self.parse_expr()?);
+        self.expect(TokenTag::Do)?;
+        let block = self.parse_block()?;
+        Ok(self.new_expr(
+            self.current().span,
+            ExprKind::For {
+                binding,
+                iterable,
+                block,
+            },
+        ))
+    }
+
     fn parse_fun_decl(&mut self) -> Result<ast::Stmt, Box<ParserError>> {
         self.expect(TokenTag::Fun)?;
         let mut generics = vec![];
@@ -432,6 +449,7 @@ impl<'a> Parser<'a> {
             }
             TokenKind::If => self.parse_if_expr(),
             TokenKind::While => self.parse_while(),
+            TokenKind::For => self.parse_for(),
             TokenKind::Do => {
                 self.expect(TokenTag::Do)?;
                 let block = self.parse_block()?;

@@ -12,7 +12,7 @@ use crate::{
     interpreter::{
         Interpreter,
         env::{Env, EnvFrame},
-        values::{BuiltinFunction, FunctionBody, FunctionValue, RangeValue, Value},
+        values::{FunctionBody, FunctionValue, RangeValue, RuntimeIterator, Value},
     },
     source::{Span, SrcPos},
 };
@@ -162,6 +162,11 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 else_branch,
             } => self.eval_if(*condition, *then_branch, else_branch, yield_mode),
             ExprKind::While { condition, block } => self.eval_while(*condition, block, yield_mode),
+            ExprKind::For {
+                binding,
+                iterable,
+                block,
+            } => self.eval_for(*binding, *iterable, block, yield_mode),
             ExprKind::Lambda { parameters, body } => {
                 Ok(EvalFlow::Continue(Value::Function(FunctionValue {
                     name: None,
@@ -371,6 +376,47 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
         Ok(EvalFlow::Continue(Value::Unit))
     }
 
+    fn eval_for(
+        &mut self,
+        binding: Expr,
+        iterable: Expr,
+        block: Block,
+        yield_mode: YieldMode,
+    ) -> Result<EvalFlow, Box<RuntimeError>> {
+        let iterable_span = iterable.span;
+        let binding_span = binding.span;
+        let mut iterable = RuntimeIterator::from_value(value_or_flow!(
+            self.eval_expr(iterable, YieldMode::Capture)?
+        ))
+        .map_err(|e| self.error_at(iterable_span, e))?;
+        let ExprKind::Ident(binding) = binding.kind else {
+            return Err(self.error_at(
+                binding_span,
+                RuntimeErrorKind::InvalidAssignmentTarget(binding.kind.to_string()),
+            ));
+        };
+        while let Some(value) = iterable.next_value() {
+            self.env.define(binding.clone(), false, value);
+            let flow = self.eval_block(block.clone(), YieldMode::Bubble)?;
+
+            match flow {
+                EvalFlow::Continue(_) => {}
+
+                EvalFlow::Return { value, span } => {
+                    return Ok(EvalFlow::Return { value, span });
+                }
+
+                EvalFlow::Yield { value, span } => {
+                    return match yield_mode {
+                        YieldMode::Capture => Ok(EvalFlow::Continue(value)),
+                        YieldMode::Bubble => Ok(EvalFlow::Yield { value, span }),
+                    };
+                }
+            }
+        }
+
+        Ok(EvalFlow::Continue(Value::Unit))
+    }
     fn eval_ident(&mut self, i: String, span: Span) -> Result<EvalFlow, Box<RuntimeError>> {
         let value = self.env.get(&i).map_err(|kind| {
             Box::new(RuntimeError {
@@ -662,30 +708,6 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                         inclusive: false,
                         step: 1,
                     })))
-                }
-            }
-        }
-    }
-
-    fn call_builtin(
-        &mut self,
-        builtin: BuiltinFunction,
-        args_values: Vec<Value>,
-        span: crate::source::Span,
-    ) -> Result<EvalFlow, Box<RuntimeError>> {
-        match builtin {
-            BuiltinFunction::Echo => {
-                if args_values.len() != 1 {
-                    Err(self.error_at(
-                        span,
-                        RuntimeErrorKind::ArityMismatch {
-                            expected: 1,
-                            found: args_values.len(),
-                        },
-                    ))
-                } else {
-                    self.writeln_output(format!("{}", args_values[0]))?;
-                    Ok(EvalFlow::Continue(Value::Unit))
                 }
             }
         }

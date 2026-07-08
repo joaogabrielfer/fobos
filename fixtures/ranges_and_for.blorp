@@ -1,0 +1,66 @@
+let range_exclusive := 0..<3
+let range_inclusive := 0..=3
+
+echo("range_exclusive: " <> range_exclusive)
+echo("range_inclusive: " <> range_inclusive)
+
+let builtin_range_end := range(3)
+let builtin_range_start_end := range(1, 4)
+let builtin_range_step := range(1, 6, 2)
+
+echo("builtin_range_end: " <> builtin_range_end)
+echo("builtin_range_start_end: " <> builtin_range_start_end)
+echo("builtin_range_step: " <> builtin_range_step)
+
+echo("for exclusive:")
+for x in 0..<3 do
+    echo(x)
+end
+
+echo("for inclusive:")
+for x in 0..=3 do
+    echo(x)
+end
+
+echo("for builtin range:")
+for x in range(3) do
+    echo(x)
+end
+
+echo("for stepped range:")
+for x in range(1, 6, 2) do
+    echo(x)
+end
+
+echo("for iterable from yield block:")
+for x in do
+    yield 0..<3
+end do
+    echo(x)
+end
+
+let first_big := for x in 0..<10 do
+    if x > 3 do
+        yield x
+    end
+end
+
+echo("first_big: " <> first_big)
+
+let for_without_yield := for x in 0..<3 do
+    echo("loop: " <> x)
+end
+
+echo("for_without_yield: " <> for_without_yield)
+
+fun find(): Int =
+    for x in 0..<10 do
+        if x == 3 do
+            return x
+        end
+    end
+
+    return 99
+end
+
+echo("find: " <> find())

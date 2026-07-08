@@ -1,5 +1,7 @@
+use crate::interpreter::builtins::BuiltinFunction;
 use crate::{
     ast::{Block, Expr, Parameter, TypeAnnotation},
+    errors::RuntimeErrorKind,
     interpreter::env::EnvRef,
 };
 
@@ -25,11 +27,6 @@ pub struct RangeValue {
     pub end: i64,
     pub inclusive: bool,
     pub step: i64,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum BuiltinFunction {
-    Echo,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -130,6 +127,66 @@ impl Value {
                 if r.inclusive { "=" } else { "<" },
                 r.end
             ),
+        }
+    }
+}
+
+pub enum RuntimeIterator {
+    Range {
+        current: i64,
+        end: i64,
+        inclusive: bool,
+        step: i64,
+    },
+    Array {
+        values: Vec<Value>,
+        index: usize,
+    },
+}
+
+impl RuntimeIterator {
+    pub fn from_value(value: Value) -> Result<Self, RuntimeErrorKind> {
+        match value {
+            Value::Range(range) => Ok(Self::Range {
+                current: range.start,
+                end: range.end,
+                inclusive: range.inclusive,
+                step: range.step,
+            }),
+
+            Value::Array(values) => Ok(Self::Array { values, index: 0 }),
+
+            other => Err(RuntimeErrorKind::NotIterable {
+                found: other.type_name().to_string(),
+            }),
+        }
+    }
+
+    pub fn next_value(&mut self) -> Option<Value> {
+        match self {
+            RuntimeIterator::Range {
+                current,
+                end,
+                inclusive,
+                step,
+            } => {
+                if (*current >= *end && !*inclusive) || (*current > *end) {
+                    None
+                } else {
+                    let result = *current;
+                    *current += *step;
+                    Some(Value::Int(result))
+                }
+            }
+            RuntimeIterator::Array { values, index } => {
+                if *index >= values.len() {
+                    None
+                } else {
+                    let result = values[*index].clone();
+                    *index += 1;
+                    Some(result)
+                }
+            }
         }
     }
 }

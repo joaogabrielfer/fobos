@@ -4,7 +4,7 @@ use anyhow::Result;
 
 use crate::{
     errors::{RuntimeError, RuntimeErrorKind},
-    interpreter::{env::Env, values::BuiltinFunction},
+    interpreter::env::Env,
     source::Span,
 };
 
@@ -22,11 +22,7 @@ pub struct Interpreter<'a, W: std::io::Write> {
 impl<'a, W: std::io::Write> Interpreter<'a, W> {
     pub fn new(file_path: &'a PathBuf, output: W) -> Self {
         let mut env = Env::default();
-        env.define(
-            "echo".to_string(),
-            false,
-            values::Value::BuiltinFunction(BuiltinFunction::Echo),
-        );
+        env.load_builtins();
         Self {
             env,
             file_path,
