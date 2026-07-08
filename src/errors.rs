@@ -50,14 +50,19 @@ impl Display for LexerError {
 
 #[derive(Error, Debug)]
 pub enum LexerErrorKind {
-    #[error("Unrecognized char '{0}'")]
+    #[error("unrecognized char '{0}'")]
     UnknownChar(char),
-    #[error("Unrecognized Token '{0}'")]
+    #[error("unrecognized token '{0}'")]
     UnknownToken(String),
-    #[error("Invalid number '{0}'")]
+    #[error("invalid number '{0}'")]
     InvalidNumber(String),
-    #[error("Unterminated String")]
+    #[error("unterminated string")]
     UnterminatedString,
+    #[error("expected chars {}, found {found}", render_vec_tokens(expected.clone()))]
+    ExpectedChars {
+        expected: Vec<String>,
+        found: String,
+    },
 }
 
 #[derive(Error, Debug)]

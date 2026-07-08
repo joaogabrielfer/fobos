@@ -60,6 +60,9 @@ pub enum TokenKind<'a> {
     GreaterEquals, // <=
     LessEquals,    // >=
 
+    DotDotEqual, // ..=
+    DotDotLess,  // ..<
+
     Ident(&'a str),
     String(&'a str),
     Int(i64),
@@ -114,6 +117,9 @@ impl<'a> TokenKind<'a> {
             TokenKind::EqualsEquals => TokenTag::EqualsEquals,
             TokenKind::GreaterEquals => TokenTag::GreaterEquals,
             TokenKind::LessEquals => TokenTag::LessEquals,
+
+            TokenKind::DotDotEqual => TokenTag::DotDotEqual,
+            TokenKind::DotDotLess => TokenTag::DotDotLess,
 
             TokenKind::Ident(_) => TokenTag::Ident,
             TokenKind::String(_) => TokenTag::String,
@@ -170,6 +176,9 @@ pub enum TokenTag {
     EqualsEquals,
     GreaterEquals,
     LessEquals,
+
+    DotDotEqual,
+    DotDotLess,
 
     Ident,
     String,
@@ -244,6 +253,9 @@ impl std::fmt::Display for TokenTag {
             TokenTag::EqualsEquals => "==",
             TokenTag::GreaterEquals => ">=",
             TokenTag::LessEquals => "<=",
+
+            TokenTag::DotDotEqual => "..=",
+            TokenTag::DotDotLess => "..<",
 
             TokenTag::Ident => "identifier",
             TokenTag::String => "string",
@@ -329,7 +341,30 @@ impl<'a> Lexer<'a> {
             Some(']') => Ok(self.new_token(TokenKind::RBrace, "]")),
             Some(':') => Ok(self.new_token(TokenKind::Colon, ":")),
             Some(',') => Ok(self.new_token(TokenKind::Comma, ",")),
-            Some('.') => Ok(self.new_token(TokenKind::Dot, ".")),
+            Some('.') => match self.source.peek() {
+                Some('.') => {
+                    self.advance();
+                    match self.source.peek().copied() {
+                        Some('<') => {
+                            self.advance();
+                            Ok(self.new_token(TokenKind::DotDotLess, "..<"))
+                        }
+                        Some('=') => {
+                            self.advance();
+                            Ok(self.new_token(TokenKind::DotDotEqual, "..="))
+                        }
+                        Some(other) => Err(self.error(LexerErrorKind::ExpectedChars {
+                            expected: vec!["=".to_string(), "<".to_string()],
+                            found: other.to_string(),
+                        })),
+                        None => Err(self.error(LexerErrorKind::ExpectedChars {
+                            expected: vec!["=".to_string(), "<".to_string()],
+                            found: "EOF".to_string(),
+                        })),
+                    }
+                }
+                _ => Ok(self.new_token(TokenKind::Dot, ".")),
+            },
             Some('+') => Ok(self.new_token(TokenKind::Plus, "+")),
             Some('*') => Ok(self.new_token(TokenKind::Star, "*")),
             Some('\n') => Ok(self.new_token(TokenKind::NewLine, "\n")),
@@ -415,35 +450,34 @@ impl<'a> Lexer<'a> {
                 }
             }
             Some('0'..='9') => {
-                while let Some('0'..='9') | Some('.') = self.source.peek() {
+                // Consume remaining integer digits.
+                while matches!(self.source.peek().copied(), Some('0'..='9')) {
                     self.advance();
                 }
 
-                if let Some(c) = self.source.peek()
-                    && matches!(c, 'a'..='z' |'A'..='Z' | '_' | '.')
+                if matches!(self.source.peek().copied(), Some('.'))
+                    && matches!(self.peek_next(), Some('0'..='9'))
                 {
-                    let end_idx = self.pos.idx + 1;
+                    self.advance();
+
+                    while matches!(self.source.peek().copied(), Some('0'..='9')) {
+                        self.advance();
+                    }
+                }
+
+                if let Some(c) = self.source.peek().copied()
+                    && matches!(c, 'a'..='z' | 'A'..='Z' | '_')
+                {
+                    let end_idx = self.pos.idx + c.len_utf8();
                     let num_str = &self.raw_src[start_idx..end_idx];
+
                     return Err(self.error(LexerErrorKind::InvalidNumber(num_str.to_string())));
                 }
 
                 let end_idx = self.pos.idx;
                 let num_str = &self.raw_src[start_idx..end_idx];
-                if num_str.contains(".") {
-                    match num_str.parse::<f64>() {
-                        Ok(num) => Ok(self.new_token(TokenKind::Float(num), num_str)),
-                        Err(_) => {
-                            Err(self.error(LexerErrorKind::InvalidNumber(num_str.to_string())))
-                        }
-                    }
-                } else {
-                    match num_str.parse::<i64>() {
-                        Ok(num) => Ok(self.new_token(TokenKind::Int(num), num_str)),
-                        Err(_) => {
-                            Err(self.error(LexerErrorKind::InvalidNumber(num_str.to_string())))
-                        }
-                    }
-                }
+
+                self.parse_num(num_str)
             }
             Some('"') => {
                 let string_start_pos = self.pos;
@@ -478,6 +512,28 @@ impl<'a> Lexer<'a> {
             Some(other) => Err(self.error(LexerErrorKind::UnknownChar(other))),
             None => Ok(self.new_token(TokenKind::Eof, "EOF")),
         }
+    }
+
+    fn parse_num(&mut self, num_str: &'a str) -> Result<Token<'a>, LexerError> {
+        if num_str.contains(".") {
+            match num_str.parse::<f64>() {
+                Ok(num) => Ok(self.new_token(TokenKind::Float(num), num_str)),
+                Err(_) => Err(self.error(LexerErrorKind::InvalidNumber(num_str.to_string()))),
+            }
+        } else {
+            match num_str.parse::<i64>() {
+                Ok(num) => Ok(self.new_token(TokenKind::Int(num), num_str)),
+                Err(_) => Err(self.error(LexerErrorKind::InvalidNumber(num_str.to_string()))),
+            }
+        }
+    }
+
+    fn peek_next(&self) -> Option<char> {
+        let mut source = self.source.clone();
+
+        source.next();
+
+        source.peek().copied()
     }
 
     fn error(&self, kind: LexerErrorKind) -> LexerError {
