@@ -1,0 +1,166 @@
+Program {
+    statements: [
+        Bind {
+            mutable: false,
+            name: "array",
+            type_annotation: Inferred,
+            value: Expr {
+                kind: Array(
+                    [
+                        Expr {
+                            kind: Int(
+                                1,
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 1,
+                                    col: 15,
+                                    idx: 14,
+                                },
+                                end: SrcPos {
+                                    line: 1,
+                                    col: 17,
+                                    idx: 16,
+                                },
+                            },
+                        },
+                        Expr {
+                            kind: Int(
+                                2,
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 1,
+                                    col: 18,
+                                    idx: 17,
+                                },
+                                end: SrcPos {
+                                    line: 1,
+                                    col: 20,
+                                    idx: 19,
+                                },
+                            },
+                        },
+                        Expr {
+                            kind: Int(
+                                3,
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 1,
+                                    col: 21,
+                                    idx: 20,
+                                },
+                                end: SrcPos {
+                                    line: 1,
+                                    col: 23,
+                                    idx: 22,
+                                },
+                            },
+                        },
+                        Expr {
+                            kind: Int(
+                                4,
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 1,
+                                    col: 24,
+                                    idx: 23,
+                                },
+                                end: SrcPos {
+                                    line: 1,
+                                    col: 26,
+                                    idx: 25,
+                                },
+                            },
+                        },
+                        Expr {
+                            kind: Int(
+                                5,
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 1,
+                                    col: 27,
+                                    idx: 26,
+                                },
+                                end: SrcPos {
+                                    line: 1,
+                                    col: 29,
+                                    idx: 28,
+                                },
+                            },
+                        },
+                    ],
+                ),
+                span: Span {
+                    start: SrcPos {
+                        line: 1,
+                        col: 14,
+                        idx: 13,
+                    },
+                    end: SrcPos {
+                        line: 2,
+                        col: 1,
+                        idx: 29,
+                    },
+                },
+            },
+        },
+        Expr(
+            Expr {
+                kind: Call {
+                    callee: Expr {
+                        kind: Ident(
+                            "echo",
+                        ),
+                        span: Span {
+                            start: SrcPos {
+                                line: 2,
+                                col: 1,
+                                idx: 29,
+                            },
+                            end: SrcPos {
+                                line: 2,
+                                col: 6,
+                                idx: 34,
+                            },
+                        },
+                    },
+                    args: [
+                        Expr {
+                            kind: Ident(
+                                "array",
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 2,
+                                    col: 6,
+                                    idx: 34,
+                                },
+                                end: SrcPos {
+                                    line: 2,
+                                    col: 12,
+                                    idx: 40,
+                                },
+                            },
+                        },
+                    ],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 2,
+                        col: 1,
+                        idx: 29,
+                    },
+                    end: SrcPos {
+                        line: 3,
+                        col: 1,
+                        idx: 41,
+                    },
+                },
+            },
+        ),
+    ],
+}

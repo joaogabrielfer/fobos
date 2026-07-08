@@ -6,7 +6,7 @@ use crate::{
     ast::{
         BinaryOp, Block, Expr, ExprKind, Program,
         Stmt::{self},
-        TypeAnnotation,
+        TypeAnnotation, UnaryOp,
     },
     errors::{RuntimeError, RuntimeErrorKind},
     interpreter::{
@@ -138,6 +138,69 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
         }
     }
 
+    fn eval_expr(
+        &mut self,
+        expr: Expr,
+        yield_mode: YieldMode,
+    ) -> Result<EvalFlow, Box<RuntimeError>> {
+        match expr.kind {
+            ExprKind::Int(val) => Ok(EvalFlow::Continue(Value::Int(val))),
+            ExprKind::Float(val) => Ok(EvalFlow::Continue(Value::Float(val))),
+            ExprKind::String(val) => Ok(EvalFlow::Continue(Value::String(val))),
+            ExprKind::Bool(val) => Ok(EvalFlow::Continue(Value::Bool(val))),
+            ExprKind::Ident(i) => self.eval_ident(i, expr.span),
+            ExprKind::Unit => Ok(EvalFlow::Continue(Value::Unit)),
+            ExprKind::Block(block) => self.eval_block(block, yield_mode),
+            ExprKind::Tuple(exprs) => self.eval_tuple(exprs),
+            ExprKind::Array(exprs) => self.eval_array(exprs),
+            ExprKind::Unary { op, operand } => self.eval_unary(op, *operand, expr.span),
+            ExprKind::Binary { lhs, op, rhs } => self.eval_binary(op, *lhs, *rhs, expr.span),
+            ExprKind::Call { callee, args } => self.eval_call(*callee, args, expr.span),
+            ExprKind::If {
+                condition,
+                then_branch,
+                else_branch,
+            } => self.eval_if(*condition, *then_branch, else_branch, yield_mode),
+            ExprKind::While { condition, block } => self.eval_while(*condition, block, yield_mode),
+            ExprKind::Lambda { parameters, body } => {
+                Ok(EvalFlow::Continue(Value::Function(FunctionValue {
+                    name: None,
+                    parameters,
+                    body: FunctionBody::Expr(*body),
+                    captured_env: self.env.current_ref(),
+                    return_type: TypeAnnotation::Inferred,
+                })))
+            }
+        }
+    }
+
+    fn eval_call(
+        &mut self,
+        callee: Expr,
+        args: Vec<Expr>,
+        span: Span,
+    ) -> Result<EvalFlow, Box<RuntimeError>> {
+        let callee_span = callee.span;
+        let callee = value_or_flow!(self.eval_expr(callee, YieldMode::Capture)?);
+
+        let mut args_values = vec![];
+        for arg in args {
+            let value = value_or_flow!(self.eval_expr(arg, YieldMode::Capture)?);
+            args_values.push(value);
+        }
+
+        match callee {
+            Value::BuiltinFunction(builtin) => self.call_builtin(builtin, args_values, span),
+
+            Value::Function(fun) => self.call_function(fun, args_values, span),
+
+            other => Err(self.error_at(
+                callee_span,
+                RuntimeErrorKind::NotCallable(other.type_name().to_string()),
+            )),
+        }
+    }
+
     fn eval_block(
         &mut self,
         block: Block,
@@ -181,308 +244,6 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
         }
 
         Ok(EvalFlow::Continue(last_value))
-    }
-
-    fn eval_expr(
-        &mut self,
-        expr: Expr,
-        yield_mode: YieldMode,
-    ) -> Result<EvalFlow, Box<RuntimeError>> {
-        match expr.kind {
-            ExprKind::Int(val) => Ok(EvalFlow::Continue(Value::Int(val))),
-            ExprKind::Float(val) => Ok(EvalFlow::Continue(Value::Float(val))),
-            ExprKind::String(val) => Ok(EvalFlow::Continue(Value::String(val))),
-            ExprKind::Bool(val) => Ok(EvalFlow::Continue(Value::Bool(val))),
-            ExprKind::Ident(i) => {
-                let value = self.env.get(&i).map_err(|kind| {
-                    Box::new(RuntimeError {
-                        kind,
-                        span: expr.span,
-                        file_path: self.file_path.clone(),
-                    })
-                })?;
-                Ok(EvalFlow::Continue(value))
-            }
-            ExprKind::Unit => Ok(EvalFlow::Continue(Value::Unit)),
-            ExprKind::Block(block) => self.eval_block(block, yield_mode),
-            ExprKind::Tuple(exprs) => {
-                let mut values = vec![];
-
-                for expr in exprs {
-                    let value = value_or_flow!(self.eval_expr(expr, YieldMode::Capture)?);
-                    values.push(value);
-                }
-
-                Ok(EvalFlow::Continue(Value::Tuple(values)))
-            }
-            ExprKind::Unary { op, operand } => {
-                let value = value_or_flow!(self.eval_expr(*operand, YieldMode::Capture)?);
-                match op {
-                    crate::ast::UnaryOp::Negate => match value {
-                        Value::Int(val) => Ok(EvalFlow::Continue(Value::Int(-val))),
-                        Value::Float(val) => Ok(EvalFlow::Continue(Value::Float(-val))),
-                        other => Err(self.error_at(
-                            expr.span,
-                            RuntimeErrorKind::InvalidUnaryOp {
-                                op,
-                                operand: other.type_name(),
-                            },
-                        )),
-                    },
-                    crate::ast::UnaryOp::Not => match value {
-                        Value::Bool(val) => Ok(EvalFlow::Continue(Value::Bool(!val))),
-                        other => Err(self.error_at(
-                            expr.span,
-                            RuntimeErrorKind::InvalidUnaryOp {
-                                op,
-                                operand: other.type_name(),
-                            },
-                        )),
-                    },
-                }
-            }
-            ExprKind::Binary { lhs, op, rhs } => {
-                let lhs = value_or_flow!(self.eval_expr(*lhs, YieldMode::Capture)?);
-                let rhs = value_or_flow!(self.eval_expr(*rhs, YieldMode::Capture)?);
-                match op {
-                    BinaryOp::Add => match (lhs, rhs) {
-                        (Value::Int(i1), Value::Int(i2)) => {
-                            Ok(EvalFlow::Continue(Value::Int(i1 + i2)))
-                        }
-                        (Value::Float(f1), Value::Float(f2)) => {
-                            Ok(EvalFlow::Continue(Value::Float(f1 + f2)))
-                        }
-                        (other_lhs, other_rhs) => Err(self.error_at(
-                            expr.span,
-                            RuntimeErrorKind::InvalidBinaryOp {
-                                op,
-                                lhs: other_lhs.type_name(),
-                                rhs: other_rhs.type_name(),
-                            },
-                        )),
-                    },
-                    BinaryOp::Sub => match (lhs, rhs) {
-                        (Value::Int(i1), Value::Int(i2)) => {
-                            Ok(EvalFlow::Continue(Value::Int(i1 - i2)))
-                        }
-                        (Value::Float(f1), Value::Float(f2)) => {
-                            Ok(EvalFlow::Continue(Value::Float(f1 - f2)))
-                        }
-                        (other_lhs, other_rhs) => Err(self.error_at(
-                            expr.span,
-                            RuntimeErrorKind::InvalidBinaryOp {
-                                op,
-                                lhs: other_lhs.type_name(),
-                                rhs: other_rhs.type_name(),
-                            },
-                        )),
-                    },
-                    BinaryOp::Mul => match (lhs, rhs) {
-                        (Value::Int(i1), Value::Int(i2)) => {
-                            Ok(EvalFlow::Continue(Value::Int(i1 * i2)))
-                        }
-                        (Value::Float(f1), Value::Float(f2)) => {
-                            Ok(EvalFlow::Continue(Value::Float(f1 * f2)))
-                        }
-                        (other_lhs, other_rhs) => Err(self.error_at(
-                            expr.span,
-                            RuntimeErrorKind::InvalidBinaryOp {
-                                op,
-                                lhs: other_lhs.type_name(),
-                                rhs: other_rhs.type_name(),
-                            },
-                        )),
-                    },
-                    BinaryOp::Div => match (lhs, rhs) {
-                        (Value::Int(i1), Value::Int(i2)) => {
-                            Ok(EvalFlow::Continue(Value::Int(i1 / i2)))
-                        }
-                        (Value::Float(f1), Value::Float(f2)) => {
-                            Ok(EvalFlow::Continue(Value::Float(f1 / f2)))
-                        }
-                        (other_lhs, other_rhs) => Err(self.error_at(
-                            expr.span,
-                            RuntimeErrorKind::InvalidBinaryOp {
-                                op,
-                                lhs: other_lhs.type_name(),
-                                rhs: other_rhs.type_name(),
-                            },
-                        )),
-                    },
-                    BinaryOp::Eq => match (lhs, rhs) {
-                        (Value::Float(a), Value::Float(b)) => {
-                            Ok(EvalFlow::Continue(Value::Bool(a == b)))
-                        }
-                        (Value::Int(a), Value::Int(b)) => {
-                            Ok(EvalFlow::Continue(Value::Bool(a == b)))
-                        }
-                        (Value::Bool(a), Value::Bool(b)) => {
-                            Ok(EvalFlow::Continue(Value::Bool(a == b)))
-                        }
-                        (Value::Tuple(a), Value::Tuple(b)) => {
-                            Ok(EvalFlow::Continue(Value::Bool(a == b)))
-                        }
-                        (Value::String(a), Value::String(b)) => {
-                            Ok(EvalFlow::Continue(Value::Bool(a == b)))
-                        }
-                        (Value::Unit, Value::Unit) => Ok(EvalFlow::Continue(Value::Bool(true))),
-                        (other_lhs, other_rhs) => Err(self.error_at(
-                            expr.span,
-                            RuntimeErrorKind::InvalidBinaryOp {
-                                op,
-                                lhs: other_lhs.type_name(),
-                                rhs: other_rhs.type_name(),
-                            },
-                        )),
-                    },
-                    BinaryOp::NotEq => match (lhs, rhs) {
-                        (Value::Float(a), Value::Float(b)) => {
-                            Ok(EvalFlow::Continue(Value::Bool(a != b)))
-                        }
-                        (Value::Int(a), Value::Int(b)) => {
-                            Ok(EvalFlow::Continue(Value::Bool(a != b)))
-                        }
-                        (Value::Bool(a), Value::Bool(b)) => {
-                            Ok(EvalFlow::Continue(Value::Bool(a != b)))
-                        }
-                        (Value::Tuple(a), Value::Tuple(b)) => {
-                            Ok(EvalFlow::Continue(Value::Bool(a != b)))
-                        }
-                        (Value::String(a), Value::String(b)) => {
-                            Ok(EvalFlow::Continue(Value::Bool(a != b)))
-                        }
-                        (Value::Unit, Value::Unit) => Ok(EvalFlow::Continue(Value::Bool(false))),
-                        (other_lhs, other_rhs) => Err(self.error_at(
-                            expr.span,
-                            RuntimeErrorKind::InvalidBinaryOp {
-                                op,
-                                lhs: other_lhs.type_name(),
-                                rhs: other_rhs.type_name(),
-                            },
-                        )),
-                    },
-                    BinaryOp::Greater => match (lhs, rhs) {
-                        (Value::Float(a), Value::Float(b)) => {
-                            Ok(EvalFlow::Continue(Value::Bool(a > b)))
-                        }
-                        (Value::Int(a), Value::Int(b)) => {
-                            Ok(EvalFlow::Continue(Value::Bool(a > b)))
-                        }
-                        (other_lhs, other_rhs) => Err(self.error_at(
-                            expr.span,
-                            RuntimeErrorKind::InvalidBinaryOp {
-                                op,
-                                lhs: other_lhs.type_name(),
-                                rhs: other_rhs.type_name(),
-                            },
-                        )),
-                    },
-                    BinaryOp::GreaterEq => match (lhs, rhs) {
-                        (Value::Float(a), Value::Float(b)) => {
-                            Ok(EvalFlow::Continue(Value::Bool(a >= b)))
-                        }
-                        (Value::Int(a), Value::Int(b)) => {
-                            Ok(EvalFlow::Continue(Value::Bool(a >= b)))
-                        }
-                        (other_lhs, other_rhs) => Err(self.error_at(
-                            expr.span,
-                            RuntimeErrorKind::InvalidBinaryOp {
-                                op,
-                                lhs: other_lhs.type_name(),
-                                rhs: other_rhs.type_name(),
-                            },
-                        )),
-                    },
-                    BinaryOp::Less => match (lhs, rhs) {
-                        (Value::Float(a), Value::Float(b)) => {
-                            Ok(EvalFlow::Continue(Value::Bool(a < b)))
-                        }
-                        (Value::Int(a), Value::Int(b)) => {
-                            Ok(EvalFlow::Continue(Value::Bool(a < b)))
-                        }
-                        (other_lhs, other_rhs) => Err(self.error_at(
-                            expr.span,
-                            RuntimeErrorKind::InvalidBinaryOp {
-                                op,
-                                lhs: other_lhs.type_name(),
-                                rhs: other_rhs.type_name(),
-                            },
-                        )),
-                    },
-                    BinaryOp::LessEq => match (lhs, rhs) {
-                        (Value::Float(a), Value::Float(b)) => {
-                            Ok(EvalFlow::Continue(Value::Bool(a <= b)))
-                        }
-                        (Value::Int(a), Value::Int(b)) => {
-                            Ok(EvalFlow::Continue(Value::Bool(a <= b)))
-                        }
-                        (other_lhs, other_rhs) => Err(self.error_at(
-                            expr.span,
-                            RuntimeErrorKind::InvalidBinaryOp {
-                                op,
-                                lhs: other_lhs.type_name(),
-                                rhs: other_rhs.type_name(),
-                            },
-                        )),
-                    },
-                    BinaryOp::Combine => match (lhs, rhs) {
-                        (Value::String(s1), s2) => Ok(EvalFlow::Continue(Value::String(
-                            format!("{s1}{s2}").to_string(),
-                        ))),
-                        (s1, Value::String(s2)) => Ok(EvalFlow::Continue(Value::String(
-                            format!("{s1}{s2}").to_string(),
-                        ))),
-                        (other_lhs, other_rhs) => Err(self.error_at(
-                            expr.span,
-                            RuntimeErrorKind::InvalidBinaryOp {
-                                op,
-                                lhs: other_lhs.type_name(),
-                                rhs: other_rhs.type_name(),
-                            },
-                        )),
-                    },
-                }
-            }
-            ExprKind::Call { callee, args } => {
-                let callee_span = callee.span;
-                let callee = value_or_flow!(self.eval_expr(*callee, YieldMode::Capture)?);
-
-                let mut args_values = vec![];
-                for arg in args {
-                    let value = value_or_flow!(self.eval_expr(arg, YieldMode::Capture)?);
-                    args_values.push(value);
-                }
-
-                match callee {
-                    Value::BuiltinFunction(builtin) => {
-                        self.call_builtin(builtin, args_values, expr.span)
-                    }
-
-                    Value::Function(fun) => self.call_function(fun, args_values, expr.span),
-
-                    other => Err(self.error_at(
-                        callee_span,
-                        RuntimeErrorKind::NotCallable(other.type_name().to_string()),
-                    )),
-                }
-            }
-            ExprKind::If {
-                condition,
-                then_branch,
-                else_branch,
-            } => self.eval_if(*condition, *then_branch, else_branch, yield_mode),
-            ExprKind::While { condition, block } => self.eval_while(*condition, block, yield_mode),
-            ExprKind::Lambda { parameters, body } => {
-                let fun = FunctionValue {
-                    name: None,
-                    parameters,
-                    body: FunctionBody::Expr(*body),
-                    captured_env: self.env.current_ref(),
-                    return_type: TypeAnnotation::Inferred,
-                };
-                Ok(EvalFlow::Continue(Value::Function(fun)))
-            }
-        }
     }
 
     fn eval_if(
@@ -577,12 +338,260 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
         Ok(EvalFlow::Continue(Value::Unit))
     }
 
-    pub fn error_at(&self, span: Span, kind: RuntimeErrorKind) -> Box<RuntimeError> {
-        Box::new(RuntimeError {
-            kind,
-            span,
-            file_path: self.file_path.clone(),
-        })
+    fn eval_ident(&mut self, i: String, span: Span) -> Result<EvalFlow, Box<RuntimeError>> {
+        let value = self.env.get(&i).map_err(|kind| {
+            Box::new(RuntimeError {
+                kind,
+                span,
+                file_path: self.file_path.clone(),
+            })
+        })?;
+        Ok(EvalFlow::Continue(value))
+    }
+
+    fn eval_tuple(&mut self, exprs: Vec<Expr>) -> Result<EvalFlow, Box<RuntimeError>> {
+        {
+            let mut values = vec![];
+
+            for expr in exprs {
+                let value = value_or_flow!(self.eval_expr(expr, YieldMode::Capture)?);
+                values.push(value);
+            }
+
+            Ok(EvalFlow::Continue(Value::Tuple(values)))
+        }
+    }
+
+    fn eval_array(&mut self, exprs: Vec<Expr>) -> Result<EvalFlow, Box<RuntimeError>> {
+        {
+            let mut values = vec![];
+
+            for expr in exprs {
+                let value = value_or_flow!(self.eval_expr(expr, YieldMode::Capture)?);
+                values.push(value);
+            }
+
+            Ok(EvalFlow::Continue(Value::Array(values)))
+        }
+    }
+
+    fn eval_unary(
+        &mut self,
+        op: UnaryOp,
+        operand: Expr,
+        span: Span,
+    ) -> Result<EvalFlow, Box<RuntimeError>> {
+        let value = value_or_flow!(self.eval_expr(operand, YieldMode::Capture)?);
+        match op {
+            crate::ast::UnaryOp::Negate => match value {
+                Value::Int(val) => Ok(EvalFlow::Continue(Value::Int(-val))),
+                Value::Float(val) => Ok(EvalFlow::Continue(Value::Float(-val))),
+                other => Err(self.error_at(
+                    span,
+                    RuntimeErrorKind::InvalidUnaryOp {
+                        op,
+                        operand: other.type_name(),
+                    },
+                )),
+            },
+            crate::ast::UnaryOp::Not => match value {
+                Value::Bool(val) => Ok(EvalFlow::Continue(Value::Bool(!val))),
+                other => Err(self.error_at(
+                    span,
+                    RuntimeErrorKind::InvalidUnaryOp {
+                        op,
+                        operand: other.type_name(),
+                    },
+                )),
+            },
+        }
+    }
+
+    fn eval_binary(
+        &mut self,
+        op: BinaryOp,
+        lhs: Expr,
+        rhs: Expr,
+        span: Span,
+    ) -> Result<EvalFlow, Box<RuntimeError>> {
+        {
+            let lhs = value_or_flow!(self.eval_expr(lhs, YieldMode::Capture)?);
+            let rhs = value_or_flow!(self.eval_expr(rhs, YieldMode::Capture)?);
+            match op {
+                BinaryOp::Add => match (lhs, rhs) {
+                    (Value::Int(i1), Value::Int(i2)) => Ok(EvalFlow::Continue(Value::Int(i1 + i2))),
+                    (Value::Float(f1), Value::Float(f2)) => {
+                        Ok(EvalFlow::Continue(Value::Float(f1 + f2)))
+                    }
+                    (other_lhs, other_rhs) => Err(self.error_at(
+                        span,
+                        RuntimeErrorKind::InvalidBinaryOp {
+                            op,
+                            lhs: other_lhs.type_name(),
+                            rhs: other_rhs.type_name(),
+                        },
+                    )),
+                },
+                BinaryOp::Sub => match (lhs, rhs) {
+                    (Value::Int(i1), Value::Int(i2)) => Ok(EvalFlow::Continue(Value::Int(i1 - i2))),
+                    (Value::Float(f1), Value::Float(f2)) => {
+                        Ok(EvalFlow::Continue(Value::Float(f1 - f2)))
+                    }
+                    (other_lhs, other_rhs) => Err(self.error_at(
+                        span,
+                        RuntimeErrorKind::InvalidBinaryOp {
+                            op,
+                            lhs: other_lhs.type_name(),
+                            rhs: other_rhs.type_name(),
+                        },
+                    )),
+                },
+                BinaryOp::Mul => match (lhs, rhs) {
+                    (Value::Int(i1), Value::Int(i2)) => Ok(EvalFlow::Continue(Value::Int(i1 * i2))),
+                    (Value::Float(f1), Value::Float(f2)) => {
+                        Ok(EvalFlow::Continue(Value::Float(f1 * f2)))
+                    }
+                    (other_lhs, other_rhs) => Err(self.error_at(
+                        span,
+                        RuntimeErrorKind::InvalidBinaryOp {
+                            op,
+                            lhs: other_lhs.type_name(),
+                            rhs: other_rhs.type_name(),
+                        },
+                    )),
+                },
+                BinaryOp::Div => match (lhs, rhs) {
+                    (Value::Int(i1), Value::Int(i2)) => Ok(EvalFlow::Continue(Value::Int(i1 / i2))),
+                    (Value::Float(f1), Value::Float(f2)) => {
+                        Ok(EvalFlow::Continue(Value::Float(f1 / f2)))
+                    }
+                    (other_lhs, other_rhs) => Err(self.error_at(
+                        span,
+                        RuntimeErrorKind::InvalidBinaryOp {
+                            op,
+                            lhs: other_lhs.type_name(),
+                            rhs: other_rhs.type_name(),
+                        },
+                    )),
+                },
+                BinaryOp::Eq => match (lhs, rhs) {
+                    (Value::Float(a), Value::Float(b)) => {
+                        Ok(EvalFlow::Continue(Value::Bool(a == b)))
+                    }
+                    (Value::Int(a), Value::Int(b)) => Ok(EvalFlow::Continue(Value::Bool(a == b))),
+                    (Value::Bool(a), Value::Bool(b)) => Ok(EvalFlow::Continue(Value::Bool(a == b))),
+                    (Value::Tuple(a), Value::Tuple(b)) => {
+                        Ok(EvalFlow::Continue(Value::Bool(a == b)))
+                    }
+                    (Value::String(a), Value::String(b)) => {
+                        Ok(EvalFlow::Continue(Value::Bool(a == b)))
+                    }
+                    (Value::Unit, Value::Unit) => Ok(EvalFlow::Continue(Value::Bool(true))),
+                    (other_lhs, other_rhs) => Err(self.error_at(
+                        span,
+                        RuntimeErrorKind::InvalidBinaryOp {
+                            op,
+                            lhs: other_lhs.type_name(),
+                            rhs: other_rhs.type_name(),
+                        },
+                    )),
+                },
+                BinaryOp::NotEq => match (lhs, rhs) {
+                    (Value::Float(a), Value::Float(b)) => {
+                        Ok(EvalFlow::Continue(Value::Bool(a != b)))
+                    }
+                    (Value::Int(a), Value::Int(b)) => Ok(EvalFlow::Continue(Value::Bool(a != b))),
+                    (Value::Bool(a), Value::Bool(b)) => Ok(EvalFlow::Continue(Value::Bool(a != b))),
+                    (Value::Tuple(a), Value::Tuple(b)) => {
+                        Ok(EvalFlow::Continue(Value::Bool(a != b)))
+                    }
+                    (Value::String(a), Value::String(b)) => {
+                        Ok(EvalFlow::Continue(Value::Bool(a != b)))
+                    }
+                    (Value::Unit, Value::Unit) => Ok(EvalFlow::Continue(Value::Bool(false))),
+                    (other_lhs, other_rhs) => Err(self.error_at(
+                        span,
+                        RuntimeErrorKind::InvalidBinaryOp {
+                            op,
+                            lhs: other_lhs.type_name(),
+                            rhs: other_rhs.type_name(),
+                        },
+                    )),
+                },
+                BinaryOp::Greater => match (lhs, rhs) {
+                    (Value::Float(a), Value::Float(b)) => {
+                        Ok(EvalFlow::Continue(Value::Bool(a > b)))
+                    }
+                    (Value::Int(a), Value::Int(b)) => Ok(EvalFlow::Continue(Value::Bool(a > b))),
+                    (other_lhs, other_rhs) => Err(self.error_at(
+                        span,
+                        RuntimeErrorKind::InvalidBinaryOp {
+                            op,
+                            lhs: other_lhs.type_name(),
+                            rhs: other_rhs.type_name(),
+                        },
+                    )),
+                },
+                BinaryOp::GreaterEq => match (lhs, rhs) {
+                    (Value::Float(a), Value::Float(b)) => {
+                        Ok(EvalFlow::Continue(Value::Bool(a >= b)))
+                    }
+                    (Value::Int(a), Value::Int(b)) => Ok(EvalFlow::Continue(Value::Bool(a >= b))),
+                    (other_lhs, other_rhs) => Err(self.error_at(
+                        span,
+                        RuntimeErrorKind::InvalidBinaryOp {
+                            op,
+                            lhs: other_lhs.type_name(),
+                            rhs: other_rhs.type_name(),
+                        },
+                    )),
+                },
+                BinaryOp::Less => match (lhs, rhs) {
+                    (Value::Float(a), Value::Float(b)) => {
+                        Ok(EvalFlow::Continue(Value::Bool(a < b)))
+                    }
+                    (Value::Int(a), Value::Int(b)) => Ok(EvalFlow::Continue(Value::Bool(a < b))),
+                    (other_lhs, other_rhs) => Err(self.error_at(
+                        span,
+                        RuntimeErrorKind::InvalidBinaryOp {
+                            op,
+                            lhs: other_lhs.type_name(),
+                            rhs: other_rhs.type_name(),
+                        },
+                    )),
+                },
+                BinaryOp::LessEq => match (lhs, rhs) {
+                    (Value::Float(a), Value::Float(b)) => {
+                        Ok(EvalFlow::Continue(Value::Bool(a <= b)))
+                    }
+                    (Value::Int(a), Value::Int(b)) => Ok(EvalFlow::Continue(Value::Bool(a <= b))),
+                    (other_lhs, other_rhs) => Err(self.error_at(
+                        span,
+                        RuntimeErrorKind::InvalidBinaryOp {
+                            op,
+                            lhs: other_lhs.type_name(),
+                            rhs: other_rhs.type_name(),
+                        },
+                    )),
+                },
+                BinaryOp::Combine => match (lhs, rhs) {
+                    (Value::String(s1), s2) => Ok(EvalFlow::Continue(Value::String(
+                        format!("{s1}{s2}").to_string(),
+                    ))),
+                    (s1, Value::String(s2)) => Ok(EvalFlow::Continue(Value::String(
+                        format!("{s1}{s2}").to_string(),
+                    ))),
+                    (other_lhs, other_rhs) => Err(self.error_at(
+                        span,
+                        RuntimeErrorKind::InvalidBinaryOp {
+                            op,
+                            lhs: other_lhs.type_name(),
+                            rhs: other_rhs.type_name(),
+                        },
+                    )),
+                },
+            }
+        }
     }
 
     fn call_builtin(
@@ -638,6 +647,14 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 Err(self.error_at(span, RuntimeErrorKind::YieldOutsideHandler))
             }
         }
+    }
+
+    pub fn error_at(&self, span: Span, kind: RuntimeErrorKind) -> Box<RuntimeError> {
+        Box::new(RuntimeError {
+            kind,
+            span,
+            file_path: self.file_path.clone(),
+        })
     }
 }
 

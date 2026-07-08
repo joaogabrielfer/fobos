@@ -423,19 +423,30 @@ impl<'a> Parser<'a> {
                     self.advance();
                     return Ok(self.new_expr(start_span, ExprKind::Unit));
                 }
-                let mut tuple = self.check(TokenTag::LParen);
+                let mut is_tuple = self.check(TokenTag::LParen);
                 exprs.push(self.parse_expr()?);
                 while self.check(TokenTag::Comma) {
-                    tuple = true;
+                    is_tuple = true;
                     self.advance();
                     exprs.push(self.parse_expr()?);
                 }
                 self.expect(TokenTag::RParen)?;
-                if tuple {
+                if is_tuple {
                     Ok(self.new_expr(start_span, ExprKind::Tuple(exprs)))
                 } else {
                     Ok(exprs[0].clone())
                 }
+            }
+            TokenKind::LBrace => {
+                self.expect(TokenTag::LBrace)?;
+                let mut exprs = vec![];
+                exprs.push(self.parse_expr()?);
+                while self.check(TokenTag::Comma) {
+                    self.advance();
+                    exprs.push(self.parse_expr()?);
+                }
+                self.expect(TokenTag::RBrace)?;
+                Ok(self.new_expr(start_span, ExprKind::Array(exprs)))
             }
             other => Err(self.error(ParserErrorKind::ExpectedExpression {
                 found: other.tag().to_string(),
@@ -612,7 +623,6 @@ impl<'a> Parser<'a> {
 
 #[cfg(test)]
 mod tests {
-
     use crate::lexer::Lexer;
     use std::{
         ffi::OsStr,
@@ -636,14 +646,20 @@ mod tests {
                 let tokens = Lexer::new(&current_file_path, &content).tokenize();
 
                 let ast_str = match tokens {
-                    Ok(t) => {
-                        let ast = parser::Parser::new(t, &current_file_path).parse_program();
-                        format!("{ast:#?}")
+                    Ok(tokens) => {
+                        let ast = parser::Parser::new(tokens, &current_file_path).parse_program();
+
+                        match ast {
+                            Ok(program) => format!("{program:#?}"),
+                            Err(e) => format!("{e:#?}"),
+                        }
                     }
+
                     Err(e) => format!("{e:#?}"),
                 };
 
                 let ast_expected_path = create_expected_by_ext(&current_file_path, ".ast").unwrap();
+
                 let expected_ast = match read_to_string(ast_expected_path.clone()) {
                     Ok(s) => s,
                     Err(_) => {
@@ -652,14 +668,11 @@ mod tests {
                     }
                 };
 
-                for (i, (my_line, expected_line)) in
-                    ast_str.lines().zip(expected_ast.lines()).enumerate()
-                {
-                    assert_eq!(
-                        my_line, expected_line,
-                        "failed to match at line '{i}' in file {ast_expected_path:?}: "
-                    )
-                }
+                assert_eq!(
+                    ast_str.trim_end(),
+                    expected_ast.trim_end(),
+                    "failed to match ast output in file {ast_expected_path:?}"
+                );
             }
         }
     }

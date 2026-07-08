@@ -11,6 +11,7 @@ pub enum Value {
     Bool(bool),
     String(String),
     Tuple(Vec<Value>),
+    Array(Vec<Value>),
 
     BuiltinFunction(BuiltinFunction),
     Function(FunctionValue),
@@ -57,6 +58,19 @@ impl std::fmt::Display for Value {
 
                 write!(f, ")")
             }
+            Value::Array(values) => {
+                write!(f, "[")?;
+
+                for (i, value) in values.iter().enumerate() {
+                    if i > 0 {
+                        write!(f, ", ")?;
+                    }
+
+                    write!(f, "{value}")?;
+                }
+
+                write!(f, "]")
+            }
             Value::BuiltinFunction(_) => write!(f, "<builtin function>"),
             Value::Function(_) => write!(f, "<function>"),
         }
@@ -79,7 +93,17 @@ impl Value {
                         s = format!("{s}, ");
                     }
                 }
-                s
+                format!("{s})")
+            }
+            Value::Array(v) => {
+                let mut s = "Array '[".to_string();
+                for (i, item) in v.iter().enumerate() {
+                    s = format!("{s}{item}");
+                    if i < v.len() - 1 {
+                        s = format!("{s}, ");
+                    }
+                }
+                format!("{s}]")
             }
             Value::BuiltinFunction(_) => "<builtin function>".to_string(),
             Value::Function(_) => "<function>".to_string(),

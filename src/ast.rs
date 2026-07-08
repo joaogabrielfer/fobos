@@ -76,6 +76,7 @@ pub enum ExprKind {
     Block(Block),
 
     Tuple(Vec<Expr>),
+    Array(Vec<Expr>),
 
     Unary {
         op: UnaryOp,
@@ -121,6 +122,7 @@ impl Display for ExprKind {
             ExprKind::Unit => write!(f, "unit"),
             ExprKind::Block(_) => write!(f, "block"),
             ExprKind::Tuple(_) => write!(f, "tuple"),
+            ExprKind::Array(_) => write!(f, "array"),
             ExprKind::Unary { .. } => write!(f, "unary operation"),
             ExprKind::Binary { .. } => write!(f, "binary operation"),
             ExprKind::Call { .. } => write!(f, "function calling"),
