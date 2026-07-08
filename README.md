@@ -6,8 +6,19 @@ To run a program:
 $ cargo run -- run <file>
 ```
 
+To run the repl (WIP):
+```console
+$ cargo run
+```
+
+For debbuging:
+```console
+$ cargo run -- ast <file>    # generate the ast of the programs
+$ cargo run -- tokens <file> # generate the tokens of the program
+```
+
 ## Testing
-Use `cargo run -- generate-expected` to compile all .blorp programs in tests/ to their tokens and save them as .blorp.expected.
+Use `cargo run -- generate-expected` to compile all .blorp programs in fixtures/ to their results and save them inside fixtures/expected
 
 Use `cargo test` to run the unit tests and ensure the result is the expected
 
