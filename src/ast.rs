@@ -109,6 +109,11 @@ pub enum ExprKind {
         parameters: Vec<Parameter>,
         body: Box<Expr>,
     },
+
+    Index {
+        target: Box<Expr>,
+        index: Box<Expr>,
+    },
 }
 
 impl Display for ExprKind {
@@ -129,6 +134,7 @@ impl Display for ExprKind {
             ExprKind::If { .. } => write!(f, "if condition"),
             ExprKind::While { .. } => write!(f, "while loop"),
             ExprKind::Lambda { .. } => write!(f, "lambda"),
+            ExprKind::Index { .. } => write!(f, "index"),
         }
     }
 }

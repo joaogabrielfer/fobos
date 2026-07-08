@@ -130,9 +130,43 @@ Program {
                     },
                     args: [
                         Expr {
-                            kind: Ident(
-                                "array",
-                            ),
+                            kind: Binary {
+                                lhs: Expr {
+                                    kind: String(
+                                        "array ",
+                                    ),
+                                    span: Span {
+                                        start: SrcPos {
+                                            line: 2,
+                                            col: 6,
+                                            idx: 34,
+                                        },
+                                        end: SrcPos {
+                                            line: 2,
+                                            col: 17,
+                                            idx: 45,
+                                        },
+                                    },
+                                },
+                                op: Combine,
+                                rhs: Expr {
+                                    kind: Ident(
+                                        "array",
+                                    ),
+                                    span: Span {
+                                        start: SrcPos {
+                                            line: 2,
+                                            col: 18,
+                                            idx: 46,
+                                        },
+                                        end: SrcPos {
+                                            line: 2,
+                                            col: 24,
+                                            idx: 52,
+                                        },
+                                    },
+                                },
+                            },
                             span: Span {
                                 start: SrcPos {
                                     line: 2,
@@ -141,8 +175,8 @@ Program {
                                 },
                                 end: SrcPos {
                                     line: 2,
-                                    col: 12,
-                                    idx: 40,
+                                    col: 24,
+                                    idx: 52,
                                 },
                             },
                         },
@@ -157,7 +191,128 @@ Program {
                     end: SrcPos {
                         line: 3,
                         col: 1,
-                        idx: 41,
+                        idx: 53,
+                    },
+                },
+            },
+        ),
+        Expr(
+            Expr {
+                kind: Call {
+                    callee: Expr {
+                        kind: Ident(
+                            "echo",
+                        ),
+                        span: Span {
+                            start: SrcPos {
+                                line: 3,
+                                col: 1,
+                                idx: 53,
+                            },
+                            end: SrcPos {
+                                line: 3,
+                                col: 6,
+                                idx: 58,
+                            },
+                        },
+                    },
+                    args: [
+                        Expr {
+                            kind: Binary {
+                                lhs: Expr {
+                                    kind: String(
+                                        "array[0] = ",
+                                    ),
+                                    span: Span {
+                                        start: SrcPos {
+                                            line: 3,
+                                            col: 6,
+                                            idx: 58,
+                                        },
+                                        end: SrcPos {
+                                            line: 3,
+                                            col: 22,
+                                            idx: 74,
+                                        },
+                                    },
+                                },
+                                op: Combine,
+                                rhs: Expr {
+                                    kind: Index {
+                                        target: Expr {
+                                            kind: Ident(
+                                                "array",
+                                            ),
+                                            span: Span {
+                                                start: SrcPos {
+                                                    line: 3,
+                                                    col: 23,
+                                                    idx: 75,
+                                                },
+                                                end: SrcPos {
+                                                    line: 3,
+                                                    col: 29,
+                                                    idx: 81,
+                                                },
+                                            },
+                                        },
+                                        index: Expr {
+                                            kind: Int(
+                                                7,
+                                            ),
+                                            span: Span {
+                                                start: SrcPos {
+                                                    line: 3,
+                                                    col: 29,
+                                                    idx: 81,
+                                                },
+                                                end: SrcPos {
+                                                    line: 3,
+                                                    col: 31,
+                                                    idx: 83,
+                                                },
+                                            },
+                                        },
+                                    },
+                                    span: Span {
+                                        start: SrcPos {
+                                            line: 3,
+                                            col: 23,
+                                            idx: 75,
+                                        },
+                                        end: SrcPos {
+                                            line: 3,
+                                            col: 32,
+                                            idx: 84,
+                                        },
+                                    },
+                                },
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 3,
+                                    col: 6,
+                                    idx: 58,
+                                },
+                                end: SrcPos {
+                                    line: 3,
+                                    col: 32,
+                                    idx: 84,
+                                },
+                            },
+                        },
+                    ],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 3,
+                        col: 1,
+                        idx: 53,
+                    },
+                    end: SrcPos {
+                        line: 4,
+                        col: 1,
+                        idx: 85,
                     },
                 },
             },

@@ -14,7 +14,7 @@ use crate::{
         env::{Env, EnvFrame},
         values::{BuiltinFunction, FunctionBody, FunctionValue, Value},
     },
-    source::Span,
+    source::{Span, SrcPos},
 };
 
 pub enum EvalFlow {
@@ -170,6 +170,39 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                     captured_env: self.env.current_ref(),
                     return_type: TypeAnnotation::Inferred,
                 })))
+            }
+            ExprKind::Index { target, index } => {
+                let target_span = target.span;
+                let index_span = Span {
+                    start: index.span.start,
+                    end: SrcPos {
+                        line: index.span.end.line,
+                        col: index.span.end.col - 1,
+                        idx: index.span.end.idx - 1,
+                    },
+                };
+                let array = match value_or_flow!(self.eval_expr(*target, YieldMode::Capture)?) {
+                    Value::Array(values) => values,
+                    other => {
+                        return Err(self.error_at(
+                            target_span,
+                            RuntimeErrorKind::InvalidIndexingTarget(other.to_string()),
+                        ));
+                    }
+                };
+                let index = match value_or_flow!(self.eval_expr(*index, YieldMode::Capture)?) {
+                    Value::Int(i) => i,
+                    other => {
+                        return Err(self.error_at(
+                            target_span,
+                            RuntimeErrorKind::InvalidIndex(other.to_string()),
+                        ));
+                    }
+                };
+                if index < 0 || index as usize >= array.len() {
+                    return Err(self.error_at(index_span, RuntimeErrorKind::OutOfBounds(index)));
+                }
+                Ok(EvalFlow::Continue(array[index as usize].clone()))
             }
         }
     }

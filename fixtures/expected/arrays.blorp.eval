@@ -1,5 +1,18 @@
-output:
-[1, 2, 3, 4, 5]
-
-result:
-Unit
+RuntimeError {
+    kind: OutOfBounds(
+        7,
+    ),
+    span: Span {
+        start: SrcPos {
+            line: 3,
+            col: 29,
+            idx: 81,
+        },
+        end: SrcPos {
+            line: 3,
+            col: 30,
+            idx: 82,
+        },
+    },
+    file_path: "/home/joaogabriel/personal/programming/projects/blorp/fixtures/arrays.blorp",
+}

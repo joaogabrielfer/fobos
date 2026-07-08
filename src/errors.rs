@@ -178,6 +178,10 @@ pub enum RuntimeErrorKind {
     CannotAssignImmutable(String),
     #[error("{0} is not a valid assignment target")]
     InvalidAssignmentTarget(String),
+    #[error("{0} is not a valid indexing target")]
+    InvalidIndexingTarget(String),
+    #[error("{0} is not a valid index")]
+    InvalidIndex(String),
     #[error("invalid binary operation '{lhs} {op} {rhs}'")]
     InvalidBinaryOp {
         op: BinaryOp,
@@ -190,6 +194,8 @@ pub enum RuntimeErrorKind {
     ExpectedBool { found: String },
     #[error("'{0}' is not callable")]
     NotCallable(String),
+    #[error("index {0} was outside of the bound of the array")]
+    OutOfBounds(i64),
     #[error("expected {expected} function parameters, found {found}")]
     ArityMismatch { expected: usize, found: usize },
     #[error("missing 'else' branch for 'if' condition that yields a value")]

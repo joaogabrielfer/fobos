@@ -32,7 +32,6 @@ impl<'a> Parser<'a> {
 
         while !self.is_at_end() {
             let stmt = self.parse_statement()?;
-            // eprintln!("{:#?}", stmt.clone());
             statements.push(stmt);
             self.expect_many(vec![TokenTag::NewLine])?;
             self.consume_newlines();
@@ -44,7 +43,6 @@ impl<'a> Parser<'a> {
         match self.current().kind {
             TokenKind::Let => self.parse_binding(false),
             TokenKind::Var => self.parse_binding(true),
-            // TokenKind::While => self.parse_while(),
             TokenKind::Fun => self.parse_fun_decl(),
             TokenKind::Return => {
                 self.advance();
@@ -303,61 +301,73 @@ impl<'a> Parser<'a> {
         let mut expr = self.parse_primary_expr()?;
 
         loop {
-            if self.check(TokenTag::LParen) {
-                let args = self.parse_call_args()?;
-
-                expr = self.new_expr(
-                    start_span,
-                    ExprKind::Call {
-                        callee: Box::new(expr),
-                        args,
-                    },
-                );
-
-                continue;
-            }
-
-            if self.check(TokenTag::Dot) {
-                self.advance();
-
-                let method_name = self.expect_ident()?;
-                let end_span = self.current().span;
-
-                if !self.check(TokenTag::LParen) {
-                    return Err(self.error(ParserErrorKind::ExpectedToken {
-                        expected: "(".to_string(),
-                        found: self.current().kind.tag().to_string(),
-                    }));
+            match self.current_tag() {
+                TokenTag::LBrace => {
+                    self.expect(TokenTag::LBrace)?;
+                    let index = Box::new(self.parse_expr()?);
+                    self.expect(TokenTag::RBrace)?;
+                    return Ok(self.new_expr(
+                        start_span,
+                        ExprKind::Index {
+                            target: Box::new(expr),
+                            index,
+                        },
+                    ));
                 }
+                TokenTag::LParen => {
+                    let args = self.parse_call_args()?;
 
-                let mut args = self.parse_call_args()?;
+                    expr = self.new_expr(
+                        start_span,
+                        ExprKind::Call {
+                            callee: Box::new(expr),
+                            args,
+                        },
+                    );
 
-                if let ExprKind::Tuple(mut t) = expr.kind {
-                    while let Some(e) = t.pop() {
-                        args.insert(0, e);
+                    continue;
+                }
+                TokenTag::Dot => {
+                    self.advance();
+
+                    let method_name = self.expect_ident()?;
+                    let end_span = self.current().span;
+
+                    if !self.check(TokenTag::LParen) {
+                        return Err(self.error(ParserErrorKind::ExpectedToken {
+                            expected: "(".to_string(),
+                            found: self.current().kind.tag().to_string(),
+                        }));
                     }
-                } else {
-                    args.insert(0, expr);
+
+                    let mut args = self.parse_call_args()?;
+
+                    if let ExprKind::Tuple(mut t) = expr.kind {
+                        while let Some(e) = t.pop() {
+                            args.insert(0, e);
+                        }
+                    } else {
+                        args.insert(0, expr);
+                    }
+
+                    expr = self.new_expr(
+                        start_span,
+                        ExprKind::Call {
+                            callee: Box::new(Expr {
+                                kind: ExprKind::Ident(method_name),
+                                span: Span {
+                                    start: start_span.start,
+                                    end: end_span.end,
+                                },
+                            }),
+                            args,
+                        },
+                    );
+
+                    continue;
                 }
-
-                expr = self.new_expr(
-                    start_span,
-                    ExprKind::Call {
-                        callee: Box::new(Expr {
-                            kind: ExprKind::Ident(method_name),
-                            span: Span {
-                                start: start_span.start,
-                                end: end_span.end,
-                            },
-                        }),
-                        args,
-                    },
-                );
-
-                continue;
+                _ => break,
             }
-
-            break;
         }
 
         Ok(expr)

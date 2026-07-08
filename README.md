@@ -21,7 +21,7 @@ Use `cargo test` to run the unit tests and ensure the result is the expected
 - [x] function calling
 - [x] while loops
 - [x] if statements
-- [ ] arrays
+- [x] arrays
 - [ ] for loops
 - [ ] type checking
 - [ ] custom types (adts)
