@@ -1,5 +1,5 @@
 use crate::{
-    ast::{self, BinaryOp, Expr, ExprKind, Parameter, Type, TypeAnnotation},
+    ast::{self, BinaryOp, Expr, ExprKind, Parameter, TypeAnnotation, TypeExpr},
     errors::{ParserError, ParserErrorKind},
     lexer::{
         Token, TokenKind,
@@ -96,11 +96,16 @@ impl<'a> Parser<'a> {
             self.parse_expr()?
         };
 
+        let value_span = value.span;
         Ok(ast::Stmt::Bind {
             mutable,
             name,
             type_annotation,
             value,
+            span: Span {
+                start: start_span.start,
+                end: value_span.end,
+            },
         })
     }
 
@@ -130,6 +135,7 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_fun_decl(&mut self) -> Result<ast::Stmt, Box<ParserError>> {
+        let start_span = self.current().span;
         self.expect(TokenTag::Fun)?;
         let mut generics = vec![];
         if let TokenTag::LBrace = self.current_tag() {
@@ -178,6 +184,7 @@ impl<'a> Parser<'a> {
         }
         self.expect(TokenTag::Colon)?;
         let return_type = self.parse_option_type()?;
+        let end_span = self.current().span;
         self.expect(TokenTag::Equals)?;
         let body = self.parse_block()?;
         Ok(ast::Stmt::FunDecl {
@@ -186,6 +193,10 @@ impl<'a> Parser<'a> {
             parameters,
             body,
             return_type,
+            span: Span {
+                start: start_span.start,
+                end: end_span.end,
+            },
         })
     }
 
@@ -334,6 +345,7 @@ impl<'a> Parser<'a> {
                     self.expect(TokenTag::LBrace)?;
                     let index = Box::new(self.parse_expr()?);
                     self.expect(TokenTag::RBrace)?;
+
                     expr = self.new_expr(
                         start_span,
                         ExprKind::Index {
@@ -504,7 +516,8 @@ impl<'a> Parser<'a> {
             TokenTag::Equals => Ok(ast::TypeAnnotation::Inferred),
             TokenTag::Ident => {
                 let t = self.expect_ident()?;
-                Ok(ast::TypeAnnotation::Explicit(ast::Type::Named(
+                // TODO: Add array type here
+                Ok(ast::TypeAnnotation::Explicit(ast::TypeExpr::Named(
                     t.to_string(),
                 )))
             }
@@ -513,7 +526,7 @@ impl<'a> Parser<'a> {
                 match self.current_tag() {
                     TokenTag::RParen => {
                         self.expect(TokenTag::RParen)?;
-                        Ok(ast::TypeAnnotation::Explicit(ast::Type::Unit))
+                        Ok(ast::TypeAnnotation::Explicit(ast::TypeExpr::Unit))
                     }
                     TokenTag::Ident => {
                         let i = self.expect_ident()?;
@@ -529,12 +542,12 @@ impl<'a> Parser<'a> {
                             else {
                                 return Err(self.error(ParserErrorKind::ExpectedTypeAnnotation));
                             };
-                            Ok(TypeAnnotation::Explicit(Type::Function {
+                            Ok(TypeAnnotation::Explicit(TypeExpr::Function {
                                 parameters: idents,
                                 return_type: Box::new(return_type),
                             }))
                         } else {
-                            Ok(TypeAnnotation::Explicit(Type::Tuple(idents)))
+                            Ok(TypeAnnotation::Explicit(TypeExpr::Tuple(idents)))
                         }
                     }
                     other => Err(self.error(ParserErrorKind::ExpectedTokens {

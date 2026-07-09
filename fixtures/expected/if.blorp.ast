@@ -554,6 +554,18 @@ Program {
                     },
                 },
             },
+            span: Span {
+                start: SrcPos {
+                    line: 19,
+                    col: 1,
+                    idx: 219,
+                },
+                end: SrcPos {
+                    line: 20,
+                    col: 1,
+                    idx: 249,
+                },
+            },
         },
     ],
 }

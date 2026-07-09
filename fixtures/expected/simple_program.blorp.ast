@@ -21,6 +21,18 @@ Program {
                     },
                 },
             },
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 1,
+                    idx: 0,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 11,
+                },
+            },
         },
         Bind {
             mutable: true,
@@ -41,6 +53,18 @@ Program {
                         col: 1,
                         idx: 23,
                     },
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 11,
+                },
+                end: SrcPos {
+                    line: 3,
+                    col: 1,
+                    idx: 23,
                 },
             },
         },

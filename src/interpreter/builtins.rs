@@ -6,6 +6,7 @@ use crate::{
         eval::EvalFlow,
         values::{self, RangeValue, Value},
     },
+    typechecker::{env::TypeEnv, ty::Type},
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -29,6 +30,38 @@ impl Env {
     }
 }
 
+impl TypeEnv {
+    pub fn load_builtins(&mut self) {
+        self.define(
+            "echo".to_string(),
+            Type::Function {
+                parameters_types: vec![Type::String],
+                return_type: Box::new(Type::Unit),
+            },
+        );
+        self.define(
+            "range1".to_string(),
+            Type::Function {
+                parameters_types: vec![Type::Int],
+                return_type: Box::new(Type::Range),
+            },
+        );
+        self.define(
+            "range2".to_string(),
+            Type::Function {
+                parameters_types: vec![Type::Int, Type::Int],
+                return_type: Box::new(Type::Range),
+            },
+        );
+        self.define(
+            "range3".to_string(),
+            Type::Function {
+                parameters_types: vec![Type::Int, Type::Int, Type::Int],
+                return_type: Box::new(Type::Range),
+            },
+        );
+    }
+}
 impl<'a, W: std::io::Write> Interpreter<'a, W> {
     pub fn call_builtin(
         &mut self,
@@ -110,6 +143,15 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                             RuntimeErrorKind::InvalidRangeParameter(args_values[0].to_string()),
                         ));
                     };
+
+                    if step == 0 {
+                        return Err(self.error_at(
+                            span,
+                            RuntimeErrorKind::BadRangeStep {
+                                found: step.to_string(),
+                            },
+                        ));
+                    }
 
                     Ok(EvalFlow::Continue(Value::Range(RangeValue {
                         start,

@@ -38,6 +38,18 @@ Program {
                     },
                 },
             },
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 1,
+                    idx: 0,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 15,
+                },
+            },
         },
         Bind {
             mutable: false,
@@ -93,6 +105,18 @@ Program {
                         col: 1,
                         idx: 31,
                     },
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 15,
+                },
+                end: SrcPos {
+                    line: 3,
+                    col: 1,
+                    idx: 31,
                 },
             },
         },
@@ -167,6 +191,18 @@ Program {
                         col: 1,
                         idx: 50,
                     },
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 3,
+                    col: 1,
+                    idx: 31,
+                },
+                end: SrcPos {
+                    line: 4,
+                    col: 1,
+                    idx: 50,
                 },
             },
         },
@@ -311,6 +347,18 @@ Program {
                     },
                 },
             },
+            span: Span {
+                start: SrcPos {
+                    line: 4,
+                    col: 1,
+                    idx: 50,
+                },
+                end: SrcPos {
+                    line: 5,
+                    col: 1,
+                    idx: 77,
+                },
+            },
         },
         Bind {
             mutable: false,
@@ -418,6 +466,18 @@ Program {
                         col: 1,
                         idx: 104,
                     },
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 5,
+                    col: 1,
+                    idx: 77,
+                },
+                end: SrcPos {
+                    line: 6,
+                    col: 1,
+                    idx: 104,
                 },
             },
         },
@@ -528,6 +588,18 @@ Program {
                     },
                 },
             },
+            span: Span {
+                start: SrcPos {
+                    line: 6,
+                    col: 1,
+                    idx: 104,
+                },
+                end: SrcPos {
+                    line: 7,
+                    col: 1,
+                    idx: 127,
+                },
+            },
         },
         Bind {
             mutable: false,
@@ -620,6 +692,18 @@ Program {
                     },
                 },
             },
+            span: Span {
+                start: SrcPos {
+                    line: 7,
+                    col: 1,
+                    idx: 127,
+                },
+                end: SrcPos {
+                    line: 8,
+                    col: 1,
+                    idx: 154,
+                },
+            },
         },
         Bind {
             mutable: false,
@@ -694,6 +778,18 @@ Program {
                     },
                 },
             },
+            span: Span {
+                start: SrcPos {
+                    line: 9,
+                    col: 1,
+                    idx: 155,
+                },
+                end: SrcPos {
+                    line: 10,
+                    col: 1,
+                    idx: 177,
+                },
+            },
         },
         Bind {
             mutable: false,
@@ -766,6 +862,18 @@ Program {
                         col: 1,
                         idx: 200,
                     },
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 10,
+                    col: 1,
+                    idx: 177,
+                },
+                end: SrcPos {
+                    line: 11,
+                    col: 1,
+                    idx: 200,
                 },
             },
         },

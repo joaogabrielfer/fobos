@@ -59,6 +59,18 @@ Program {
                     },
                 },
             },
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 1,
+                    idx: 0,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 21,
+                },
+            },
         },
         Bind {
             mutable: false,
@@ -147,6 +159,18 @@ Program {
                         col: 1,
                         idx: 42,
                     },
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 21,
+                },
+                end: SrcPos {
+                    line: 3,
+                    col: 1,
+                    idx: 42,
                 },
             },
         },
@@ -273,6 +297,18 @@ Program {
                     },
                 },
             },
+            span: Span {
+                start: SrcPos {
+                    line: 3,
+                    col: 1,
+                    idx: 42,
+                },
+                end: SrcPos {
+                    line: 4,
+                    col: 1,
+                    idx: 67,
+                },
+            },
         },
         Bind {
             mutable: false,
@@ -327,6 +363,18 @@ Program {
                         col: 1,
                         idx: 83,
                     },
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 4,
+                    col: 1,
+                    idx: 67,
+                },
+                end: SrcPos {
+                    line: 5,
+                    col: 1,
+                    idx: 83,
                 },
             },
         },
@@ -423,6 +471,18 @@ Program {
                     },
                 },
             },
+            span: Span {
+                start: SrcPos {
+                    line: 5,
+                    col: 1,
+                    idx: 83,
+                },
+                end: SrcPos {
+                    line: 6,
+                    col: 1,
+                    idx: 108,
+                },
+            },
         },
         Bind {
             mutable: false,
@@ -517,6 +577,18 @@ Program {
                     },
                 },
             },
+            span: Span {
+                start: SrcPos {
+                    line: 6,
+                    col: 1,
+                    idx: 108,
+                },
+                end: SrcPos {
+                    line: 7,
+                    col: 1,
+                    idx: 136,
+                },
+            },
         },
         Bind {
             mutable: false,
@@ -594,6 +666,18 @@ Program {
                     },
                 },
             },
+            span: Span {
+                start: SrcPos {
+                    line: 7,
+                    col: 1,
+                    idx: 136,
+                },
+                end: SrcPos {
+                    line: 8,
+                    col: 1,
+                    idx: 157,
+                },
+            },
         },
         Bind {
             mutable: false,
@@ -631,6 +715,18 @@ Program {
                         col: 1,
                         idx: 172,
                     },
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 8,
+                    col: 1,
+                    idx: 157,
+                },
+                end: SrcPos {
+                    line: 9,
+                    col: 1,
+                    idx: 172,
                 },
             },
         },

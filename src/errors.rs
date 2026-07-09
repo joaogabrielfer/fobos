@@ -23,7 +23,7 @@ impl Display for LexerError {
                 let spaces = (0..line.to_string().len()).map(|_| ' ').collect::<String>();
                 let pipe = "|".cyan();
                 let arrow = "-->".cyan();
-                let error_red = "error".red();
+                let error_red = "tokenizer error".red();
                 write!(
                     f,
                     "{error_red}: {}\n{spaces}{arrow} {}:{line}:{col}:\n{spaces} {pipe}\n{} {pipe}   {snippet}",
@@ -79,7 +79,7 @@ impl Display for ParserError {
                 let spaces = (0..line.to_string().len()).map(|_| ' ').collect::<String>();
                 let pipe = "|".cyan();
                 let arrow = "-->".cyan();
-                let error_red = "error".red();
+                let error_red = "parser error".red();
                 write!(
                     f,
                     "{error_red}: {}\n{spaces}{arrow} {}:{line}:{col}:\n{spaces} {pipe}\n{} {pipe}   {snippet}",
@@ -158,7 +158,7 @@ impl Display for RuntimeError {
                 let spaces = (0..line.to_string().len()).map(|_| ' ').collect::<String>();
                 let pipe = "|".cyan();
                 let arrow = "-->".cyan();
-                let error_red = "error".red();
+                let error_red = "runtime error".red();
                 write!(
                     f,
                     "{error_red}: {}\n{spaces}{arrow} {}:{line}:{col}:\n{spaces} {pipe}\n{} {pipe}   {snippet}",
@@ -217,4 +217,71 @@ pub enum RuntimeErrorKind {
     YieldOutsideHandler,
     #[error("{found} is not an iterable value")]
     NotIterable { found: String },
+    #[error("{found} is not a valid range step")]
+    BadRangeStep { found: String },
+}
+
+#[derive(Debug, Error)]
+pub struct TypeError {
+    pub kind: TypeErrorKind,
+    pub span: Span,
+    pub file_path: PathBuf,
+}
+
+impl Display for TypeError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match render_source_span(&self.file_path, self.span) {
+            Ok((line, col, snippet)) => {
+                let spaces = (0..line.to_string().len()).map(|_| ' ').collect::<String>();
+                let pipe = "|".cyan();
+                let arrow = "-->".cyan();
+                let error_red = "type error".red();
+                write!(
+                    f,
+                    "{error_red}: {}\n{spaces}{arrow} {}:{line}:{col}:\n{spaces} {pipe}\n{} {pipe}   {snippet}",
+                    self.kind,
+                    self.file_path.display(),
+                    line.to_string().cyan(),
+                )
+            }
+            Err(_) => {
+                let error_red = "error".red();
+                write!(f, "{error_red}: {}", self.kind)
+            }
+        }
+    }
+}
+
+#[derive(Debug, Error)]
+pub enum TypeErrorKind {
+    #[error("mismatched types, expected '{expected}' but got '{found}'")]
+    MismatchedType { expected: String, found: String },
+    #[error("mismatched array members types, expected '{expected} for array' but got '{found}'")]
+    MismatchedArrayType { expected: String, found: String },
+    #[error("mismatched yielded types, expected '{expected}', but got '{found}'")]
+    MismatchedYieldTypes { expected: String, found: String },
+    #[error("mismatched returned types, expected '{expected}', but got '{found}'")]
+    MismatchedReturnTypes { expected: String, found: String },
+    #[error("mismatched types on branches, expected '{expected}', but got '{found}'")]
+    MismatchedBranchTypes { expected: String, found: String },
+    #[error("'{lhs}' and '{rhs}' are not valid types for operation '{op}'")]
+    MismatchedBinaryOpType {
+        op: BinaryOp,
+        lhs: String,
+        rhs: String,
+    },
+    #[error("undefined variable '{0}'")]
+    UndefinedVariable(String),
+    #[error("{found} is not an iterable type")]
+    NotIterable { found: String },
+    #[error("{0} is not a valid assignment target")]
+    InvalidAssignmentTarget(String),
+    #[error("{0} is not a valid indexing target")]
+    InvalidIndexingTarget(String),
+    #[error("{0} is not a valid indexing type")]
+    InvalidIndexType(String),
+    #[error("cannot return outside a function")]
+    ReturnOutsideFunction,
+    #[error("yield used outside of an effect handler")]
+    YieldOutsideHandler,
 }

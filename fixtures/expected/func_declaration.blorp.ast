@@ -137,6 +137,18 @@ Program {
                     ),
                 ],
             },
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 1,
+                    idx: 0,
+                },
+                end: SrcPos {
+                    line: 1,
+                    col: 45,
+                    idx: 44,
+                },
+            },
         },
         FunDecl {
             name: "foo",
@@ -169,6 +181,18 @@ Program {
                         },
                     ),
                 ],
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 6,
+                    col: 2,
+                    idx: 81,
+                },
+                end: SrcPos {
+                    line: 6,
+                    col: 18,
+                    idx: 97,
+                },
             },
         },
         FunDecl {
@@ -212,6 +236,18 @@ Program {
                     ),
                 ],
             },
+            span: Span {
+                start: SrcPos {
+                    line: 10,
+                    col: 1,
+                    idx: 119,
+                },
+                end: SrcPos {
+                    line: 10,
+                    col: 28,
+                    idx: 146,
+                },
+            },
         },
         FunDecl {
             name: "greet",
@@ -244,6 +280,18 @@ Program {
                         },
                     ),
                 ],
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 14,
+                    col: 2,
+                    idx: 166,
+                },
+                end: SrcPos {
+                    line: 14,
+                    col: 23,
+                    idx: 187,
+                },
             },
         },
         FunDecl {
@@ -311,6 +359,18 @@ Program {
                     ),
                 ],
             },
+            span: Span {
+                start: SrcPos {
+                    line: 18,
+                    col: 1,
+                    idx: 214,
+                },
+                end: SrcPos {
+                    line: 18,
+                    col: 27,
+                    idx: 240,
+                },
+            },
         },
         FunDecl {
             name: "inferred_type",
@@ -328,6 +388,18 @@ Program {
             return_type: Inferred,
             body: Block {
                 statements: [],
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 22,
+                    col: 1,
+                    idx: 281,
+                },
+                end: SrcPos {
+                    line: 22,
+                    col: 29,
+                    idx: 309,
+                },
             },
         },
         FunDecl {
@@ -352,6 +424,18 @@ Program {
             ),
             body: Block {
                 statements: [],
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 25,
+                    col: 1,
+                    idx: 315,
+                },
+                end: SrcPos {
+                    line: 25,
+                    col: 36,
+                    idx: 350,
+                },
             },
         },
         FunDecl {
@@ -383,6 +467,18 @@ Program {
             ),
             body: Block {
                 statements: [],
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 28,
+                    col: 1,
+                    idx: 356,
+                },
+                end: SrcPos {
+                    line: 28,
+                    col: 45,
+                    idx: 400,
+                },
             },
         },
     ],

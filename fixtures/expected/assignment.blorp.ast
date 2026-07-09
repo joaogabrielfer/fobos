@@ -21,6 +21,18 @@ Program {
                     },
                 },
             },
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 1,
+                    idx: 0,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 14,
+                },
+            },
         },
         Assignment {
             target: Expr {
@@ -77,6 +89,18 @@ Program {
                         col: 1,
                         idx: 41,
                     },
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 4,
+                    col: 1,
+                    idx: 24,
+                },
+                end: SrcPos {
+                    line: 5,
+                    col: 1,
+                    idx: 41,
                 },
             },
         },

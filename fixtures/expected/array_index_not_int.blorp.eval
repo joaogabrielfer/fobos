@@ -1,0 +1,18 @@
+RuntimeError {
+    kind: InvalidIndex(
+        "foo",
+    ),
+    span: Span {
+        start: SrcPos {
+            line: 2,
+            col: 1,
+            idx: 25,
+        },
+        end: SrcPos {
+            line: 2,
+            col: 6,
+            idx: 30,
+        },
+    },
+    file_path: "/home/joaogabriel/personal/programming/projects/blorp/fixtures/array_index_not_int.blorp",
+}

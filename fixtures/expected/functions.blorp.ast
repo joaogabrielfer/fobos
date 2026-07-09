@@ -79,6 +79,18 @@ Program {
                     ),
                 ],
             },
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 1,
+                    idx: 0,
+                },
+                end: SrcPos {
+                    line: 1,
+                    col: 27,
+                    idx: 26,
+                },
+            },
         },
         Expr(
             Expr {
@@ -319,6 +331,18 @@ Program {
                     },
                 },
             },
+            span: Span {
+                start: SrcPos {
+                    line: 7,
+                    col: 1,
+                    idx: 83,
+                },
+                end: SrcPos {
+                    line: 8,
+                    col: 1,
+                    idx: 117,
+                },
+            },
         },
         Bind {
             mutable: false,
@@ -374,6 +398,18 @@ Program {
                         col: 1,
                         idx: 142,
                     },
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 8,
+                    col: 1,
+                    idx: 117,
+                },
+                end: SrcPos {
+                    line: 9,
+                    col: 1,
+                    idx: 142,
                 },
             },
         },

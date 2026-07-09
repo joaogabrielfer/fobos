@@ -1,6 +1,9 @@
 use std::fmt::Display;
 
-use crate::source::Span;
+use crate::{
+    source::Span,
+    typechecker::{TypeResult, ty::Type},
+};
 
 #[derive(Debug, Clone)]
 pub struct Program {
@@ -18,6 +21,7 @@ pub enum Stmt {
         name: String,
         type_annotation: TypeAnnotation,
         value: Expr,
+        span: Span,
     },
 
     Assignment {
@@ -31,26 +35,150 @@ pub enum Stmt {
         parameters: Vec<Parameter>,
         return_type: TypeAnnotation,
         body: Block,
+        span: Span,
     },
+}
+
+impl Stmt {
+    pub fn span(&self) -> Span {
+        match self {
+            Stmt::Expr(expr) => expr.span,
+            Stmt::Return(expr) => expr.span,
+            Stmt::Yield(expr) => expr.span,
+            Stmt::Bind { span, .. } => *span,
+            Stmt::Assignment { target, value } => Span {
+                start: target.span.start,
+                end: value.span.end,
+            },
+            Stmt::FunDecl { span, .. } => *span,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum TypeAnnotation {
     Inferred,
-    Explicit(Type),
+    Explicit(TypeExpr),
+}
+
+impl TypeAnnotation {
+    pub fn resolve_type_annotation(&self) -> TypeResult<Type> {
+        let TypeAnnotation::Explicit(t) = self else {
+            return Ok(Type::Any);
+        };
+        match t {
+            TypeExpr::Named(name) if name == "Int" => Ok(Type::Int),
+            TypeExpr::Named(name) if name == "Float" => Ok(Type::Float),
+            TypeExpr::Named(name) if name == "Bool" => Ok(Type::Bool),
+            TypeExpr::Named(name) if name == "String" => Ok(Type::String),
+            TypeExpr::Named(name) => Ok(Type::TypeVar(name.clone())), // temporary for generics
+            TypeExpr::Unit => Ok(Type::Unit),
+            // TODO: Array isnt
+            // implemented in the
+            // tokenizer yet
+            TypeExpr::Array(inner) => Ok(Type::Array(Box::new(
+                TypeAnnotation::Explicit(TypeExpr::Named(inner.clone()))
+                    .resolve_type_annotation()?,
+            ))),
+            TypeExpr::Tuple(items) => {
+                let mut types = Vec::new();
+
+                for item in items {
+                    types.push(
+                        TypeAnnotation::Explicit(TypeExpr::Named(item.clone()))
+                            .resolve_type_annotation()?,
+                    );
+                }
+
+                Ok(Type::Tuple(types))
+            }
+            TypeExpr::Function {
+                parameters,
+                return_type,
+            } => {
+                let parameters = parameters
+                    .iter()
+                    .map(|p| {
+                        TypeAnnotation::Explicit(TypeExpr::Named(p.clone()))
+                            .resolve_type_annotation()
+                    })
+                    .collect::<Result<Vec<_>, _>>()?;
+
+                let ret =
+                    TypeAnnotation::Explicit(*return_type.clone()).resolve_type_annotation()?;
+
+                Ok(Type::Function {
+                    parameters_types: parameters,
+                    return_type: Box::new(ret),
+                })
+            }
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum Type {
+pub enum TypeExpr {
     Named(String),
     Tuple(Vec<String>),
+    Array(String),
     Function {
         parameters: Vec<String>,
-        return_type: Box<Type>,
+        return_type: Box<TypeExpr>,
     },
     Unit,
 }
 
+impl TypeExpr {
+    pub fn resolve_type_expr(&self) -> TypeResult<Type> {
+        match self {
+            TypeExpr::Named(name) if name == "Int" => Ok(Type::Int),
+            TypeExpr::Named(name) if name == "Float" => Ok(Type::Float),
+            TypeExpr::Named(name) if name == "Bool" => Ok(Type::Bool),
+            TypeExpr::Named(name) if name == "String" => Ok(Type::String),
+            TypeExpr::Named(name) => Ok(Type::TypeVar(name.clone())), // temporary for generics
+            TypeExpr::Unit => Ok(Type::Unit),
+            // TODO: Array isnt
+            // implemented in the
+            // tokenizer yet
+            TypeExpr::Array(inner) => Ok(Type::Array(Box::new(
+                TypeAnnotation::Explicit(TypeExpr::Named(inner.clone()))
+                    .resolve_type_annotation()?,
+            ))),
+            TypeExpr::Tuple(items) => {
+                let mut types = Vec::new();
+
+                for item in items {
+                    types.push(
+                        TypeAnnotation::Explicit(TypeExpr::Named(item.clone()))
+                            .resolve_type_annotation()?,
+                    );
+                }
+
+                Ok(Type::Tuple(types))
+            }
+            TypeExpr::Function {
+                parameters,
+                return_type,
+            } => {
+                let parameters = parameters
+                    .iter()
+                    .map(|p| {
+                        TypeAnnotation::Explicit(TypeExpr::Named(p.clone()))
+                            .resolve_type_annotation()
+                    })
+                    .collect::<Result<Vec<_>, _>>()?;
+
+                let ret =
+                    TypeAnnotation::Explicit(*return_type.clone()).resolve_type_annotation()?;
+
+                Ok(Type::Function {
+                    parameters_types: parameters,
+                    return_type: Box::new(ret),
+                })
+            }
+        }
+    }
+}
 #[allow(dead_code)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Parameter {
@@ -149,6 +277,21 @@ impl Display for ExprKind {
 #[derive(Debug, Clone, PartialEq)]
 pub struct Block {
     pub statements: Vec<Stmt>,
+}
+
+impl Block {
+    pub fn span(&self) -> Span {
+        let start = self.statements.first();
+        let end = self.statements.last();
+
+        match (start, end) {
+            (Some(s), Some(e)) => Span {
+                start: s.span().start,
+                end: e.span().end,
+            },
+            _ => Span::dummy(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]

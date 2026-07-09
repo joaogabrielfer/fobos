@@ -119,6 +119,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 parameters,
                 return_type,
                 body,
+                ..
             } => {
                 // let return_type = match return_type {
                 //     TypeAnnotation::Explicit(t) => t,
@@ -566,6 +567,18 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                         Ok(EvalFlow::Continue(Value::Bool(a == b)))
                     }
                     (Value::Unit, Value::Unit) => Ok(EvalFlow::Continue(Value::Bool(true))),
+                    (Value::Array(a), Value::Array(b)) => {
+                        Ok(EvalFlow::Continue(Value::Bool(a == b)))
+                    }
+                    (Value::BuiltinFunction(a), Value::BuiltinFunction(b)) => {
+                        Ok(EvalFlow::Continue(Value::Bool(a == b)))
+                    }
+                    (Value::Range(a), Value::Range(b)) => {
+                        Ok(EvalFlow::Continue(Value::Bool(a == b)))
+                    }
+                    (Value::Function(a), Value::Function(b)) => {
+                        Ok(EvalFlow::Continue(Value::Bool(a == b)))
+                    }
                     (other_lhs, other_rhs) => Err(self.error_at(
                         span,
                         RuntimeErrorKind::InvalidBinaryOp {
@@ -588,6 +601,18 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                         Ok(EvalFlow::Continue(Value::Bool(a != b)))
                     }
                     (Value::Unit, Value::Unit) => Ok(EvalFlow::Continue(Value::Bool(false))),
+                    (Value::Array(a), Value::Array(b)) => {
+                        Ok(EvalFlow::Continue(Value::Bool(a != b)))
+                    }
+                    (Value::BuiltinFunction(a), Value::BuiltinFunction(b)) => {
+                        Ok(EvalFlow::Continue(Value::Bool(a != b)))
+                    }
+                    (Value::Range(a), Value::Range(b)) => {
+                        Ok(EvalFlow::Continue(Value::Bool(a != b)))
+                    }
+                    (Value::Function(a), Value::Function(b)) => {
+                        Ok(EvalFlow::Continue(Value::Bool(a != b)))
+                    }
                     (other_lhs, other_rhs) => Err(self.error_at(
                         span,
                         RuntimeErrorKind::InvalidBinaryOp {

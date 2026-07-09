@@ -1,0 +1,18 @@
+RuntimeError {
+    kind: OutOfBounds(
+        3,
+    ),
+    span: Span {
+        start: SrcPos {
+            line: 2,
+            col: 6,
+            idx: 30,
+        },
+        end: SrcPos {
+            line: 2,
+            col: 7,
+            idx: 31,
+        },
+    },
+    file_path: "/home/joaogabriel/personal/programming/projects/blorp/fixtures/array_out_of_bounds.blorp",
+}

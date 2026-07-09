@@ -9,6 +9,7 @@ use blorp::{
     interpreter::{self, Interpreter},
     lexer::{self, Lexer},
     parser::{self},
+    typechecker::TypeChecker,
 };
 
 #[derive(Parser)]
@@ -22,6 +23,8 @@ struct Cli {
 enum Commands {
     Run {
         path: PathBuf,
+        #[arg(short = 't', long = "checker", default_value_t = false)]
+        type_checker: bool,
     },
     Tokens {
         path: PathBuf,
@@ -114,12 +117,17 @@ fn run() -> anyhow::Result<()> {
                 }
             }
         }
-        Some(Commands::Run { path }) => {
+        Some(Commands::Run { path, type_checker }) => {
             let content = read_to_string(path)?;
             let tokens = Lexer::new(path, &content).tokenize()?;
             let ast = parser::Parser::new(tokens, path).parse_program()?;
             let stdout = std::io::stdout();
-            Interpreter::new(path, stdout.lock()).eval_program(ast)?;
+            if *type_checker {
+                let checked_program = TypeChecker::new(path.clone()).check_program(ast)?;
+                Interpreter::new(path, stdout.lock()).eval_program(checked_program.program)?;
+            } else {
+                Interpreter::new(path, stdout.lock()).eval_program(ast)?;
+            }
             Ok(())
         }
         Some(Commands::Tokens { path, only_kinds }) => {

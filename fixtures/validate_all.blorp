@@ -1,5 +1,5 @@
 let unit_value: () = ()
-let int_value := 10
+let int_value: Int = 10
 let float_value := 10.5
 let bool_value := true
 let string_value := "hello"

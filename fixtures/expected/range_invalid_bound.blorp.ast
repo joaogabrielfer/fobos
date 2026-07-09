@@ -1,0 +1,72 @@
+Program {
+    statements: [
+        Bind {
+            mutable: false,
+            name: "r",
+            type_annotation: Inferred,
+            value: Expr {
+                kind: Binary {
+                    lhs: Expr {
+                        kind: String(
+                            "a",
+                        ),
+                        span: Span {
+                            start: SrcPos {
+                                line: 1,
+                                col: 10,
+                                idx: 9,
+                            },
+                            end: SrcPos {
+                                line: 1,
+                                col: 16,
+                                idx: 15,
+                            },
+                        },
+                    },
+                    op: ExclusiveRange,
+                    rhs: Expr {
+                        kind: Int(
+                            10,
+                        ),
+                        span: Span {
+                            start: SrcPos {
+                                line: 1,
+                                col: 16,
+                                idx: 15,
+                            },
+                            end: SrcPos {
+                                line: 2,
+                                col: 1,
+                                idx: 18,
+                            },
+                        },
+                    },
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 1,
+                        col: 10,
+                        idx: 9,
+                    },
+                    end: SrcPos {
+                        line: 2,
+                        col: 1,
+                        idx: 18,
+                    },
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 1,
+                    idx: 0,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 18,
+                },
+            },
+        },
+    ],
+}

@@ -1,0 +1,107 @@
+Program {
+    statements: [
+        Bind {
+            mutable: false,
+            name: "r",
+            type_annotation: Inferred,
+            value: Expr {
+                kind: Call {
+                    callee: Expr {
+                        kind: Ident(
+                            "range",
+                        ),
+                        span: Span {
+                            start: SrcPos {
+                                line: 1,
+                                col: 10,
+                                idx: 9,
+                            },
+                            end: SrcPos {
+                                line: 1,
+                                col: 16,
+                                idx: 15,
+                            },
+                        },
+                    },
+                    args: [
+                        Expr {
+                            kind: Int(
+                                0,
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 1,
+                                    col: 16,
+                                    idx: 15,
+                                },
+                                end: SrcPos {
+                                    line: 1,
+                                    col: 18,
+                                    idx: 17,
+                                },
+                            },
+                        },
+                        Expr {
+                            kind: Int(
+                                10,
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 1,
+                                    col: 19,
+                                    idx: 18,
+                                },
+                                end: SrcPos {
+                                    line: 1,
+                                    col: 22,
+                                    idx: 21,
+                                },
+                            },
+                        },
+                        Expr {
+                            kind: Int(
+                                0,
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 1,
+                                    col: 23,
+                                    idx: 22,
+                                },
+                                end: SrcPos {
+                                    line: 1,
+                                    col: 25,
+                                    idx: 24,
+                                },
+                            },
+                        },
+                    ],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 1,
+                        col: 10,
+                        idx: 9,
+                    },
+                    end: SrcPos {
+                        line: 2,
+                        col: 1,
+                        idx: 25,
+                    },
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 1,
+                    idx: 0,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 25,
+                },
+            },
+        },
+    ],
+}
