@@ -1,10 +1,14 @@
 use crate::{
     ast::{BinaryOp, Block, Expr, ExprKind, Program, Stmt, TypeAnnotation, UnaryOp},
     errors::{TypeError, TypeErrorKind},
+    interpreter::values::Value,
     source::Span,
     typechecker::{
         CheckedProgram, TypeChecker, TypeResult,
-        ty::Type::{self},
+        ty::{
+            ParameterTypes,
+            Type::{self},
+        },
     },
 };
 
@@ -90,7 +94,7 @@ impl TypeChecker {
                     self.error_at(stmt.span(), TypeErrorKind::ReturnOutsideFunction)
                 })?;
 
-                if self.types_compatible(&expected, &found) {
+                if TypeChecker::types_compatible(&expected, &found) {
                     Ok(StmtCheck::returns(found))
                 } else {
                     Err(self.error_at(
@@ -116,8 +120,8 @@ impl TypeChecker {
                         Ok(StmtCheck::normal(Type::Unit))
                     }
                     TypeAnnotation::Explicit(bind_type) => {
-                        let bind_type = bind_type.resolve_type_expr()?;
-                        if self.types_compatible(&bind_type, &value_type) {
+                        let bind_type = bind_type.resolve_type_expr();
+                        if TypeChecker::types_compatible(&bind_type, &value_type) {
                             self.env.define(name.clone(), bind_type);
                             Ok(StmtCheck::normal(Type::Unit))
                         } else {
@@ -142,7 +146,7 @@ impl TypeChecker {
                             .get(name)
                             .map_err(|kind| self.error_at(target.span, kind))?;
 
-                        if !self.types_compatible(&target_type, &value_type) {
+                        if !TypeChecker::types_compatible(&target_type, &value_type) {
                             return Err(self.error_at(
                                 value.span,
                                 TypeErrorKind::MismatchedType {
@@ -195,7 +199,7 @@ impl TypeChecker {
             }
             ExprKind::Array(exprs) => {
                 let Some(fst) = exprs.first() else {
-                    return Ok(Type::Array(Box::new(Type::Unit)));
+                    return Ok(Type::Array(Box::new(Type::Any)));
                 };
                 let t = self.infer_expr(fst)?;
                 for expr in exprs {
@@ -318,8 +322,7 @@ impl TypeChecker {
             ExprKind::While { condition, block } => {
                 let condition_span = condition.span;
                 let t = self.infer_expr(condition)?;
-                if !self.types_compatible(&Type::Bool, &t) {
-                    eprintln!("{t} - {}", Type::Bool);
+                if !TypeChecker::types_compatible(&Type::Bool, &t) {
                     return Err(self.error_at(
                         condition_span,
                         TypeErrorKind::MismatchedType {
@@ -402,7 +405,7 @@ impl TypeChecker {
                     };
 
                     Ok(Type::Function {
-                        parameters_types,
+                        parameter_overloads: vec![parameters_types],
                         return_type: Box::new(ret_type),
                     })
                 })();
@@ -509,21 +512,42 @@ impl TypeChecker {
             return Ok(());
         };
 
-        let mut param_types = Vec::new();
+        let mut parameters_types = Vec::new();
 
         for param in parameters {
-            param_types.push(param.t.resolve_type_annotation()?);
+            parameters_types.push(param.t.resolve_type_annotation());
         }
 
-        let ret = return_type.resolve_type_annotation()?;
+        let return_type = Box::new(return_type.resolve_type_annotation());
 
-        self.env.define(
-            name.clone(),
+        let fun = if let Ok(Type::Function {
+            mut parameter_overloads,
+            return_type: defined_return_type,
+        }) = self.env.get(name)
+        {
+            if defined_return_type != return_type {
+                return Err(self.error_at(
+                    stmt.span(),
+                    TypeErrorKind::MismatchedReturnTypes {
+                        expected: defined_return_type.to_string(),
+                        found: return_type.to_string(),
+                    },
+                ));
+            }
+
+            parameter_overloads.push(parameters_types);
             Type::Function {
-                parameters_types: param_types,
-                return_type: Box::new(ret),
-            },
-        );
+                parameter_overloads,
+                return_type,
+            }
+        } else {
+            Type::Function {
+                parameter_overloads: vec![parameters_types],
+                return_type,
+            }
+        };
+
+        self.env.define(name.clone(), fun);
 
         Ok(())
     }
@@ -539,14 +563,14 @@ impl TypeChecker {
             return Ok(());
         };
 
-        let expected_return = return_type.resolve_type_annotation()?;
+        let expected_return = return_type.resolve_type_annotation();
         let previous_return = self.current_function_return.clone();
         self.current_function_return = Some(expected_return.clone());
 
         self.env.push_scope();
 
         for param in parameters {
-            let param_type = param.t.resolve_type_annotation()?;
+            let param_type = param.t.resolve_type_annotation();
             self.env.define(param.name.clone(), param_type);
         }
 
@@ -557,7 +581,10 @@ impl TypeChecker {
         self.current_function_return = previous_return;
 
         if let Some(returned) = body_check.returned_type
-            && !self.types_compatible(&expected_return, &return_type.resolve_type_annotation()?)
+            && !TypeChecker::types_compatible(
+                &expected_return,
+                &return_type.resolve_type_annotation(),
+            )
         {
             return Err(self.error_at(
                 body.span(),
@@ -571,9 +598,36 @@ impl TypeChecker {
         Ok(())
     }
 
-    fn types_compatible(&self, expected: &Type, found: &Type) -> bool {
+    // returns the matched index, not parameter length
+    pub fn check_function_call(
+        parameter_overloads: &[ParameterTypes],
+        args_values: &Vec<Value>,
+    ) -> Option<usize> {
+        for (i, parameter_list) in parameter_overloads.iter().enumerate() {
+            let mut matched = true;
+            for (parameter, value) in parameter_list.iter().zip(args_values) {
+                if !TypeChecker::types_compatible(parameter, &value.get_type()) {
+                    matched = false
+                }
+            }
+            if matched {
+                return Some(i);
+            }
+        }
+
+        None
+    }
+
+    fn types_compatible(expected: &Type, found: &Type) -> bool {
         match (expected, found) {
             (Type::Any, _) | (_, Type::Any) => true,
+            (Type::Array(inner), _) | (_, Type::Array(inner)) => {
+                if let Type::Any = **inner {
+                    true
+                } else {
+                    *expected == *found
+                }
+            }
             _ => *expected == *found,
         }
     }

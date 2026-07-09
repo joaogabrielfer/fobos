@@ -13,7 +13,7 @@ pub enum Type {
     Range,
 
     Function {
-        parameters_types: Vec<Type>,
+        parameter_overloads: Vec<ParameterTypes>,
         return_type: Box<Type>,
     },
 
@@ -21,6 +21,8 @@ pub enum Type {
     Unknown,
     TypeVar(String),
 }
+
+pub type ParameterTypes = Vec<Type>;
 
 impl Display for Type {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -41,16 +43,21 @@ impl Display for Type {
                 write!(f, ")")?;
                 Ok(())
             }
-            Type::Array(t) => write!(f, "Arr<{t}"),
+            Type::Array(t) => write!(f, "Arr<{t}>"),
             Type::Function {
-                parameters_types,
+                parameter_overloads: overloaded_parameters,
                 return_type,
             } => {
                 write!(f, "(")?;
-                for (i, param) in parameters_types.iter().enumerate() {
-                    write!(f, "{param}")?;
+                for (i, parameters_types) in overloaded_parameters.iter().enumerate() {
+                    for (j, param) in parameters_types.iter().enumerate() {
+                        write!(f, "{param}")?;
+                        if j < parameters_types.len() - 1 {
+                            write!(f, ", ")?;
+                        }
+                    }
                     if i < parameters_types.len() - 1 {
-                        write!(f, ", ")?;
+                        write!(f, "| ")?;
                     }
                 }
                 write!(f, ") -> {return_type}")?;
@@ -59,7 +66,7 @@ impl Display for Type {
             Type::Any => write!(f, "Any"),
             Type::Unknown => write!(f, "Unknown"),
             Type::Range => write!(f, "Range"),
-            Type::TypeVar(t) => write!(f, "<{t}>"),
+            Type::TypeVar(t) => write!(f, "TypeVar[{t}]"),
         }
     }
 }

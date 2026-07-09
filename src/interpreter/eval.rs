@@ -229,7 +229,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
         }
 
         match callee {
-            Value::BuiltinFunction(builtin) => self.call_builtin(builtin, args_values, span),
+            Value::BuiltinFunction(builtin) => self.call_builtin(builtin, &mut args_values, span),
 
             Value::Function(fun) => self.call_function(fun, args_values, span),
 
@@ -419,6 +419,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
         Ok(EvalFlow::Continue(Value::Unit))
     }
     fn eval_ident(&mut self, i: String, span: Span) -> Result<EvalFlow, Box<RuntimeError>> {
+        // eprintln!("evaluating ident {i}");
         let value = self.env.get(&i).map_err(|kind| {
             Box::new(RuntimeError {
                 kind,
@@ -426,6 +427,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 file_path: self.file_path.clone(),
             })
         })?;
+        // eprintln!("has value of {value}");
         Ok(EvalFlow::Continue(value))
     }
 
@@ -698,13 +700,13 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                     let Value::Int(start) = lhs else {
                         return Err(self.error_at(
                             span,
-                            RuntimeErrorKind::InvalidRangeParameter(lhs.to_string()),
+                            RuntimeErrorKind::InvalidBuiltinParameter(lhs.to_string()),
                         ));
                     };
                     let Value::Int(end) = rhs else {
                         return Err(self.error_at(
                             span,
-                            RuntimeErrorKind::InvalidRangeParameter(rhs.to_string()),
+                            RuntimeErrorKind::InvalidBuiltinParameter(rhs.to_string()),
                         ));
                     };
                     Ok(EvalFlow::Continue(Value::Range(RangeValue {
@@ -718,13 +720,13 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                     let Value::Int(start) = lhs else {
                         return Err(self.error_at(
                             span,
-                            RuntimeErrorKind::InvalidRangeParameter(lhs.to_string()),
+                            RuntimeErrorKind::InvalidBuiltinParameter(lhs.to_string()),
                         ));
                     };
                     let Value::Int(end) = rhs else {
                         return Err(self.error_at(
                             span,
-                            RuntimeErrorKind::InvalidRangeParameter(rhs.to_string()),
+                            RuntimeErrorKind::InvalidBuiltinParameter(rhs.to_string()),
                         ));
                     };
                     Ok(EvalFlow::Continue(Value::Range(RangeValue {

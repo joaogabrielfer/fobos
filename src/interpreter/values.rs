@@ -1,4 +1,5 @@
 use crate::interpreter::builtins::BuiltinFunction;
+use crate::typechecker::ty::Type;
 use crate::{
     ast::{Block, Expr, Parameter, TypeAnnotation},
     errors::RuntimeErrorKind,
@@ -19,6 +20,37 @@ pub enum Value {
     Function(FunctionValue),
 
     Range(RangeValue),
+}
+
+impl Value {
+    pub fn get_type(&self) -> Type {
+        match self {
+            Value::Unit => Type::Unit,
+            Value::Int(_) => Type::Int,
+            Value::Float(_) => Type::Float,
+            Value::Bool(_) => Type::Bool,
+            Value::String(_) => Type::String,
+            Value::Tuple(values) => Type::Tuple(values.iter().map(|v| v.get_type()).collect()),
+            Value::Array(values) => Type::Array(
+                values
+                    .first()
+                    .map(|v| Box::new(v.get_type()))
+                    .unwrap_or(Box::new(Type::Any)),
+            ),
+            Value::BuiltinFunction(builtin_function) => builtin_function.get_type(),
+            Value::Function(function_value) => Type::Function {
+                parameter_overloads: vec![
+                    function_value
+                        .parameters
+                        .iter()
+                        .map(|p| p.t.resolve_type_annotation())
+                        .collect(),
+                ],
+                return_type: Box::new(function_value.return_type.resolve_type_annotation()),
+            },
+            Value::Range(_) => Type::Range,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]

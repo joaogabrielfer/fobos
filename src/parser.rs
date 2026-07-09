@@ -516,10 +516,16 @@ impl<'a> Parser<'a> {
             TokenTag::Equals => Ok(ast::TypeAnnotation::Inferred),
             TokenTag::Ident => {
                 let t = self.expect_ident()?;
-                // TODO: Add array type here
-                Ok(ast::TypeAnnotation::Explicit(ast::TypeExpr::Named(
-                    t.to_string(),
-                )))
+                if t == "Arr" {
+                    self.expect(TokenTag::LAngle)?;
+                    let inner = self.expect_ident()?;
+                    self.expect(TokenTag::RAngle)?;
+                    Ok(ast::TypeAnnotation::Explicit(ast::TypeExpr::Array(inner)))
+                } else {
+                    Ok(ast::TypeAnnotation::Explicit(ast::TypeExpr::Named(
+                        t.to_string(),
+                    )))
+                }
             }
             TokenTag::LParen => {
                 self.expect(TokenTag::LParen)?;

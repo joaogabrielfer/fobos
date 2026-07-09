@@ -6,7 +6,9 @@ use thiserror::Error;
 use crate::{
     ast::{BinaryOp, UnaryOp},
     diagnostic::render_source_span,
+    interpreter::values::Value,
     source::Span,
+    typechecker::ty::ParameterTypes,
 };
 
 #[derive(Error, Debug)]
@@ -144,6 +146,37 @@ fn render_vec_tokens(tks: Vec<String>) -> String {
     s
 }
 
+pub fn render_types_from_value_vector(values: Vec<Value>) -> String {
+    let mut s = String::new();
+    s = format!("{s}(");
+    for (i, v) in values.iter().enumerate() {
+        s = format!("{s}{}", v.get_type());
+        if i < values.len() - 1 {
+            s = format!("{s}, ");
+        }
+    }
+    s = format!("{s})");
+    s
+}
+
+pub fn render_parameter_types(overloaded_parameters: Vec<ParameterTypes>) -> String {
+    let mut s = String::new();
+    s = format!("{s}(");
+    for (i, parameters_types) in overloaded_parameters.iter().enumerate() {
+        for (j, param) in parameters_types.iter().enumerate() {
+            s = format!("{s}{param}");
+            if j < parameters_types.len() - 1 {
+                s = format!("{s}, ");
+            }
+        }
+        if i < overloaded_parameters.len() - 1 {
+            s = format!("{s}| ");
+        }
+    }
+    s = format!("{s})");
+    s
+}
+
 #[derive(Debug, Error)]
 pub struct RuntimeError {
     pub kind: RuntimeErrorKind,
@@ -195,18 +228,16 @@ pub enum RuntimeErrorKind {
     },
     #[error("invalid unary operation '{op}{operand}'")]
     InvalidUnaryOp { op: UnaryOp, operand: String },
-    #[error("invalid range parameter '{0}'")]
-    InvalidRangeParameter(String),
+    #[error("invalid builtin parameter '{0}'")]
+    InvalidBuiltinParameter(String),
     #[error("expected boolean, found '{found}'")]
     ExpectedBool { found: String },
     #[error("'{0}' is not callable")]
     NotCallable(String),
     #[error("index {0} was outside of the bound of the array")]
     OutOfBounds(i64),
-    #[error("expected {expected} function parameters, found {found}")]
-    ArityMismatch { expected: usize, found: usize },
-    #[error("expected {} function parameters, found {found}", render_vec_tokens(expected.iter().map(|i| i.to_string()).collect()) )]
-    ArityMismatchMany { expected: Vec<usize>, found: usize },
+    #[error("expected signature of {expected}, but found {found}")]
+    SignatureMismatch { expected: String, found: String },
     #[error("missing 'else' branch for 'if' condition that yields a value")]
     ElseBranchMissing,
     #[error("IO error: {0}")]

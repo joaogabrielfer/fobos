@@ -1,9 +1,6 @@
 use std::fmt::Display;
 
-use crate::{
-    source::Span,
-    typechecker::{TypeResult, ty::Type},
-};
+use crate::{source::Span, typechecker::ty::Type};
 
 #[derive(Debug, Clone)]
 pub struct Program {
@@ -62,35 +59,35 @@ pub enum TypeAnnotation {
 }
 
 impl TypeAnnotation {
-    pub fn resolve_type_annotation(&self) -> TypeResult<Type> {
+    pub fn resolve_type_annotation(&self) -> Type {
         let TypeAnnotation::Explicit(t) = self else {
-            return Ok(Type::Any);
+            return Type::Any;
         };
         match t {
-            TypeExpr::Named(name) if name == "Int" => Ok(Type::Int),
-            TypeExpr::Named(name) if name == "Float" => Ok(Type::Float),
-            TypeExpr::Named(name) if name == "Bool" => Ok(Type::Bool),
-            TypeExpr::Named(name) if name == "String" => Ok(Type::String),
-            TypeExpr::Named(name) => Ok(Type::TypeVar(name.clone())), // temporary for generics
-            TypeExpr::Unit => Ok(Type::Unit),
+            TypeExpr::Named(name) if name == "Int" => Type::Int,
+            TypeExpr::Named(name) if name == "Float" => Type::Float,
+            TypeExpr::Named(name) if name == "Bool" => Type::Bool,
+            TypeExpr::Named(name) if name == "String" => Type::String,
+            TypeExpr::Named(name) if name == "Any" => Type::Any,
+            TypeExpr::Named(name) => Type::TypeVar(name.clone()), // temporary for generics
+            TypeExpr::Unit => Type::Unit,
             // TODO: Array isnt
             // implemented in the
             // tokenizer yet
-            TypeExpr::Array(inner) => Ok(Type::Array(Box::new(
-                TypeAnnotation::Explicit(TypeExpr::Named(inner.clone()))
-                    .resolve_type_annotation()?,
-            ))),
+            TypeExpr::Array(inner) => Type::Array(Box::new(
+                TypeAnnotation::Explicit(TypeExpr::Named(inner.clone())).resolve_type_annotation(),
+            )),
             TypeExpr::Tuple(items) => {
                 let mut types = Vec::new();
 
                 for item in items {
                     types.push(
                         TypeAnnotation::Explicit(TypeExpr::Named(item.clone()))
-                            .resolve_type_annotation()?,
+                            .resolve_type_annotation(),
                     );
                 }
 
-                Ok(Type::Tuple(types))
+                Type::Tuple(types)
             }
             TypeExpr::Function {
                 parameters,
@@ -102,15 +99,14 @@ impl TypeAnnotation {
                         TypeAnnotation::Explicit(TypeExpr::Named(p.clone()))
                             .resolve_type_annotation()
                     })
-                    .collect::<Result<Vec<_>, _>>()?;
+                    .collect();
 
-                let ret =
-                    TypeAnnotation::Explicit(*return_type.clone()).resolve_type_annotation()?;
+                let ret = TypeAnnotation::Explicit(*return_type.clone()).resolve_type_annotation();
 
-                Ok(Type::Function {
-                    parameters_types: parameters,
+                Type::Function {
+                    parameter_overloads: vec![parameters],
                     return_type: Box::new(ret),
-                })
+                }
             }
         }
     }
@@ -129,32 +125,31 @@ pub enum TypeExpr {
 }
 
 impl TypeExpr {
-    pub fn resolve_type_expr(&self) -> TypeResult<Type> {
+    pub fn resolve_type_expr(&self) -> Type {
         match self {
-            TypeExpr::Named(name) if name == "Int" => Ok(Type::Int),
-            TypeExpr::Named(name) if name == "Float" => Ok(Type::Float),
-            TypeExpr::Named(name) if name == "Bool" => Ok(Type::Bool),
-            TypeExpr::Named(name) if name == "String" => Ok(Type::String),
-            TypeExpr::Named(name) => Ok(Type::TypeVar(name.clone())), // temporary for generics
-            TypeExpr::Unit => Ok(Type::Unit),
+            TypeExpr::Named(name) if name == "Int" => Type::Int,
+            TypeExpr::Named(name) if name == "Float" => Type::Float,
+            TypeExpr::Named(name) if name == "Bool" => Type::Bool,
+            TypeExpr::Named(name) if name == "String" => Type::String,
+            TypeExpr::Named(name) => Type::TypeVar(name.clone()), // temporary for generics
+            TypeExpr::Unit => Type::Unit,
             // TODO: Array isnt
             // implemented in the
             // tokenizer yet
-            TypeExpr::Array(inner) => Ok(Type::Array(Box::new(
-                TypeAnnotation::Explicit(TypeExpr::Named(inner.clone()))
-                    .resolve_type_annotation()?,
-            ))),
+            TypeExpr::Array(inner) => Type::Array(Box::new(
+                TypeAnnotation::Explicit(TypeExpr::Named(inner.clone())).resolve_type_annotation(),
+            )),
             TypeExpr::Tuple(items) => {
                 let mut types = Vec::new();
 
                 for item in items {
                     types.push(
                         TypeAnnotation::Explicit(TypeExpr::Named(item.clone()))
-                            .resolve_type_annotation()?,
+                            .resolve_type_annotation(),
                     );
                 }
 
-                Ok(Type::Tuple(types))
+                Type::Tuple(types)
             }
             TypeExpr::Function {
                 parameters,
@@ -166,15 +161,14 @@ impl TypeExpr {
                         TypeAnnotation::Explicit(TypeExpr::Named(p.clone()))
                             .resolve_type_annotation()
                     })
-                    .collect::<Result<Vec<_>, _>>()?;
+                    .collect();
 
-                let ret =
-                    TypeAnnotation::Explicit(*return_type.clone()).resolve_type_annotation()?;
+                let ret = TypeAnnotation::Explicit(*return_type.clone()).resolve_type_annotation();
 
-                Ok(Type::Function {
-                    parameters_types: parameters,
+                Type::Function {
+                    parameter_overloads: vec![parameters],
                     return_type: Box::new(ret),
-                })
+                }
             }
         }
     }
