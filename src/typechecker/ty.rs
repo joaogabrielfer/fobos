@@ -56,7 +56,7 @@ impl Display for Type {
                             write!(f, ", ")?;
                         }
                     }
-                    if i < parameters_types.len() - 1 {
+                    if i < overloaded_parameters.len() - 1 {
                         write!(f, "| ")?;
                     }
                 }

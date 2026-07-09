@@ -1,14 +1,17 @@
 use crate::{
+    ast::{Expr, ExprKind},
     errors::{
         RuntimeError, RuntimeErrorKind, render_parameter_types, render_types_from_value_vector,
     },
     interpreter::{
         Interpreter,
         env::Env,
-        eval::EvalFlow,
+        eval::{EvalFlow, YieldMode},
         values::{self, RangeValue, Value},
     },
+    source::Span,
     typechecker::{TypeChecker, env::TypeEnv, ty::Type},
+    value_or_flow,
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -38,6 +41,10 @@ impl BuiltinFunction {
                 return_type: Box::new(Type::Array(Box::new(Type::Any))),
             },
         }
+    }
+
+    pub fn needs_raw_args(&self) -> bool {
+        matches!(self, BuiltinFunction::Push)
     }
 }
 
@@ -212,6 +219,17 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                     )),
                 }
             }
+            _ => unreachable!("raw builtin passed to regular call_builtin"),
+        }
+    }
+
+    pub fn call_builtin_raw(
+        &mut self,
+        builtin: BuiltinFunction,
+        args: Vec<Expr>,
+        call_span: Span,
+    ) -> Result<EvalFlow, Box<RuntimeError>> {
+        match builtin {
             BuiltinFunction::Push => {
                 let Type::Function {
                     parameter_overloads,
@@ -221,52 +239,65 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                     panic!("builtin types should always be functions")
                 };
 
-                if let Some(0) = TypeChecker::check_function_call(&parameter_overloads, args_values)
-                {
-                    let item = args_values
-                        .pop()
-                        .expect("array should never have less than 2 elements");
-                    let array = args_values
-                        .pop()
-                        .expect("array should never have less than 2 elements");
-                    let Value::Array(mut array) = array else {
-                        return Err(self.error_at(
-                            span,
-                            RuntimeErrorKind::SignatureMismatch {
-                                expected: render_parameter_types(parameter_overloads),
-                                found: render_types_from_value_vector(args_values.clone()),
-                            },
-                        ));
-                    };
-                    eprintln!("item = {}", item.type_name());
-                    eprintln!("item = {}", item.get_type());
-                    match array.first() {
-                        None => array.push(item),
-                        Some(t) if t.get_type() == item.get_type() => {
-                            array.push(item);
-                            eprintln!("array = {:?}", array)
-                        }
-                        Some(_) => {
-                            return Err(self.error_at(
-                                span,
-                                RuntimeErrorKind::SignatureMismatch {
-                                    expected: render_parameter_types(parameter_overloads),
-                                    found: render_types_from_value_vector(args_values.clone()),
-                                },
-                            ));
-                        }
+                if args.len() != 2 {
+                    let eval_flows_for_printing = args
+                        .into_iter()
+                        .map(|e| self.eval_expr(e, YieldMode::Capture))
+                        .collect::<Result<Vec<_>, _>>()?;
+
+                    let mut values_for_printing = vec![];
+                    for e in eval_flows_for_printing {
+                        values_for_printing.push(value_or_flow!(e));
                     }
-                    Ok(EvalFlow::Continue(Value::Unit))
-                } else {
-                    Err(self.error_at(
-                        span,
+
+                    return Err(self.error_at(
+                        call_span,
                         RuntimeErrorKind::SignatureMismatch {
                             expected: render_parameter_types(parameter_overloads),
-                            found: render_types_from_value_vector(args_values.clone()),
+                            found: render_types_from_value_vector(values_for_printing.clone()),
                         },
-                    ))
+                    ));
+                }
+
+                let target = &args[0];
+                let value_expr = args[1].clone();
+
+                let value = value_or_flow!(self.eval_expr(value_expr, YieldMode::Capture)?);
+
+                match &target.kind {
+                    ExprKind::Ident(name) => {
+                        self.env
+                            .mutate_binding(name, |binding| {
+                                if !binding.mutable {
+                                    return Err(RuntimeErrorKind::CannotAssignImmutable(
+                                        name.clone(),
+                                    ));
+                                }
+
+                                match &mut binding.value {
+                                    Value::Array(items) => {
+                                        items.push(value);
+                                        Ok(())
+                                    }
+
+                                    other => Err(RuntimeErrorKind::ExpectedArray {
+                                        found: other.type_name().to_string(),
+                                    }),
+                                }
+                            })
+                            .map_err(|kind| self.error_at(target.span, kind))?;
+
+                        Ok(EvalFlow::Continue(Value::Unit))
+                    }
+
+                    other => Err(self.error_at(
+                        target.span,
+                        RuntimeErrorKind::InvalidAssignmentTarget(other.to_string()),
+                    )),
                 }
             }
+
+            _ => unreachable!("non-raw builtin passed to call_builtin_raw"),
         }
     }
 }

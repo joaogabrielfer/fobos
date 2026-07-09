@@ -86,7 +86,6 @@ impl std::fmt::Display for Value {
             Value::String(s) => write!(f, "{s}"),
             Value::Tuple(values) => {
                 write!(f, "(")?;
-
                 for (i, value) in values.iter().enumerate() {
                     if i > 0 {
                         write!(f, ", ")?;
@@ -94,7 +93,6 @@ impl std::fmt::Display for Value {
 
                     write!(f, "{value}")?;
                 }
-
                 write!(f, ")")
             }
             Value::Array(values) => {
@@ -107,7 +105,6 @@ impl std::fmt::Display for Value {
 
                     write!(f, "{value}")?;
                 }
-
                 write!(f, "]")
             }
             Value::BuiltinFunction(_) => write!(f, "<builtin function>"),

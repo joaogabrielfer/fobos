@@ -289,7 +289,17 @@ impl TypeChecker {
                     )),
                 }
             }
-            ExprKind::Call { callee, args: _ } => self.infer_expr(callee),
+            ExprKind::Call { callee, args: _ } => {
+                let Type::Function {
+                    parameter_overloads: _,
+                    return_type,
+                } = self.infer_expr(callee)?
+                else {
+                    panic!("should be a function call")
+                };
+
+                Ok(*return_type)
+            }
             ExprKind::If {
                 condition: _,
                 then_branch,
@@ -621,9 +631,15 @@ impl TypeChecker {
     fn types_compatible(expected: &Type, found: &Type) -> bool {
         match (expected, found) {
             (Type::Any, _) | (_, Type::Any) => true,
-            (Type::Array(inner), _) | (_, Type::Array(inner)) => {
-                if let Type::Any = **inner {
+            (Type::Array(i1), other) => {
+                if let Type::Any = **i1 {
                     true
+                } else if let Type::Array(i2) = other {
+                    if let Type::Any = **i2 {
+                        true
+                    } else {
+                        *expected == *found
+                    }
                 } else {
                     *expected == *found
                 }

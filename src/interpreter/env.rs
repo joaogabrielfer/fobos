@@ -103,4 +103,24 @@ impl Env {
 
         Err(RuntimeErrorKind::UndefinedVariable(name.to_string()))
     }
+
+    pub fn mutate_binding<R>(
+        &mut self,
+        name: &str,
+        f: impl FnOnce(&mut Binding) -> Result<R, RuntimeErrorKind>,
+    ) -> Result<R, RuntimeErrorKind> {
+        let mut current = Some(self.current_ref());
+
+        while let Some(env) = current {
+            let mut borrowed = env.borrow_mut();
+
+            if let Some(binding) = borrowed.frame.get_mut(name) {
+                return f(binding);
+            }
+
+            current = borrowed.parent.clone();
+        }
+
+        Err(RuntimeErrorKind::UndefinedVariable(name.to_string()))
+    }
 }

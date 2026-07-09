@@ -250,6 +250,8 @@ pub enum RuntimeErrorKind {
     NotIterable { found: String },
     #[error("{found} is not a valid range step")]
     BadRangeStep { found: String },
+    #[error("expected array, but found {found}")]
+    ExpectedArray { found: String },
 }
 
 #[derive(Debug, Error)]

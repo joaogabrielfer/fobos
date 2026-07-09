@@ -24,11 +24,12 @@ pub enum EvalFlow {
 }
 
 #[derive(Debug, Clone, Copy)]
-enum YieldMode {
+pub enum YieldMode {
     Bubble,
     Capture,
 }
 
+#[macro_export]
 macro_rules! value_or_flow {
     ($flow:expr) => {
         match $flow {
@@ -139,7 +140,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
         }
     }
 
-    fn eval_expr(
+    pub fn eval_expr(
         &mut self,
         expr: Expr,
         yield_mode: YieldMode,
@@ -222,16 +223,28 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
         let callee_span = callee.span;
         let callee = value_or_flow!(self.eval_expr(callee, YieldMode::Capture)?);
 
-        let mut args_values = vec![];
-        for arg in args {
-            let value = value_or_flow!(self.eval_expr(arg, YieldMode::Capture)?);
-            args_values.push(value);
-        }
-
         match callee {
-            Value::BuiltinFunction(builtin) => self.call_builtin(builtin, &mut args_values, span),
+            Value::BuiltinFunction(builtin) => {
+                if builtin.needs_raw_args() {
+                    self.call_builtin_raw(builtin, args, span)
+                } else {
+                    let mut args_values = vec![];
+                    for arg in args {
+                        let value = value_or_flow!(self.eval_expr(arg, YieldMode::Capture)?);
+                        args_values.push(value);
+                    }
+                    self.call_builtin(builtin, &mut args_values, span)
+                }
+            }
 
-            Value::Function(fun) => self.call_function(fun, args_values, span),
+            Value::Function(fun) => {
+                let mut args_values = vec![];
+                for arg in args {
+                    let value = value_or_flow!(self.eval_expr(arg, YieldMode::Capture)?);
+                    args_values.push(value);
+                }
+                self.call_function(fun, args_values, span)
+            }
 
             other => Err(self.error_at(
                 callee_span,
