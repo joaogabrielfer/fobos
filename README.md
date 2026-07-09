@@ -36,6 +36,8 @@ Use `cargo test` to run the unit tests and ensure the result is the expected
 - [x] ranges
 - [x] for loops
 - [x] type checking
+- [x] function overloading
+- [x] higher order functions
 - [ ] custom types (adts)
 - [ ] interfaces
 - [ ] pattern matching
