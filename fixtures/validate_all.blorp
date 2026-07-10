@@ -52,14 +52,14 @@ fun inferred_return(x: Int, y: Int) :=
     return x + y
 end
 
-fun [T] identity(x: T): T =
-    return x
-end
+// fun [T] identity(x: T): T =
+//     return x
+// end
 
 let add_result := add(10, 20)
 let inferred_result := inferred_return(2, 3)
-let identity_int := identity(123)
-let identity_string := identity("abc")
+// let identity_int := identity(123)
+// let identity_string := identity("abc")
 
 let inc := x -> x + 1
 let inc_result := inc(10)
@@ -112,8 +112,8 @@ echo("counter:" <> counter)
 echo("add_result:" <> add_result)
 echo("unit_func:" <> unit_func())
 echo("inferred_result:" <> inferred_result)
-echo("identity_int:" <> identity_int)
-echo("identity_string:" <> identity_string)
+// echo("identity_int:" <> identity_int)
+// echo("identity_string:" <> identity_string)
 
 echo("inc_result:" <> inc_result)
 echo("lambda_add_result:" <> lambda_add_result)

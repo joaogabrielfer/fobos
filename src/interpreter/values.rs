@@ -1,4 +1,7 @@
+use itertools::{EitherOrBoth, Itertools};
+
 use crate::interpreter::builtins::BuiltinFunction;
+use crate::typechecker::TypeChecker;
 use crate::typechecker::ty::Type;
 use crate::{
     ast::{Block, Expr, Parameter, TypeAnnotation},
@@ -39,13 +42,16 @@ impl Value {
             ),
             Value::BuiltinFunction(builtin_function) => builtin_function.get_type(),
             Value::Function(function_value) => Type::Function {
-                parameter_overloads: vec![
-                    function_value
-                        .parameters
-                        .iter()
-                        .map(|p| p.t.resolve_type_annotation())
-                        .collect(),
-                ],
+                parameter_overloads: function_value
+                    .overload_variants
+                    .iter()
+                    .map(|v| {
+                        v.parameters
+                            .iter()
+                            .map(|p| p.t.resolve_type_annotation())
+                            .collect()
+                    })
+                    .collect(),
                 return_type: Box::new(function_value.return_type.resolve_type_annotation()),
             },
             Value::Range(_) => Type::Range,
@@ -64,16 +70,46 @@ pub struct RangeValue {
 #[derive(Debug, Clone, PartialEq)]
 pub struct FunctionValue {
     pub name: Option<String>,
-    pub parameters: Vec<Parameter>,
-    pub body: FunctionBody,
-    pub captured_env: EnvRef,
+    pub overload_variants: Vec<OverloadFunctionVariant>,
     pub return_type: TypeAnnotation,
+}
+
+impl FunctionValue {
+    pub fn match_variant(&self, caller_parameters: &[Value]) -> Option<usize> {
+        for (i, variant) in self.overload_variants.iter().enumerate() {
+            if variant
+                .parameters
+                .iter()
+                .map(|p| p.t.resolve_type_annotation())
+                .zip_longest(
+                    caller_parameters
+                        .iter()
+                        .map(|v| v.get_type())
+                        .collect::<Vec<Type>>(),
+                )
+                .all(|pair| match pair {
+                    EitherOrBoth::Both(a, b) => TypeChecker::types_compatible(&a, &b),
+                    _ => false,
+                })
+            {
+                return Some(i);
+            }
+        }
+        None
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum FunctionBody {
     Block(Block),
     Expr(Expr),
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct OverloadFunctionVariant {
+    pub parameters: Vec<Parameter>,
+    pub body: FunctionBody,
+    pub captured_env: EnvRef,
 }
 
 impl std::fmt::Display for Value {

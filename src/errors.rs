@@ -228,8 +228,10 @@ pub enum RuntimeErrorKind {
     },
     #[error("invalid unary operation '{op}{operand}'")]
     InvalidUnaryOp { op: UnaryOp, operand: String },
-    #[error("invalid builtin parameter '{0}'")]
-    InvalidBuiltinParameter(String),
+    #[error("invalid function parameter '{0}'")]
+    InvalidFunctionParameter(String),
+    #[error("invalid function parameters '{0}'")]
+    InvalidFunctionParameters(String),
     #[error("expected boolean, found '{found}'")]
     ExpectedBool { found: String },
     #[error("'{0}' is not callable")]
@@ -252,6 +254,8 @@ pub enum RuntimeErrorKind {
     BadRangeStep { found: String },
     #[error("expected array, but found {found}")]
     ExpectedArray { found: String },
+    #[error("mismatched returned types, expected '{expected}', but got '{found}'")]
+    MismatchedReturnTypes { expected: String, found: String },
 }
 
 #[derive(Debug, Error)]

@@ -25,7 +25,7 @@ impl BuiltinFunction {
     pub fn get_type(&self) -> Type {
         match self {
             BuiltinFunction::Echo => Type::Function {
-                parameter_overloads: vec![vec![Type::String]],
+                parameter_overloads: vec![vec![Type::Any]],
                 return_type: Box::new(Type::Range),
             },
             BuiltinFunction::Range => Type::Function {
@@ -150,7 +150,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                         let Value::Int(end) = args_values[1] else {
                             return Err(self.error_at(
                                 span,
-                                RuntimeErrorKind::InvalidBuiltinParameter(
+                                RuntimeErrorKind::InvalidFunctionParameter(
                                     args_values[0].to_string(),
                                 ),
                             ));
@@ -288,6 +288,54 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                             .map_err(|kind| self.error_at(target.span, kind))?;
 
                         Ok(EvalFlow::Continue(Value::Unit))
+                    }
+
+                    ExprKind::Index { target, index } => {
+                        let index_span = index.span;
+                        let (name, mut indices) =
+                            self.resolve_nested_index(*target.clone(), *index.clone(), vec![])?;
+
+                        self.env
+                            .mutate_binding(&name, |binding| {
+                                if !binding.mutable {
+                                    return Err(RuntimeErrorKind::CannotAssignImmutable(
+                                        name.clone(),
+                                    ));
+                                }
+                                let mut array = match binding.value {
+                                    Value::Array(ref mut array) => array,
+                                    _ => {
+                                        return Err(RuntimeErrorKind::InvalidIndexingTarget(
+                                            target.kind.to_string(),
+                                        ));
+                                    }
+                                };
+                                indices.reverse();
+                                while let Some(idx) = indices.pop() {
+                                    if idx as usize >= array.len() || idx < 0 {
+                                        return Err(RuntimeErrorKind::OutOfBounds(idx));
+                                    }
+
+                                    if indices.is_empty() {
+                                        let Value::Array(new_array) =
+                                            array
+                                                .get_mut(idx as usize)
+                                                .ok_or(RuntimeErrorKind::OutOfBounds(idx))?
+                                        else {
+                                            return Err(RuntimeErrorKind::InvalidIndexingTarget(
+                                                target.kind.to_string(),
+                                            ));
+                                        };
+
+                                        array = new_array;
+                                    }
+                                }
+
+                                array.push(value);
+
+                                Ok(EvalFlow::Continue(Value::Unit))
+                            })
+                            .map_err(|kind| self.error_at(index_span, kind))
                     }
 
                     other => Err(self.error_at(

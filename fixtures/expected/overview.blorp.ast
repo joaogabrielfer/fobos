@@ -1,9 +1,6 @@
 ParserError {
-    kind: ExpectedTokens {
-        expected: [
-            ")",
-            ",",
-        ],
+    kind: ExpectedToken {
+        expected: "<",
         found: "(",
     },
     file_path: "/home/joaogabriel/personal/programming/projects/blorp/fixtures/overview.blorp",

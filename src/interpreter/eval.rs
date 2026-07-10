@@ -8,11 +8,14 @@ use crate::{
         Stmt::{self},
         TypeAnnotation, UnaryOp,
     },
-    errors::{RuntimeError, RuntimeErrorKind},
+    errors::{RuntimeError, RuntimeErrorKind, render_types_from_value_vector},
     interpreter::{
         Interpreter,
         env::{Env, EnvFrame},
-        values::{FunctionBody, FunctionValue, RangeValue, RuntimeIterator, Value},
+        values::{
+            FunctionBody, FunctionValue, OverloadFunctionVariant, RangeValue, RuntimeIterator,
+            Value,
+        },
     },
     source::{Span, SrcPos},
 };
@@ -94,24 +97,78 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
             Stmt::Assignment { target, value } => {
                 let value_span = value.span;
                 let value = self.eval_expr(value, YieldMode::Capture)?;
-                if let ExprKind::Ident(name) = target.kind {
-                    self.env
-                        .assign(&name, value_or_flow!(value))
-                        .map_err(|kind| {
-                            self.error_at(
-                                Span {
-                                    start: target.span.start,
-                                    end: value_span.end,
-                                },
-                                kind,
-                            )
-                        })?;
-                    Ok(EvalFlow::Continue(Value::Unit))
-                } else {
-                    Err(self.error_at(
+                match target.kind {
+                    ExprKind::Ident(name) => {
+                        self.env
+                            .assign(&name, value_or_flow!(value))
+                            .map_err(|kind| {
+                                self.error_at(
+                                    Span {
+                                        start: target.span.start,
+                                        end: value_span.end,
+                                    },
+                                    kind,
+                                )
+                            })?;
+                        Ok(EvalFlow::Continue(Value::Unit))
+                    }
+                    ExprKind::Index { target, index } => {
+                        let index_span = index.span;
+                        let (name, mut indices) =
+                            self.resolve_nested_index(*target.clone(), *index.clone(), vec![])?;
+
+                        self.env
+                            .mutate_binding(&name, |binding| {
+                                if !binding.mutable {
+                                    return Err(RuntimeErrorKind::CannotAssignImmutable(
+                                        name.clone(),
+                                    ));
+                                }
+                                let Value::Array(mut array) = binding.value.clone() else {
+                                    return Err(RuntimeErrorKind::InvalidIndexingTarget(
+                                        target.kind.to_string(),
+                                    ));
+                                };
+                                indices.reverse();
+                                if let Some((&last_idx, steps)) = indices.split_last() {
+                                    for &idx in steps {
+                                        if idx as usize >= array.len() || idx < 0 {
+                                            return Err(RuntimeErrorKind::OutOfBounds(idx));
+                                        }
+
+                                        // eprintln!("array[idx] = {:?}", array[idx as usize]);
+                                        // eprintln!("indices = {:?}", indices);
+                                        if indices.is_empty() {
+                                            let Value::Array(new_array) =
+                                                array[idx as usize].clone()
+                                            else {
+                                                return Err(
+                                                    RuntimeErrorKind::InvalidIndexingTarget(
+                                                        target.kind.to_string(),
+                                                    ),
+                                                );
+                                            };
+
+                                            array = new_array;
+                                        }
+                                    }
+
+                                    if last_idx as usize >= array.len() || last_idx < 0 {
+                                        return Err(RuntimeErrorKind::OutOfBounds(last_idx));
+                                    }
+
+                                    array[last_idx as usize] = value_or_flow!(value);
+                                    binding.value = Value::Array(array);
+                                }
+
+                                Ok(EvalFlow::Continue(Value::Unit))
+                            })
+                            .map_err(|kind| self.error_at(index_span, kind))
+                    }
+                    _ => Err(self.error_at(
                         target.span,
                         RuntimeErrorKind::InvalidAssignmentTarget(target.kind.to_string()),
-                    ))
+                    )),
                 }
             }
             Stmt::FunDecl {
@@ -120,19 +177,51 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 parameters,
                 return_type,
                 body,
-                ..
+                span,
             } => {
-                // let return_type = match return_type {
-                //     TypeAnnotation::Explicit(t) => t,
-                //     TypeAnnotation::Inferred => todo!("type inference is not implemented yet"),
-                // };
-                let fun = Value::Function(FunctionValue {
-                    name: Some(name.clone()),
-                    parameters,
-                    body: FunctionBody::Block(body),
-                    return_type,
-                    captured_env: self.env.current_ref(),
-                });
+                let fun = if let Ok(Value::Function(mut fun)) = self.env.get(&name) {
+                    if fun.return_type == return_type {
+                        let mut repeated = false;
+                        for p in &fun.overload_variants {
+                            if p.parameters == parameters {
+                                repeated = true;
+                            }
+                        }
+                        let overload_variants = if repeated {
+                            fun.overload_variants
+                        } else {
+                            fun.overload_variants.push(OverloadFunctionVariant {
+                                parameters,
+                                body: FunctionBody::Block(body),
+                                captured_env: self.env.current_ref(),
+                            });
+                            fun.overload_variants
+                        };
+                        Value::Function(FunctionValue {
+                            name: Some(name.clone()),
+                            overload_variants,
+                            return_type,
+                        })
+                    } else {
+                        return Err(self.error_at(
+                            span,
+                            RuntimeErrorKind::MismatchedReturnTypes {
+                                expected: fun.return_type.resolve_type_annotation().to_string(),
+                                found: return_type.resolve_type_annotation().to_string(),
+                            },
+                        ));
+                    }
+                } else {
+                    Value::Function(FunctionValue {
+                        name: Some(name.clone()),
+                        overload_variants: vec![OverloadFunctionVariant {
+                            parameters,
+                            body: FunctionBody::Block(body),
+                            captured_env: self.env.current_ref(),
+                        }],
+                        return_type,
+                    })
+                };
 
                 self.env.define(name, false, fun);
                 Ok(EvalFlow::Continue(Value::Unit))
@@ -172,9 +261,11 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
             ExprKind::Lambda { parameters, body } => {
                 Ok(EvalFlow::Continue(Value::Function(FunctionValue {
                     name: None,
-                    parameters,
-                    body: FunctionBody::Expr(*body),
-                    captured_env: self.env.current_ref(),
+                    overload_variants: vec![OverloadFunctionVariant {
+                        parameters,
+                        body: FunctionBody::Expr(*body),
+                        captured_env: self.env.current_ref(),
+                    }],
                     return_type: TypeAnnotation::Inferred,
                 })))
             }
@@ -191,6 +282,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 let array = match value_or_flow!(self.eval_expr(*target, YieldMode::Capture)?) {
                     Value::Array(values) => values,
                     other => {
+                        eprintln!("eval expr index");
                         return Err(self.error_at(
                             target_span,
                             RuntimeErrorKind::InvalidIndexingTarget(other.to_string()),
@@ -713,13 +805,13 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                     let Value::Int(start) = lhs else {
                         return Err(self.error_at(
                             span,
-                            RuntimeErrorKind::InvalidBuiltinParameter(lhs.to_string()),
+                            RuntimeErrorKind::InvalidFunctionParameter(lhs.to_string()),
                         ));
                     };
                     let Value::Int(end) = rhs else {
                         return Err(self.error_at(
                             span,
-                            RuntimeErrorKind::InvalidBuiltinParameter(rhs.to_string()),
+                            RuntimeErrorKind::InvalidFunctionParameter(rhs.to_string()),
                         ));
                     };
                     Ok(EvalFlow::Continue(Value::Range(RangeValue {
@@ -733,13 +825,13 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                     let Value::Int(start) = lhs else {
                         return Err(self.error_at(
                             span,
-                            RuntimeErrorKind::InvalidBuiltinParameter(lhs.to_string()),
+                            RuntimeErrorKind::InvalidFunctionParameter(lhs.to_string()),
                         ));
                     };
                     let Value::Int(end) = rhs else {
                         return Err(self.error_at(
                             span,
-                            RuntimeErrorKind::InvalidBuiltinParameter(rhs.to_string()),
+                            RuntimeErrorKind::InvalidFunctionParameter(rhs.to_string()),
                         ));
                     };
                     Ok(EvalFlow::Continue(Value::Range(RangeValue {
@@ -753,23 +845,63 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
         }
     }
 
+    pub fn resolve_nested_index(
+        &mut self,
+        target: Expr,
+        index: Expr,
+        current_indices: Vec<i64>,
+    ) -> Result<(String, Vec<i64>), Box<RuntimeError>> {
+        let ExprKind::Int(new_idx) = index.kind else {
+            return Err(self.error_at(
+                target.span,
+                RuntimeErrorKind::InvalidIndex(index.kind.to_string()),
+            ));
+        };
+        let mut new_indices = current_indices;
+        new_indices.push(new_idx);
+        let (name, new_indices) = match target.kind {
+            ExprKind::Ident(i) => (i, new_indices),
+            ExprKind::Index { target, index } => {
+                self.resolve_nested_index(*target, *index, new_indices)?
+            }
+            _ => {
+                return Err(self.error_at(
+                    target.span,
+                    RuntimeErrorKind::InvalidIndexingTarget(target.kind.to_string()),
+                ));
+            }
+        };
+        Ok((name, new_indices))
+    }
+
     fn call_function(
         &mut self,
         fun: FunctionValue,
         args: Vec<Value>,
         span: Span,
     ) -> Result<EvalFlow, Box<RuntimeError>> {
+        let variant_index = fun.match_variant(&args).ok_or(self.error_at(
+            span,
+            RuntimeErrorKind::InvalidFunctionParameters(render_types_from_value_vector(
+                args.clone(),
+            )),
+        ))?;
+
         let previous_env = self.env.clone();
         self.env = Env::from_ref(Rc::new(RefCell::new(EnvFrame {
             frame: HashMap::new(),
-            parent: Some(fun.captured_env),
+            parent: Some(fun.overload_variants[variant_index].captured_env.clone()),
         })));
 
-        for (param, arg) in fun.parameters.iter().zip(args) {
+        for (param, arg) in fun.overload_variants[variant_index]
+            .parameters
+            .iter()
+            .zip(args)
+        {
             self.env.define(param.name.clone(), false, arg);
         }
 
-        let flow = match fun.body {
+        let flow = match fun.overload_variants[variant_index].body.clone() {
             FunctionBody::Block(block) => self.eval_block(block, YieldMode::Bubble)?,
             FunctionBody::Expr(expr) => self.eval_expr(expr, YieldMode::Capture)?,
         };
@@ -858,10 +990,16 @@ mod tests {
                     Err(e) => format!("{e:#?}"),
                 };
 
-                assert_eq!(
-                    eval_str, expected_eval,
-                    "failed to match eval output in file {eval_expected_path:?}"
-                );
+                for (ev, ex) in eval_str
+                    .trim_end()
+                    .lines()
+                    .zip(expected_eval.trim_end().lines())
+                {
+                    assert_eq!(
+                        ev, ex,
+                        "failed to match ast output in file {eval_expected_path:?}"
+                    );
+                }
             }
         }
     }

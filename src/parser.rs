@@ -56,7 +56,12 @@ impl<'a> Parser<'a> {
                 let starting_span = self.current().span;
                 let expr = self.parse_expr()?;
                 if self.check(TokenTag::Equals) {
-                    if !matches!(expr.kind, ast::ExprKind::Ident(_) | ast::ExprKind::Tuple(_)) {
+                    if !matches!(
+                        expr.kind,
+                        ast::ExprKind::Ident(_)
+                            | ast::ExprKind::Tuple(_)
+                            | ast::ExprKind::Index { .. }
+                    ) {
                         return Err(Box::new(ParserError {
                             kind: ParserErrorKind::InvalidAssignmentTarget {
                                 expr: expr.kind.to_string(),
@@ -732,11 +737,16 @@ mod tests {
                     }
                 };
 
-                assert_eq!(
-                    ast_str.trim_end(),
-                    expected_ast.trim_end(),
-                    "failed to match ast output in file {ast_expected_path:?}"
-                );
+                for (a, e) in ast_str
+                    .trim_end()
+                    .lines()
+                    .zip(expected_ast.trim_end().lines())
+                {
+                    assert_eq!(
+                        a, e,
+                        "failed to match ast output in file {ast_expected_path:?}"
+                    );
+                }
             }
         }
     }

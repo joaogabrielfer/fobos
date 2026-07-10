@@ -1,3 +1,5 @@
+use itertools::{EitherOrBoth, Itertools};
+
 use crate::{
     ast::{BinaryOp, Block, Expr, ExprKind, Program, Stmt, TypeAnnotation, UnaryOp},
     errors::{TypeError, TypeErrorKind},
@@ -490,20 +492,20 @@ impl TypeChecker {
     fn check_index_assignment(&mut self, target: &Expr, index: &Expr) -> TypeResult<Type> {
         let target_span = target.span;
         let target = self.infer_expr(target)?;
-        match target {
-            Type::Array(_) => {}
+        let array_t = match target {
+            Type::Array(t) => *t,
             other => {
                 return Err(self.error_at(
                     target_span,
                     TypeErrorKind::InvalidIndexingTarget(other.to_string()),
                 ));
             }
-        }
+        };
 
         let index_span = index.span;
         let index = self.infer_expr(index)?;
         match index {
-            Type::Int => Ok(Type::Int),
+            Type::Int => Ok(array_t),
             other => Err(self.error_at(
                 index_span,
                 TypeErrorKind::InvalidIndexType(other.to_string()),
@@ -614,13 +616,14 @@ impl TypeChecker {
         args_values: &Vec<Value>,
     ) -> Option<usize> {
         for (i, parameter_list) in parameter_overloads.iter().enumerate() {
-            let mut matched = true;
-            for (parameter, value) in parameter_list.iter().zip(args_values) {
-                if !TypeChecker::types_compatible(parameter, &value.get_type()) {
-                    matched = false
-                }
-            }
-            if matched {
+            if parameter_list
+                .iter()
+                .zip_longest(args_values)
+                .all(|pair| match pair {
+                    EitherOrBoth::Both(a, b) => TypeChecker::types_compatible(a, &b.get_type()),
+                    _ => false,
+                })
+            {
                 return Some(i);
             }
         }
@@ -628,7 +631,7 @@ impl TypeChecker {
         None
     }
 
-    fn types_compatible(expected: &Type, found: &Type) -> bool {
+    pub fn types_compatible(expected: &Type, found: &Type) -> bool {
         match (expected, found) {
             (Type::Any, _) | (_, Type::Any) => true,
             (Type::Array(i1), other) => {

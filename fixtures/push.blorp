@@ -1,0 +1,41 @@
+var nums := [1, 2]
+push(nums, 3)
+push(nums, 4)
+
+echo("nums: " <> nums)
+
+var nested := [[1], [2]]
+push(nested[0], 99)
+
+echo("nested: " <> nested)
+
+var values := []
+push(values, 10)
+push(values, "hello")
+push(values, true)
+
+echo("values: " <> values)
+
+// fun append_twice(xs: Arr<Any>, value: Any): () =
+//     push(xs, value)
+//     push(xs, value)
+//     return ()
+// end
+//
+//var from_func := [0]
+//append_twice(from_func, 5)
+
+//echo("from_func: " <> from_func)
+
+var scoped := [1]
+
+do
+    push(scoped, 2)
+end
+
+echo("scoped: " <> scoped)
+
+var matrix := [[1, 2], [3, 4]]
+push(matrix, [5, 6])
+
+echo("matrix: " <> matrix)

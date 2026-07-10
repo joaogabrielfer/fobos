@@ -23,8 +23,8 @@ struct Cli {
 enum Commands {
     Run {
         path: PathBuf,
-        #[arg(short = 't', long = "checker", default_value_t = false)]
-        type_checker: bool,
+        #[arg(short = 'd', long = "disable-checker", default_value_t = false)]
+        disable_type_checker: bool,
     },
     Tokens {
         path: PathBuf,
@@ -117,12 +117,15 @@ fn run() -> anyhow::Result<()> {
                 }
             }
         }
-        Some(Commands::Run { path, type_checker }) => {
+        Some(Commands::Run {
+            path,
+            disable_type_checker,
+        }) => {
             let content = read_to_string(path)?;
             let tokens = Lexer::new(path, &content).tokenize()?;
             let ast = parser::Parser::new(tokens, path).parse_program()?;
             let stdout = std::io::stdout();
-            if *type_checker {
+            if !*disable_type_checker {
                 let checked_program = TypeChecker::new(path.clone()).check_program(ast)?;
                 Interpreter::new(path, stdout.lock()).eval_program(checked_program.program)?;
             } else {
