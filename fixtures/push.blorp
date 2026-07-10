@@ -16,6 +16,7 @@ push(values, true)
 
 echo("values: " <> values)
 
+// TODO: add support for mutable function bindings: `fun append_twice(xs: var Arr<Any> ...`
 // fun append_twice(xs: Arr<Any>, value: Any): () =
 //     push(xs, value)
 //     push(xs, value)

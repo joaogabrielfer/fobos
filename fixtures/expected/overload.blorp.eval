@@ -1,0 +1,13 @@
+output:
+int: 10
+float: 10.5
+string: hello
+bool: true
+add int: 3
+arity one: one
+arity two: two
+array: [1, 2, 3]
+range: 0..<3
+
+result:
+Unit

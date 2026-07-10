@@ -270,9 +270,8 @@ impl TypeChecker {
                         Type::Any,
                         Type::Float | Type::Int,
                     ) => Ok(Type::Bool),
-                    (BinaryOp::Combine, Type::String, Type::String) => Ok(Type::String),
-                    (BinaryOp::Combine, Type::Any, Type::String | Type::Any) => Ok(Type::String),
-                    (BinaryOp::Combine, Type::String, Type::Any) => Ok(Type::String),
+                    (BinaryOp::Combine, Type::String, _) => Ok(Type::String),
+                    (BinaryOp::Combine, _, Type::String | Type::Any) => Ok(Type::String),
                     (
                         BinaryOp::InclusiveRange | BinaryOp::ExclusiveRange,
                         Type::Int | Type::Any,

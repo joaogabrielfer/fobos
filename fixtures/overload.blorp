@@ -1,0 +1,59 @@
+fun describe(x: Int): String =
+    return "int: " <> x
+end
+
+fun describe(x: Float): String =
+    return "float: " <> x
+end
+
+fun describe(x: String): String =
+    return "string: " <> x
+end
+
+fun describe(x: Bool): String =
+    return "bool: " <> x
+end
+
+echo(describe(10))
+echo(describe(10.5))
+echo(describe("hello"))
+echo(describe(true))
+
+fun add(x: Int, y: Int): Int =
+    return x + y
+end
+
+// errors given the mismatch on the return type
+// fun add(x: Float, y: Float): Float =
+//     return x + y
+// end
+
+// fun add(x: String, y: String): String =
+//     return x <> y
+// end
+
+echo("add int: " <> add(1, 2))
+// echo("add float: " <> add(1.5, 2.5))
+// echo("add string: " <> add("foo", "bar"))
+
+fun arity(x: Int): String =
+    return "one"
+end
+
+fun arity(x: Int, y: Int): String =
+    return "two"
+end
+
+echo("arity one: " <> arity(1))
+echo("arity two: " <> arity(1, 2))
+
+fun choose(xs: Arr<Int>): String =
+    return "array: " <> xs
+end
+
+fun choose(r: Range): String =
+    return "range: " <> r
+end
+
+echo(choose([1, 2, 3]))
+echo(choose(0..<3))

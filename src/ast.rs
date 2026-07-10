@@ -69,6 +69,7 @@ impl TypeAnnotation {
             TypeExpr::Named(name) if name == "Bool" => Type::Bool,
             TypeExpr::Named(name) if name == "String" => Type::String,
             TypeExpr::Named(name) if name == "Any" => Type::Any,
+            TypeExpr::Named(name) if name == "Range" => Type::Range,
             TypeExpr::Named(name) => Type::TypeVar(name.clone()), // temporary for generics
             TypeExpr::Unit => Type::Unit,
             // TODO: Array isnt
