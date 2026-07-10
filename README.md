@@ -48,7 +48,7 @@ Use `cargo test` to run the unit tests and ensure the result is the expected
 - [ ] effects
 - [ ] trailing commas
 
-## Langage syntax
+## Language syntax
 
 ### Variable definition
 ```blorp
@@ -60,11 +60,11 @@ var bar := "bar" // mutable
 - Variables in blorp use camel_case syntax
 
 ### Blocks
-Blocks in blorp are not declared with curly braces. Instead, they use `end` to denote the end of blocks and `=`, `->`,  `do`, `in` to indicate the opening of is, when succeded by a new line.
+Blocks in blorp are not declared with curly braces. Instead, they use `end` to denote the end of blocks and `=`, `->`,  `do`, `in` to indicate the opening of is, when succeeded by a new line.
 ```blorp
 let my_var =
     var (a, b) = (10, 20) // assignment with tuples
-    return a + b          // explicit return
+    yield a + b
 end
 ```
 
@@ -128,7 +128,7 @@ fun foo(): Int =
 end
 ```
 
-Yield also has 2 different behaviours based on the context of the block. If it is an lhs expression, it bubbles that yield up to the outer expression, if it is an rhs expression, the block itself evaluates to that value
+Yield also has 2 different behaviours based on the context of the block. If it is in a statement position, it bubbles that yield up to the outer expression, if it is in an value, the block itself evaluates to that value
 
 ```blorp
 let a :=
@@ -162,7 +162,7 @@ end
 As it is now, `yield` only returns the first value, though the plan on the future is make `yield` an effect handler for collections and streams, so that you could yield in a loop and collect an array.
 
 ### Function declaration
-Functions are defined with the `fun` keyword succeded with the name and signature of the function, with the return type following the variable definition conventino of being between the `:` and the `=`
+Functions are defined with the `fun` keyword succeded with the name and signature of the function, with the return type following the variable definition convention of being between the `:` and the `=`
 ```blorp
 fun add(x: Int, y: Int): Int =
     return x + y
@@ -195,7 +195,7 @@ let bar := (a, b) ->
 end
 ```
 
-They can also have their types anotated:
+They can also have their types annotated:
 
 ```blorp
 let suc: Int -> Int = a -> a + 1
@@ -204,7 +204,7 @@ let suc: Int -> Int = a -> a + 1
 Though it is not needed, and also may worsen legibility
 
 ### Function calling
-Functions are called either the normal way with parenthesis, or they can be called as methods using a `.`
+Functions are called either the normal way with parenthesis, or they can be called being piped using a `.`
 
 In turn, calling a function with a `.` is the same as calling it as its first value
 
@@ -230,6 +230,8 @@ end
 
 let foo := ((10, 5)).accepts_tuples()
 let foo := accepts_tuples((10, 5))
+
+
 ```
 
 ### Loops
@@ -238,7 +240,7 @@ blorp contains both for and while loops
 While loops syntax is `while <cond> [block]`
 
 ```blorp
-// will print "loop" indefinetly
+// will print "loop" indefinitely
 while true do
     println("loop")
 end
@@ -256,7 +258,7 @@ for i in range(10) do
 end
 
 // range can also take in 2 arguments, being the start and the end of the iterator
-for i in range(5, 11) do pritnln(i)
+for i in range(5, 11) do println(i)
 ```
 
 ### Pattern matching and if statements
@@ -308,7 +310,7 @@ var my_vec: Arr<Int> = Arr()
 ## Future plans
 
 ### Generics
-Generics are definied in between square braces before the name in function declarations
+Generics are defined in between square braces before the name in function declarations
 
 ```blorp
 fun [T] add(x: T, y: T): T =
@@ -353,9 +355,9 @@ end
 For simple type aliases, use `type` keyword
 
 ```blorp
-type IntArrray = Arr<Int>
+type IntArray = Arr<Int>
 
-type MyUnitType // defines a type with only one value
+type MyUnitType = () // defines a type with only one value
 ```
 
 Design patterns from functional programming language are also expressed here
@@ -363,7 +365,7 @@ Design patterns from functional programming language are also expressed here
 ```blorp
 enum Result[T, E] =
     Ok(T),
-    Err(T).
+    Err(E).
 end
 ```
 
@@ -400,7 +402,7 @@ end
 
 // interfaces allow you to talk about all members that implement this at once
 fun [T: Speak] speak(speaker: T) :=
-    println("spoke: {}", animal.make_sound())
+    println("spoke: {}", speaker.make_sound())
 end
 ```
 
@@ -452,7 +454,7 @@ let my_stream := stream do // would result in a Stream<Int> with values of 0 to 
     end
 end
 
-let my_array := collect do // would result in a Arr<Int> with values of 0 through 9
+let my_array := collect do // would result in a Arr<Int> with values of 0 through 8
     for i in 0..<9 do yield i
 end
 ```
@@ -487,3 +489,402 @@ foo(
     false,
 )
 ```
+
+### ? in Identifiers
+
+Functions that return a boolean should, by convention, have their names end with `?`
+
+```blorp
+empty?(value)
+valid?(user)
+positive?(number)
+
+value.empty?()
+user.valid?()
+number.positive?()
+```
+
+The `?` is considered part of the identifier and is not an operator
+
+### Modules
+
+Modules are accessed using the `::` operator
+
+```blorp
+let result := std::math::abs(-10)
+let file := std::fs::open("foo.txt")
+```
+
+
+This also applies to functions accessed from modules
+
+```blorp
+let empty := std::string::empty?(path)
+```
+
+They can be imported into the current scope and then used with the piped syntax
+
+```blorp
+use std::string::{empty?}
+
+let empty := path.empty?()
+```
+
+### Macros
+
+Macros are compile-time functions that receive and return syntax instead of runtime values
+
+Macro declarations use curly braces instead of parenthesis
+
+```blorp
+macro unless{
+    condition: std::syntax::Expression,
+    body: std::syntax::Block,
+}: std::syntax::Expression =
+    template
+        if !${condition} ${body}
+    end
+end
+```
+
+Macros are also called using curly braces
+
+```blorp
+unless{foo.empty?(), do
+    println("foo is not empty")
+end}
+```
+
+This makes normal function and macro calls visually different
+
+```blorp
+foo(...) // runtime function call
+foo{...} // compile-time macro call
+```
+
+Macro arguments are passed as syntax and are not evaluated before the macro is expanded
+
+Like normal function calls, macros can also use the piped `.` syntax
+
+```blorp
+foo.assert{}
+assert{foo} // the same as above
+```
+
+The lhs of the pipe is passed as the first macro argument
+
+```blorp
+value.foo{a, b}
+foo{value, a, b} // the same as above
+```
+
+Syntax types are exposed through the `std::syntax` module
+
+```blorp
+std::syntax::Expression
+std::syntax::Identifier
+std::syntax::Block
+std::syntax::Lambda
+std::syntax::Declaration
+std::syntax::DeclarationList
+std::syntax::Parameter
+std::syntax::ParameterList
+std::syntax::Type
+std::syntax::Pattern
+std::syntax::MatchArm
+std::syntax::MatchArmList
+```
+
+These are compile-time types and can only be used inside macro declarations and future compile-time functions
+
+Macros use `template` to construct syntax
+
+`${value}` inserts one syntax node into the template, while `$..{values}` inserts all the syntax nodes contained in a sequence
+
+```blorp
+macro define_function{
+    name: std::syntax::Identifier,
+    parameters: std::syntax::ParameterList,
+    return_type: std::syntax::Type,
+    body: std::syntax::Block,
+}: std::syntax::Declaration =
+    template
+        fun ${name}($..{parameters}): ${return_type} =
+            ${body}
+        end
+    end
+end
+
+define_function{
+    foo,
+    (x: Int, y: Int),
+    Int,
+    do
+        return x + y
+    end,
+}
+```
+
+Identifiers created inside a macro template are hygienic by default, meaning they do not conflict with variables from the place where the macro is called
+
+Syntax passed into a macro keeps its original source span, while generated syntax also stores where the macro was called and where it was declared
+
+Macros are expanded before name resolution and type checking
+
+### Assertion macros
+
+`assert` takes a boolean expression, crashes if it is false and returns the same value if it is true
+
+```blorp
+let foo := true
+
+foo.assert{"foo should be true"}
+```
+
+Since the value is returned, it can continue being piped
+
+```blorp
+foo.assert{"foo should be true"}.do_other_thing()
+```
+
+`assert_not` does the opposite. It crashes if the boolean expression is true
+
+```blorp
+path.empty?().assert_not{"path cannot be empty"}
+```
+
+`assert_that` takes a value and a predicate of that value, crashes if the predicate returns false and then returns the original value
+
+Its conceptual type is:
+
+```blorp
+[T] (T, T -> Bool) -> T
+```
+
+```blorp
+foo.assert_that{
+    (> 2),
+    "foo should be greater than 2",
+}.do_other_thing()
+```
+
+Since predicates are normal first-class functions, they can be passed directly
+
+```blorp
+path.assert_that{
+    empty?,
+    "path should be empty",
+}
+```
+
+To assert that the path is not empty, the predicate can be negated using the `not` function
+
+```blorp
+path.assert_that{
+    empty?.not(),
+    "path cannot be empty",
+}
+```
+
+The expression above is the same as:
+
+```blorp
+path.assert_that{
+    not(empty?),
+    "path cannot be empty",
+}
+```
+
+`not` is a normal higher-order function that takes a predicate and returns its negation
+
+```blorp
+fun [T] not(predicate: T -> Bool): T -> Bool =
+    return value -> !predicate(value)
+end
+```
+
+### Operator sections
+
+Binary operators can be partially applied by leaving one of their operands out inside parenthesis
+
+```blorp
+(+ 1) // x -> x + 1
+(> 2) // x -> x > 2
+(2 >) // x -> 2 > x
+```
+
+These operator sections are normal function values
+
+```blorp
+let increment := (+ 1)
+let greater_than_two := (> 2)
+
+let result := increment(10)
+let valid := greater_than_two(5)
+```
+
+They can be used with higher-order functions
+
+```blorp
+let incremented := values.map((+ 1))
+let positive := values.filter((> 0))
+```
+
+They can also be used as predicates for macros like `assert_that`
+
+```blorp
+foo.assert_that{
+    (> 2),
+    "foo should be greater than 2",
+}
+```
+
+The order of the operands matters for operators that are not commutative
+
+```blorp
+(> 2) // x -> x > 2
+(2 >) // x -> 2 > x
+```
+
+### Spread, splice and rest syntax
+
+The `..` token represents the general idea of spreading or collecting multiple values, but its exact behaviour depends on where it is used
+
+When used after a value inside a function call, it spreads the value into multiple arguments
+
+```blorp
+let tup := (1, 2)
+
+foo(tup..)
+foo(1, 2) // the same as above
+```
+
+It can also be used inside tuple and array literals
+
+```blorp
+let tup := (1, 2)
+let extended := (0, tup.., 3)
+
+let values := [1, 2]
+let extended_values := [0, values.., 3]
+```
+
+Inside macro templates, `$..{value}` splices multiple syntax nodes into the surrounding syntax
+
+```blorp
+template
+    fun ${name}($..{parameters}): ${return_type} =
+        ${body}
+    end
+end
+```
+
+Inside patterns, prefixing a binding with `..` collects the remaining values
+
+```blorp
+match values in
+    [] => println("empty")
+    [only] => println("one value: {}", only)
+    [head, ..tail] => do
+        println("head: {}", head)
+        println("tail: {}", tail)
+    end
+end
+```
+
+Initially, only one rest pattern is allowed and it must be the last element of the pattern
+
+```blorp
+[head, ..tail]       // valid
+[a, b, ..rest]       // valid
+[..start, last]      // not valid initially
+[a, ..middle, last]  // not valid initially
+[a, ..first, ..last] // invalid
+```
+
+A plain `..` is not a range operator. Ranges use only `..<` and `..=`
+
+### Result propagation
+
+`Result` should eventually be a normal algebraic data type from the standard library
+
+```blorp
+enum Result[T, E] =
+    Ok(T),
+    Err(E),
+end
+```
+
+The `or_return` macro propagates an error from a function
+
+```blorp
+fun read_config(path: String): Result<Config, IOError> =
+    let text := fs::read(path).or_return{}
+    let config := parse_config(text).or_return{}
+
+    return Ok(config)
+end
+```
+
+It evaluates the result once and expands to the equivalent of:
+
+```blorp
+match result in
+    Ok(value) =>
+        yield value
+
+    Err(error) =>
+        return Err(error)
+end
+```
+
+Since `return` exits the nearest function, an `Err` is returned from the function where `or_return` was called
+
+For functions with different error types, the error can first be converted using `map_error`
+
+```blorp
+fun read_config(path: String): Result<Config, AppError> =
+    let text :=
+        fs::read(path)
+            .map_error(AppError::IO)
+            .or_return{}
+
+    return parse_config(text)
+end
+```
+
+### Resource management
+
+The `with` macro provides a scoped way of working with resources
+
+```blorp
+let text :=
+    fs::open("file.txt").with{file ->
+        return file.read_all()
+    end}.or_return{}
+```
+
+The piped form above is equivalent to:
+
+```blorp
+with{
+    fs::open("file.txt"),
+    file ->
+        return file.read_all()
+    end,
+}.or_return{}
+```
+
+Because `with` is a macro, the resource expression is passed as syntax and is only evaluated where the expanded code places it
+
+The resource expression must only be evaluated once
+
+The lambda creates a function boundary around the resource usage. Returning from the lambda does not skip the resource cleanup
+
+`with` should expand into a standard library resource helper that guarantees the resource is closed after the lambda finishes, including when the lambda returns an error
+
+```blorp
+std::resource::with(resource, callback)
+```
+
+The actual cleanup behaviour cannot be implemented safely by only placing `close` after the body, since an early return or runtime error could skip it. It requires support from the runtime, destructors or an unwind-safe standard library primitive
