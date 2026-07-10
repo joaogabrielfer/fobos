@@ -1,4 +1,7 @@
-use std::{fmt::Display, path::PathBuf};
+use std::{
+    fmt::{self, Display, Formatter},
+    path::PathBuf,
+};
 
 use colored::Colorize;
 use thiserror::Error;
@@ -10,128 +13,6 @@ use crate::{
     source::Span,
     typechecker::ty::ParameterTypes,
 };
-
-#[derive(Error, Debug)]
-pub struct LexerError {
-    pub kind: LexerErrorKind,
-    pub file_path: PathBuf,
-    pub pos: Span,
-}
-
-impl Display for LexerError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match render_source_span(&self.file_path, self.pos) {
-            Ok((line, col, snippet)) => {
-                let spaces = (0..line.to_string().len()).map(|_| ' ').collect::<String>();
-                let pipe = "|".cyan();
-                let arrow = "-->".cyan();
-                let error_red = "tokenizer error".red();
-                write!(
-                    f,
-                    "{error_red}: {}\n{spaces}{arrow} {}:{line}:{col}:\n{spaces} {pipe}\n{} {pipe}   {snippet}",
-                    self.kind,
-                    self.file_path.display(),
-                    line.to_string().cyan(),
-                )
-            }
-            Err(_) => {
-                let arrow = "-->".cyan();
-                let error_red = "error".red();
-                write!(
-                    f,
-                    "{error_red}: {}\n {arrow} {}:{}:{}",
-                    self.kind,
-                    self.file_path.display(),
-                    self.pos.start.line,
-                    self.pos.start.col,
-                )
-            }
-        }
-    }
-}
-
-#[derive(Error, Debug)]
-pub enum LexerErrorKind {
-    #[error("unrecognized char '{0}'")]
-    UnknownChar(char),
-    #[error("unrecognized token '{0}'")]
-    UnknownToken(String),
-    #[error("invalid number '{0}'")]
-    InvalidNumber(String),
-    #[error("unterminated string")]
-    UnterminatedString,
-    #[error("expected chars {}, found {found}", render_vec_tokens(expected.clone()))]
-    ExpectedChars {
-        expected: Vec<String>,
-        found: String,
-    },
-}
-
-#[derive(Error, Debug)]
-pub struct ParserError {
-    pub kind: ParserErrorKind,
-    pub file_path: PathBuf,
-    pub pos: Span,
-}
-
-impl Display for ParserError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match render_source_span(&self.file_path, self.pos) {
-            Ok((line, col, snippet)) => {
-                let spaces = (0..line.to_string().len()).map(|_| ' ').collect::<String>();
-                let pipe = "|".cyan();
-                let arrow = "-->".cyan();
-                let error_red = "parser error".red();
-                write!(
-                    f,
-                    "{error_red}: {}\n{spaces}{arrow} {}:{line}:{col}:\n{spaces} {pipe}\n{} {pipe}   {snippet}",
-                    self.kind,
-                    self.file_path.display(),
-                    line.to_string().cyan(),
-                )
-            }
-            Err(_) => {
-                let arrow = "-->".cyan();
-                let error_red = "error".red();
-                write!(
-                    f,
-                    "{error_red}: {}\n {arrow} {}:{}:{}",
-                    self.kind,
-                    self.file_path.display(),
-                    self.pos.start.line,
-                    self.pos.start.col,
-                )
-            }
-        }
-    }
-}
-
-#[derive(Error, Debug)]
-pub enum ParserErrorKind {
-    #[error("expected token '{expected}', found '{found}'")]
-    ExpectedToken { expected: String, found: String },
-    #[error("expected tokens {} but found '{found}'", render_vec_tokens(expected.clone()))]
-    ExpectedTokens {
-        expected: Vec<String>,
-        found: String,
-    },
-    #[error("expected identifier, found '{found}'")]
-    ExpectedIdentifier { found: String },
-    #[error("expected expression, found '{found}'")]
-    ExpectedExpression { found: String },
-    #[error("unexpected token '{found}'")]
-    UnexpectedToken { found: String },
-    #[error("unexpected EOF")]
-    UnexpectedEof,
-    #[error("{expr} is not a valid assignment target")]
-    InvalidAssignmentTarget { expr: String },
-    #[error("{expr} is not a valid lamda parameter")]
-    InvalidParameter { expr: String },
-    #[error("expected type annotation, got nothing")]
-    ExpectedTypeAnnotation,
-    #[error("cannot chain more than one range operations")]
-    ChainingRanges,
-}
 
 fn render_vec_tokens(tks: Vec<String>) -> String {
     let mut s = String::new();
@@ -177,6 +58,136 @@ pub fn render_parameter_types(overloaded_parameters: Vec<ParameterTypes>) -> Str
     s
 }
 
+trait DiagnosticError {
+    type Kind: Display;
+
+    fn file_path(&self) -> &PathBuf;
+    fn span(&self) -> Span;
+    fn kind(&self) -> &Self::Kind;
+}
+
+fn fmt_diagnostic<E>(error: &E, f: &mut Formatter<'_>) -> fmt::Result
+where
+    E: DiagnosticError,
+{
+    match render_source_span(error.file_path(), error.span()) {
+        Ok((line, col, snippet)) => {
+            let spaces = (0..line.to_string().len()).map(|_| ' ').collect::<String>();
+            let arrow = "-->".cyan();
+            let error_red = "type error".red();
+            write!(
+                f,
+                "{error_red}: {}\n{spaces}{arrow} {}:{line}:{col}:\n{snippet}",
+                error.kind(),
+                error.file_path().display(),
+                // line.to_string().cyan(),
+            )
+        }
+        Err(_) => {
+            let error_red = "error".red();
+            write!(f, "{error_red}: {}", error.kind())
+        }
+    }
+}
+
+#[derive(Error, Debug)]
+pub struct LexerError {
+    pub kind: LexerErrorKind,
+    pub file_path: PathBuf,
+    pub pos: Span,
+}
+
+impl DiagnosticError for LexerError {
+    type Kind = LexerErrorKind;
+
+    fn file_path(&self) -> &PathBuf {
+        &self.file_path
+    }
+    fn span(&self) -> Span {
+        self.pos
+    }
+    fn kind(&self) -> &Self::Kind {
+        &self.kind
+    }
+}
+
+impl Display for LexerError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        fmt_diagnostic(self, f)
+    }
+}
+
+#[derive(Error, Debug)]
+pub enum LexerErrorKind {
+    #[error("unrecognized char '{0}'")]
+    UnknownChar(char),
+    #[error("unrecognized token '{0}'")]
+    UnknownToken(String),
+    #[error("invalid number '{0}'")]
+    InvalidNumber(String),
+    #[error("unterminated string")]
+    UnterminatedString,
+    #[error("expected chars {}, found {found}", render_vec_tokens(expected.clone()))]
+    ExpectedChars {
+        expected: Vec<String>,
+        found: String,
+    },
+}
+
+#[derive(Error, Debug)]
+pub struct ParserError {
+    pub kind: ParserErrorKind,
+    pub file_path: PathBuf,
+    pub pos: Span,
+}
+
+impl DiagnosticError for ParserError {
+    type Kind = ParserErrorKind;
+
+    fn file_path(&self) -> &PathBuf {
+        &self.file_path
+    }
+    fn span(&self) -> Span {
+        self.pos
+    }
+    fn kind(&self) -> &Self::Kind {
+        &self.kind
+    }
+}
+
+impl Display for ParserError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        fmt_diagnostic(self, f)
+    }
+}
+
+#[derive(Error, Debug)]
+pub enum ParserErrorKind {
+    #[error("expected token '{expected}', found '{found}'")]
+    ExpectedToken { expected: String, found: String },
+    #[error("expected tokens {} but found '{found}'", render_vec_tokens(expected.clone()))]
+    ExpectedTokens {
+        expected: Vec<String>,
+        found: String,
+    },
+    #[error("expected identifier, found '{found}'")]
+    ExpectedIdentifier { found: String },
+    #[error("expected expression, found '{found}'")]
+    ExpectedExpression { found: String },
+    #[error("unexpected token '{found}'")]
+    UnexpectedToken { found: String },
+    #[error("unexpected EOF")]
+    UnexpectedEof,
+    #[error("{expr} is not a valid assignment target")]
+    InvalidAssignmentTarget { expr: String },
+    #[error("{expr} is not a valid lamda parameter")]
+    InvalidParameter { expr: String },
+    #[error("expected type annotation, got nothing")]
+    ExpectedTypeAnnotation,
+    #[error("cannot chain more than one range operations")]
+    ChainingRanges,
+}
+
 #[derive(Debug, Error)]
 pub struct RuntimeError {
     pub kind: RuntimeErrorKind,
@@ -184,27 +195,23 @@ pub struct RuntimeError {
     pub file_path: PathBuf,
 }
 
+impl DiagnosticError for RuntimeError {
+    type Kind = RuntimeErrorKind;
+
+    fn file_path(&self) -> &PathBuf {
+        &self.file_path
+    }
+    fn span(&self) -> Span {
+        self.span
+    }
+    fn kind(&self) -> &Self::Kind {
+        &self.kind
+    }
+}
+
 impl Display for RuntimeError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match render_source_span(&self.file_path, self.span) {
-            Ok((line, col, snippet)) => {
-                let spaces = (0..line.to_string().len()).map(|_| ' ').collect::<String>();
-                let pipe = "|".cyan();
-                let arrow = "-->".cyan();
-                let error_red = "runtime error".red();
-                write!(
-                    f,
-                    "{error_red}: {}\n{spaces}{arrow} {}:{line}:{col}:\n{spaces} {pipe}\n{} {pipe}   {snippet}",
-                    self.kind,
-                    self.file_path.display(),
-                    line.to_string().cyan(),
-                )
-            }
-            Err(_) => {
-                let error_red = "error".red();
-                write!(f, "{error_red}: {}", self.kind)
-            }
-        }
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        fmt_diagnostic(self, f)
     }
 }
 
@@ -265,27 +272,23 @@ pub struct TypeError {
     pub file_path: PathBuf,
 }
 
+impl DiagnosticError for TypeError {
+    type Kind = TypeErrorKind;
+
+    fn file_path(&self) -> &PathBuf {
+        &self.file_path
+    }
+    fn span(&self) -> Span {
+        self.span
+    }
+    fn kind(&self) -> &Self::Kind {
+        &self.kind
+    }
+}
+
 impl Display for TypeError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match render_source_span(&self.file_path, self.span) {
-            Ok((line, col, snippet)) => {
-                let spaces = (0..line.to_string().len()).map(|_| ' ').collect::<String>();
-                let pipe = "|".cyan();
-                let arrow = "-->".cyan();
-                let error_red = "type error".red();
-                write!(
-                    f,
-                    "{error_red}: {}\n{spaces}{arrow} {}:{line}:{col}:\n{spaces} {pipe}\n{} {pipe}   {snippet}",
-                    self.kind,
-                    self.file_path.display(),
-                    line.to_string().cyan(),
-                )
-            }
-            Err(_) => {
-                let error_red = "error".red();
-                write!(f, "{error_red}: {}", self.kind)
-            }
-        }
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        fmt_diagnostic(self, f)
     }
 }
 
