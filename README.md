@@ -37,12 +37,14 @@ Use `cargo test` to run the unit tests and ensure the result is the expected
 - [x] for loops
 - [x] type checking
 - [x] higher order functions
-    - [ ] function overloading
+- [x] function overloading
+- [ ] importing modules
 - [ ] custom types (adts)
 - [ ] interfaces
 - [ ] pattern matching
 - [ ] generic
 - [ ] patterns
+- [ ] c ffi
 - [ ] effects
 - [ ] trailing commas
 
