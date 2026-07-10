@@ -164,10 +164,19 @@ As it is now, `yield` only returns the first value, though the plan on the futur
 ### Function declaration
 Functions are defined with the `fun` keyword succeded with the name and signature of the function, with the return type following the variable definition conventino of being between the `:` and the `=`
 ```blorp
-fun add(x: int, y: int): int =
+fun add(x: Int, y: Int): Int =
     return x + y
 end
 ```
+
+Variables from parameters are immutable by default, in case you want to mutate the function argument, use the keyword `var` before the type
+
+```blorp
+fun inc(x: var Int): () =
+    x = x + 1
+end
+```
+
 ### Functions as values
 Function are treated as values in blorp.
 
@@ -210,6 +219,17 @@ This syntax can be explored more to its limits, as a tuple `(a, b)` gets piped a
 let added := (10, 20).add()         // returns 30
 
 let foo := ((10).double(), 5).add() // the same as the first example
+```
+
+If you want to pass a literal tuple, you wrap it in another set of parenthesis
+
+```blorp
+fun accepts_tuples(tup: (Int, Int)): Int =
+    return tup.0 + tup.1
+end
+
+let foo := ((10, 5)).accepts_tuples()
+let foo := accepts_tuples((10, 5))
 ```
 
 ### Loops
@@ -272,17 +292,6 @@ match str in
 end
 ```
 
-## Future plans
-
-### Generics
-Generics are definied in between square braces before the name in function declarations
-
-```blorp
-fun [T] add(x: T, y: T): T =
-    return x + y
-end
-```
-
 ### Ranges
 
 Ranges are an instance of an operator that can be created using either the `range()` builtin or a `..=`/`..<` syntax. There is not a plain `..` variant
@@ -294,6 +303,17 @@ end
 
 var my_vec: Arr<Int> = Arr()
 (0..<MY_UPPER_LIMIT).for_each(i -> my_vec.push(i))
+```
+
+## Future plans
+
+### Generics
+Generics are definied in between square braces before the name in function declarations
+
+```blorp
+fun [T] add(x: T, y: T): T =
+    return x + y
+end
 ```
 
 ### Types and interfaces
@@ -354,7 +374,7 @@ A type T implements the interface if all the functions inside the interface exis
 ```blorp
 // in this case, any type that implements to_string is considered of the interface Display
 interface Display =
-    fun to_string(Self) -> String
+    fun to_string(Self): String
 end
 ```
 
@@ -380,7 +400,7 @@ end
 
 // interfaces allow you to talk about all members that implement this at once
 fun [T: Speak] speak(speaker: T) :=
-    println("spoke: {}", animal.speak())
+    println("spoke: {}", animal.make_sound())
 end
 ```
 
