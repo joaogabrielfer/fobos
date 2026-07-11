@@ -263,6 +263,8 @@ pub enum RuntimeErrorKind {
     ExpectedArray { found: String },
     #[error("mismatched returned types, expected '{expected}', but got '{found}'")]
     MismatchedReturnTypes { expected: String, found: String },
+    #[error("could not find an argument '{found}' for function {function}")]
+    InvalidNamedArgument { found: String, function: String },
 }
 
 #[derive(Debug, Error)]

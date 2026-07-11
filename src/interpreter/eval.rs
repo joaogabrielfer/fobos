@@ -303,6 +303,9 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 }
                 Ok(EvalFlow::Continue(array[index as usize].clone()))
             }
+            ExprKind::NamedArg { value, name } => {
+                Ok(EvalFlow::Continue(Value::NamedArg { name, value: Box::new(value_or_flow!(self.eval_expr(*value, yield_mode)?)) }))
+            },
         }
     }
 
@@ -880,6 +883,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
         args: Vec<Value>,
         span: Span,
     ) -> Result<EvalFlow, Box<RuntimeError>> {
+        let mut args = args;
         let variant_index = fun.match_variant(&args).ok_or(self.error_at(
             span,
             RuntimeErrorKind::InvalidFunctionParameters(render_types_from_value_vector(
@@ -887,18 +891,60 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
             )),
         ))?;
 
+        let mut parameters = fun.overload_variants[variant_index].parameters.clone();
+
         let previous_env = self.env.clone();
         self.env = Env::from_ref(Rc::new(RefCell::new(EnvFrame {
             frame: HashMap::new(),
             parent: Some(fun.overload_variants[variant_index].captured_env.clone()),
         })));
 
+        let mut idx_to_remove = vec![];
+
         for (param, arg) in fun.overload_variants[variant_index]
             .parameters
             .iter()
-            .zip(args)
+            .zip(args.iter())
         {
-            self.env.define(param.name.clone(), false, arg);
+            if let Value::NamedArg { .. } = arg {
+            } else {
+                eprintln!("binding '{arg}' to {}", param.name.clone());
+                self.env.define(param.name.clone(), false, arg.clone());
+
+            }
+        }
+
+        for arg in args.iter() {
+            if let Value::NamedArg { name, value } = arg {
+                if fun.overload_variants[variant_index].parameters
+                    .iter()
+                    .map(|p| p.name.clone())
+                    .collect::<Vec<String>>()
+                    .contains(name) {
+                    // eprintln!("binding {value} to {name}");
+                    self.env.define(name.clone(), false, *value.clone());
+                    idx_to_remove.push(name.clone());
+                    // eprintln!("pushing {i} to idx_to_remove");
+                } else {
+                    return Err(self.error_at(span, RuntimeErrorKind::InvalidNamedArgument {
+                        found: name.clone(),
+                        function: fun.name.unwrap_or("<lambda>".to_string())
+                    }))
+                }
+            }
+        }
+
+        idx_to_remove.sort_by(|a, b| b.cmp(a));
+
+        for name_to_remove in idx_to_remove{
+            args.retain(|a| {
+                if let Value::NamedArg { name, .. } = a && *name == name_to_remove {
+                    true
+                } else {
+                    false
+                }
+            });
+            parameters.retain(|p| p.name != name_to_remove);
         }
 
         let flow = match fun.overload_variants[variant_index].body.clone() {

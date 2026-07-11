@@ -23,6 +23,11 @@ pub enum Value {
     Function(FunctionValue),
 
     Range(RangeValue),
+
+    NamedArg {
+        name: String,
+        value: Box<Value>,
+    }
 }
 
 impl Value {
@@ -55,6 +60,11 @@ impl Value {
                 return_type: Box::new(function_value.return_type.resolve_type_annotation()),
             },
             Value::Range(_) => Type::Range,
+            Value::NamedArg { value: _, .. } => Type::Any, //TODO: This is being done to satisfy the
+                                                        //runtime parameter checker because if this
+                                                        //is any other type, it can raise an error
+                                                        //if the named parameter is in another
+                                                        //parameter position
         }
     }
 }
@@ -90,7 +100,8 @@ impl FunctionValue {
                 .all(|pair| match pair {
                     EitherOrBoth::Both(a, b) => TypeChecker::types_compatible(&a, &b),
                     _ => false,
-                })
+                }) // TODO: This does not check types for named arguments, so `add(x = "foo", 10)`
+                   // is valid as of now
             {
                 return Some(i);
             }
@@ -152,6 +163,7 @@ impl std::fmt::Display for Value {
                 if r.inclusive { "=" } else { "<" },
                 r.end
             ),
+            Value::NamedArg { value, name } => write!(f, "{name} = {value}"),
         }
     }
 }
@@ -192,6 +204,7 @@ impl Value {
                 if r.inclusive { "=" } else { "<" },
                 r.end
             ),
+            Value::NamedArg { name, value } => format!("Argument '{name} = {value}'"),
         }
     }
 }

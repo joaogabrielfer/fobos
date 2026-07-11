@@ -374,6 +374,21 @@ impl<'a> Parser<'a> {
 
                     continue;
                 }
+                TokenTag::Equals => {
+                    self.expect(TokenTag::Equals)?;
+                    let name = match expr.kind {
+                        ExprKind::Ident(i) => i,
+                        other => {
+                            return Err(self.error(ParserErrorKind::ExpectedIdentifier {
+                                found: format!("{other:?}"),
+                            }));
+                        },
+                    };
+                    let value = Box::new(self.parse_expr()?);
+
+                    expr = self.new_expr(start_span, ExprKind::NamedArg { name, value });
+                    break;
+                }
                 TokenTag::Dot => {
                     self.advance();
 

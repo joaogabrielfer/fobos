@@ -427,6 +427,7 @@ impl TypeChecker {
                 result
             }
             ExprKind::Index { target, index } => self.check_index_assignment(target, index),
+            ExprKind::NamedArg { value, .. } => self.infer_expr(value),
         }
     }
 
@@ -618,10 +619,15 @@ impl TypeChecker {
             if parameter_list
                 .iter()
                 .zip_longest(args_values)
-                .all(|pair| match pair {
-                    EitherOrBoth::Both(a, b) => TypeChecker::types_compatible(a, &b.get_type()),
-                    _ => false,
-                })
+                .all(|pair| {
+                    // eprintln!("checking {:?}", pair);
+                    match pair {
+                        EitherOrBoth::Both(_, Value::NamedArg { .. }) => true,
+                        EitherOrBoth::Both(a, b) => TypeChecker::types_compatible(a, &b.get_type()),
+                        _ => false,
+                    }
+                }) // TODO: This does not check types for named arguments, so `add(x = "foo", 10)`
+                   // is valid as of now
             {
                 return Some(i);
             }

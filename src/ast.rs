@@ -243,6 +243,11 @@ pub enum ExprKind {
         target: Box<Expr>,
         index: Box<Expr>,
     },
+
+    NamedArg {
+        name: String,
+        value: Box<Expr>,
+    }
 }
 
 impl Display for ExprKind {
@@ -265,6 +270,7 @@ impl Display for ExprKind {
             ExprKind::For { .. } => write!(f, "for loop"),
             ExprKind::Lambda { .. } => write!(f, "lambda"),
             ExprKind::Index { .. } => write!(f, "index"),
+            ExprKind::NamedArg { .. } => write!(f, "named argument"),
         }
     }
 }
