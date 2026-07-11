@@ -1,0 +1,13 @@
+fun add(
+	x: Int,
+	y: Int,
+) :=
+	return x + y
+end
+
+let added := add(
+	10,
+	15,
+)
+
+added.echo()

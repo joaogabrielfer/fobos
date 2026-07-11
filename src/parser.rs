@@ -157,6 +157,7 @@ impl<'a> Parser<'a> {
         let name = self.expect_ident()?;
         self.expect(TokenTag::LParen)?;
         let mut parameters = vec![];
+        self.check_and_advance(TokenTag::NewLine);
         while !self.check(TokenTag::NewLine) {
             if let TokenTag::RParen = self.current_tag() {
                 self.advance();
@@ -174,6 +175,7 @@ impl<'a> Parser<'a> {
             match self.current_tag() {
                 TokenTag::Comma => {
                     self.expect(TokenTag::Comma)?;
+                    self.check_and_advance(TokenTag::NewLine);
                 }
                 TokenTag::RParen => {
                     self.expect(RParen)?;
@@ -311,8 +313,7 @@ impl<'a> Parser<'a> {
 
     fn parse_unary_expr(&mut self) -> Result<ast::Expr, Box<ParserError>> {
         let start_span = self.current().span;
-        if self.check(TokenTag::Bang) {
-            self.advance();
+        if self.check_and_advance(TokenTag::Bang) {
 
             let expr = self.parse_unary_expr()?;
             return Ok(self.new_expr(
@@ -324,8 +325,7 @@ impl<'a> Parser<'a> {
             ));
         }
 
-        if self.check(TokenTag::Minus) {
-            self.advance();
+        if self.check_and_advance(TokenTag::Minus) {
 
             let expr = self.parse_unary_expr()?;
             return Ok(self.new_expr(
@@ -424,17 +424,26 @@ impl<'a> Parser<'a> {
         self.expect(TokenTag::LParen)?;
         let mut args = vec![];
 
-        if self.check(TokenTag::RParen) {
-            self.advance();
+        if self.check_and_advance(TokenTag::RParen) {
             return Ok(args);
         }
+
+
+        self.check_and_advance(TokenTag::NewLine);
 
         loop {
             let expr = self.parse_expr()?;
             args.push(expr);
 
-            if self.check(TokenTag::Comma) {
-                self.advance();
+            if self.check_and_advance(TokenTag::Comma) {
+                // here it cannot be collapsed because its not lazy i guess (it had some problems
+                // once i did it)
+                #[allow(clippy::collapsible_if)]
+                if self.check_and_advance(TokenTag::NewLine){
+                    if self.check(TokenTag::RParen) {
+                        break;
+                    }
+                }
             } else {
                 break;
             }
@@ -477,15 +486,13 @@ impl<'a> Parser<'a> {
             TokenKind::LParen => {
                 self.advance();
                 let mut exprs = vec![];
-                if self.check(TokenTag::RParen) {
-                    self.advance();
+                if self.check_and_advance(TokenTag::RParen) {
                     return Ok(self.new_expr(start_span, ExprKind::Unit));
                 }
                 let mut is_tuple = self.check(TokenTag::LParen);
                 exprs.push(self.parse_expr()?);
-                while self.check(TokenTag::Comma) {
+                while self.check_and_advance(TokenTag::Comma) {
                     is_tuple = true;
-                    self.advance();
                     exprs.push(self.parse_expr()?);
                 }
                 self.expect(TokenTag::RParen)?;
@@ -498,13 +505,11 @@ impl<'a> Parser<'a> {
             TokenKind::LBrace => {
                 self.expect(TokenTag::LBrace)?;
                 let mut exprs = vec![];
-                if self.check(TokenTag::RBrace) {
-                    self.advance();
+                if self.check_and_advance(TokenTag::RBrace) {
                     return Ok(self.new_expr(start_span, ExprKind::Array(exprs)));
                 }
                 exprs.push(self.parse_expr()?);
-                while self.check(TokenTag::Comma) {
-                    self.advance();
+                while self.check_and_advance(TokenTag::Comma) {
                     exprs.push(self.parse_expr()?);
                 }
                 self.expect(TokenTag::RBrace)?;
@@ -547,8 +552,7 @@ impl<'a> Parser<'a> {
                             idents.push(self.expect_ident()?);
                         }
                         self.expect(TokenTag::RParen)?;
-                        if self.check(TokenTag::RArrow) {
-                            self.expect(TokenTag::RArrow)?;
+                        if self.check_and_advance(TokenTag::RArrow) {
                             let TypeAnnotation::Explicit(return_type) = self.parse_option_type()?
                             else {
                                 return Err(self.error(ParserErrorKind::ExpectedTypeAnnotation));
@@ -579,8 +583,7 @@ impl<'a> Parser<'a> {
         self.expect(TokenTag::If)?;
         let condition = Box::new(self.parse_expr()?);
         let then_branch = Box::new(self.parse_expr()?);
-        let else_branch = if self.check(TokenTag::Else) {
-            self.advance();
+        let else_branch = if self.check_and_advance(TokenTag::Else) {
             Some(Box::new(self.parse_expr()?))
         } else {
             None
@@ -615,6 +618,15 @@ impl<'a> Parser<'a> {
 
     fn check(&self, tag: TokenTag) -> bool {
         self.current_tag() == tag
+    }
+
+    fn check_and_advance(&mut self, tag: TokenTag) -> bool {
+        if self.check(tag) {
+            self.advance();
+            true
+        } else {
+            false
+        }
     }
 
     fn is_at_end(&self) -> bool {

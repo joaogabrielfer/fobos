@@ -48,7 +48,7 @@ Use `cargo test` to run the unit tests and ensure the result is the expected
 - [ ] module loading and imports
 - [ ] named function arguments
 - [ ] required named parameters
-- [ ] trailing commas
+- [x] trailing commas
 - [ ] boolean identifiers ending in `?`
 - [ ] word forms for boolean operators
 - [ ] operator sections
