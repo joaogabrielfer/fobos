@@ -26,7 +26,7 @@ pub fn dump_expected() -> anyhow::Result<()> {
         let current_file_path = file.path();
 
         if !current_file_path.is_file()
-            || current_file_path.extension() != Some(OsStr::new("blorp"))
+            || current_file_path.extension() != Some(OsStr::new("fob"))
         {
             continue;
         }

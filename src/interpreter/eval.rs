@@ -944,7 +944,7 @@ mod tests {
             let current_file_path = entry.unwrap().path();
 
             if current_file_path.is_file()
-                && current_file_path.extension() == Some(OsStr::new("blorp"))
+                && current_file_path.extension() == Some(OsStr::new("fob"))
             {
                 let eval_expected_path =
                     create_expected_by_ext(&current_file_path, ".eval").unwrap();

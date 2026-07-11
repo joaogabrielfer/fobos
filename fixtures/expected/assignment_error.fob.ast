@@ -2,7 +2,7 @@ ParserError {
     kind: InvalidAssignmentTarget {
         expr: "integer '10'",
     },
-    file_path: "/home/joaogabriel/personal/programming/projects/blorp/fixtures/assignment_error.blorp",
+    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/assignment_error.fob",
     pos: Span {
         start: SrcPos {
             line: 4,

@@ -709,7 +709,7 @@ mod tests {
             let current_file_path = entry.unwrap().path();
 
             if current_file_path.is_file()
-                && current_file_path.extension() == Some(OsStr::new("blorp"))
+                && current_file_path.extension() == Some(OsStr::new("fob"))
             {
                 let content = read_to_string(&current_file_path).unwrap();
                 let tokens = Lexer::new(&current_file_path, &content).tokenize();

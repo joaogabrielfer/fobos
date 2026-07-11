@@ -1,7 +1,7 @@
 RuntimeError {
-    kind: InvalidFunctionParameter(
-        "a",
-    ),
+    kind: BadRangeStep {
+        found: "0",
+    },
     span: Span {
         start: SrcPos {
             line: 1,
@@ -11,8 +11,8 @@ RuntimeError {
         end: SrcPos {
             line: 2,
             col: 1,
-            idx: 18,
+            idx: 25,
         },
     },
-    file_path: "/home/joaogabriel/personal/programming/projects/blorp/fixtures/range_invalid_bound.blorp",
+    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/range_zero_step.fob",
 }

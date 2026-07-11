@@ -4,7 +4,7 @@ use rustyline::DefaultEditor;
 use std::{fs::read_to_string, path::PathBuf, process::exit};
 use thiserror::Error;
 
-use blorp::{
+use fobos::{
     dump::dump_expected,
     interpreter::{self, Interpreter},
     lexer::{self, Lexer},
@@ -13,7 +13,7 @@ use blorp::{
 };
 
 #[derive(Parser)]
-#[command(name = "blorp")]
+#[command(name = "fobos")]
 struct Cli {
     #[command(subcommand)]
     command: Option<Commands>,

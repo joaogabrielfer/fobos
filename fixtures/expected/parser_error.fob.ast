@@ -2,7 +2,7 @@ ParserError {
     kind: ExpectedIdentifier {
         found: "If",
     },
-    file_path: "/home/joaogabriel/personal/programming/projects/blorp/fixtures/parser_error.blorp",
+    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/parser_error.fob",
     pos: Span {
         start: SrcPos {
             line: 1,

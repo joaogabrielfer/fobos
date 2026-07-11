@@ -1,4 +1,4 @@
-# blorp
+# Fobos
 
 ## Quickstart
 To run a program:
@@ -18,7 +18,7 @@ $ cargo run -- tokens <file> # generate the tokens of the program
 ```
 
 ## Testing
-Use `cargo run -- generate-expected` to compile all .blorp programs in fixtures/ to their results and save them inside fixtures/expected
+Use `cargo run -- generate-expected` to compile all .fob programs in fixtures/ to their results and save them inside fixtures/expected
 
 Use `cargo test` to run the unit tests and ensure the result is the expected
 
@@ -51,17 +51,17 @@ Use `cargo test` to run the unit tests and ensure the result is the expected
 ## Language syntax
 
 ### Variable definition
-```blorp
+```fob
 let foo := 10    // immutable
 var bar := "bar" // mutable
 ```
 - The syntax is: `[let | var] <name> : <type> = <value>`
 - If no type is provided, it is inferred
-- Variables in blorp use camel_case syntax
+- Variables in Fobos use camel_case syntax
 
 ### Blocks
-Blocks in blorp are not declared with curly braces. Instead, they use `end` to denote the end of blocks and `=`, `->`,  `do`, `in` to indicate the opening of is, when succeeded by a new line.
-```blorp
+Blocks in Fobos are not declared with curly braces. Instead, they use `end` to denote the end of blocks and `=`, `->`,  `do`, `in` to indicate the opening of is, when succeeded by a new line.
+```fob
 let my_var =
     var (a, b) = (10, 20) // assignment with tuples
     yield a + b
@@ -73,7 +73,7 @@ end
 - `in` is used in `match` statements
 
 If after the block opener there is not a new line, it has an implicit `end` at the end of it.
-```blorp
+```fob
 let my_var = 10
            ^    ^
        opener  implicit `end`
@@ -88,7 +88,7 @@ end
 
 `return` returns that value from the nearest function
 
-```blorp
+```fob
 fun foo(): Int = // returns 10
     return 10
 end
@@ -96,7 +96,7 @@ end
 
 `yield` returns that value from the nearest expression.
 
-```blorp
+```fob
 let bar :=
     let a := 1
     let b := 2
@@ -104,9 +104,9 @@ let bar :=
 end
 ```
 
-They can be used to disambiguate whether you want to return that value from the function, or evaluate that block, since blorp has no implicit returns
+They can be used to disambiguate whether you want to return that value from the function, or evaluate that block, since Fobos has no implicit returns
 
-```blorp
+```fob
 fun foo(): Int =
     let bar :=
         let a := 10
@@ -130,7 +130,7 @@ end
 
 Yield also has 2 different behaviours based on the context of the block. If it is in a statement position, it bubbles that yield up to the outer expression, if it is in an value, the block itself evaluates to that value
 
-```blorp
+```fob
 let a :=
     if true do
         yield 10 // here these yields instead of making the if statement evaluate to 10, they bubble that yield to the outer `do` block and make it evaluate to 10
@@ -163,7 +163,7 @@ As it is now, `yield` only returns the first value, though the plan on the futur
 
 ### Function declaration
 Functions are defined with the `fun` keyword succeded with the name and signature of the function, with the return type following the variable definition convention of being between the `:` and the `=`
-```blorp
+```fob
 fun add(x: Int, y: Int): Int =
     return x + y
 end
@@ -171,24 +171,24 @@ end
 
 Variables from parameters are immutable by default, in case you want to mutate the function argument, use the keyword `var` before the type
 
-```blorp
+```fob
 fun inc(x: var Int): () =
     x = x + 1
 end
 ```
 
 ### Functions as values
-Function are treated as values in blorp.
+Function are treated as values in Fobos.
 
 Their type are defined with their parameters preceded by `->` and their return type:
-```blorp
+```fob
 let suc: Int -> Int        // a function that takes and int and returns an int
 let add: (Int, Int) -> Int // when there is more than one arg, it should be surrounded by parenthesis
 ```
 
 Anonymous functions are declared with the following syntax: `<args> -> <body>`
 
-```blorp
+```fob
 let suc := a -> a + 1  // if the function is a single expression, the value is automatically returned
 let bar := (a, b) ->
     return a + b       // when it is not, you have to explicitly call return
@@ -197,7 +197,7 @@ end
 
 They can also have their types annotated:
 
-```blorp
+```fob
 let suc: Int -> Int = a -> a + 1
 ```
 
@@ -208,14 +208,14 @@ Functions are called either the normal way with parenthesis, or they can be call
 
 In turn, calling a function with a `.` is the same as calling it as its first value
 
-```blorp
+```fob
 let foo := (10).double().add(5) // returns 25
 let foo := add(double(10), 5)   // it is the same as this
 ```
 
 This syntax can be explored more to its limits, as a tuple `(a, b)` gets piped as `f(a, b)` when called using the dot syntax
 
-```blorp
+```fob
 let added := (10, 20).add()         // returns 30
 
 let foo := ((10).double(), 5).add() // the same as the first example
@@ -223,7 +223,7 @@ let foo := ((10).double(), 5).add() // the same as the first example
 
 If you want to pass a literal tuple, you wrap it in another set of parenthesis
 
-```blorp
+```fob
 fun accepts_tuples(tup: (Int, Int)): Int =
     return tup.0 + tup.1
 end
@@ -235,11 +235,11 @@ let foo := accepts_tuples((10, 5))
 ```
 
 ### Loops
-blorp contains both for and while loops
+Fobos contains both for and while loops
 
 While loops syntax is `while <cond> [block]`
 
-```blorp
+```fob
 // will print "loop" indefinitely
 while true do
     println("loop")
@@ -251,7 +251,7 @@ while true do println("loop")
 
 For loops syntax is `for <item> in <iterator> [block]`
 
-```blorp
+```fob
 // will print 0 to 9. range(n) returns a range from 0 to n
 for i in range(10) do
     println(i)
@@ -265,7 +265,7 @@ for i in range(5, 11) do println(i)
 
 If statements follow the normal syntax as `if <cond> [block] else [block]`
 
-```blorp
+```fob
 if true do
     println("true")
 end else do
@@ -281,7 +281,7 @@ When there is more than one possible value, match staments are more idiomatic
 
 The syntax is: `match <value> in [patterns]`, where a pattern is: `<pat> => [block]`
 
-```blorp
+```fob
 let str := "foobar"
 
 match str in
@@ -298,7 +298,7 @@ end
 
 Ranges are an instance of an operator that can be created using either the `range()` builtin or a `..=`/`..<` syntax. There is not a plain `..` variant
 
-```blorp
+```fob
 for i in 0..=9 do // starts from 0 goes up to 9
     println(i)
 end
@@ -312,7 +312,7 @@ var my_vec: Arr<Int> = Arr()
 ### Generics
 Generics are defined in between square braces before the name in function declarations
 
-```blorp
+```fob
 fun [T] add(x: T, y: T): T =
     return x + y
 end
@@ -322,7 +322,7 @@ end
 
 Product types are defined with the `struct` keyword
 
-```blorp
+```fob
 struct Point =
     x: Int,
     y: Int,
@@ -331,16 +331,16 @@ end
 
 Sum types are defined with the `enum` keyword
 
-```blorp
+```fob
 enum State =
     Active,
     Inactive
 end
 ```
 
-blorp allow for full algebraic data types with generics:
+Fobos allow for full algebraic data types with generics:
 
-```blorp
+```fob
 struct User =
     id: Int,
     role: UserRole,
@@ -354,7 +354,7 @@ end
 
 For simple type aliases, use `type` keyword
 
-```blorp
+```fob
 type IntArray = Arr<Int>
 
 type MyUnitType = () // defines a type with only one value
@@ -362,7 +362,7 @@ type MyUnitType = () // defines a type with only one value
 
 Design patterns from functional programming language are also expressed here
 
-```blorp
+```fob
 enum Result[T, E] =
     Ok(T),
     Err(E).
@@ -373,7 +373,7 @@ Interfaces are what allow constraints with generics
 
 A type T implements the interface if all the functions inside the interface exist with those parameters. Inside interfaces, `Self` is a special type that represents the type of the thing
 
-```blorp
+```fob
 // in this case, any type that implements to_string is considered of the interface Display
 interface Display =
     fun to_string(Self): String
@@ -382,7 +382,7 @@ end
 
 More complete example
 
-```blorp
+```fob
 type Cat
 type Dog
 
@@ -408,11 +408,11 @@ end
 
 ### Patterns
 
-Patterns in blorp are a first class citizen
+Patterns in Fobos are a first class citizen
 
 In pattern matching statements, everything you can match on, has to be an instance of the IntoPattern interface. Normal types that you would expect to be matched already implement by default
 
-```blorp
+```fob
 match d in
     0..=10  => ...
     11..=20 => ...
@@ -422,7 +422,7 @@ end
 
 But you can also implement your own instance of IntoPattern for your types and use them in pattern matches
 
-```blorp
+```fob
 match foo in
     MyPattern() => ... // here MyPattern is a type constructor
     _ => ...
@@ -431,7 +431,7 @@ end
 
 You can use this alongside pattern pinning, by prefixing the variable with the ^ operator, that allows you to use the value of a variable as a pattern in a match statement
 
-```blorp
+```fob
 let p := RegexPattern("foo.*(bar)+") // here an example of what could be a custom pattern
 
 match s in
@@ -445,7 +445,7 @@ end
 
 Have `collect` and `stream` effect handlers where they could catch the yields into a stream or an array
 
-```blorp
+```fob
 let my_stream := stream do // would result in a Stream<Int> with values of 0 to +inf
     var i := 0
     while true do
@@ -465,7 +465,7 @@ The difference from both is that stream are lazy list while collections are norm
 
 Allow trailing commas for multi-line array and tuple literals as well as function call
 
-```blorp
+```fob
 let my_arr := [
     1,
     2,
@@ -473,7 +473,7 @@ let my_arr := [
 ]
 ```
 
-```blorp
+```fob
 let my_tuple := (
     1,
     true,
@@ -481,7 +481,7 @@ let my_tuple := (
 )
 ```
 
-```blorp
+```fob
 foo(
     1,
     2,
@@ -494,7 +494,7 @@ foo(
 
 Functions that return a boolean should, by convention, have their names end with `?`
 
-```blorp
+```fob
 empty?(value)
 valid?(user)
 positive?(number)
@@ -510,7 +510,7 @@ The `?` is considered part of the identifier and is not an operator
 
 Modules are accessed using the `::` operator
 
-```blorp
+```fob
 let result := std::math::abs(-10)
 let file := std::fs::open("foo.txt")
 ```
@@ -518,13 +518,13 @@ let file := std::fs::open("foo.txt")
 
 This also applies to functions accessed from modules
 
-```blorp
+```fob
 let empty := std::string::empty?(path)
 ```
 
 They can be imported into the current scope and then used with the piped syntax
 
-```blorp
+```fob
 use std::string::{empty?}
 
 let empty := path.empty?()
@@ -536,7 +536,7 @@ Macros are compile-time functions that receive and return syntax instead of runt
 
 Macro declarations use curly braces instead of parenthesis
 
-```blorp
+```fob
 macro unless{
     condition: std::syntax::Expression,
     body: std::syntax::Block,
@@ -549,7 +549,7 @@ end
 
 Macros are also called using curly braces
 
-```blorp
+```fob
 unless{foo.empty?(), do
     println("foo is not empty")
 end}
@@ -557,7 +557,7 @@ end}
 
 This makes normal function and macro calls visually different
 
-```blorp
+```fob
 foo(...) // runtime function call
 foo{...} // compile-time macro call
 ```
@@ -566,21 +566,21 @@ Macro arguments are passed as syntax and are not evaluated before the macro is e
 
 Like normal function calls, macros can also use the piped `.` syntax
 
-```blorp
+```fob
 foo.assert{}
 assert{foo} // the same as above
 ```
 
 The lhs of the pipe is passed as the first macro argument
 
-```blorp
+```fob
 value.foo{a, b}
 foo{value, a, b} // the same as above
 ```
 
 Syntax types are exposed through the `std::syntax` module
 
-```blorp
+```fob
 std::syntax::Expression
 std::syntax::Identifier
 std::syntax::Block
@@ -601,7 +601,7 @@ Macros use `template` to construct syntax
 
 `${value}` inserts one syntax node into the template, while `$..{values}` inserts all the syntax nodes contained in a sequence
 
-```blorp
+```fob
 macro define_function{
     name: std::syntax::Identifier,
     parameters: std::syntax::ParameterList,
@@ -635,7 +635,7 @@ Macros are expanded before name resolution and type checking
 
 `assert` takes a boolean expression, crashes if it is false and returns the same value if it is true
 
-```blorp
+```fob
 let foo := true
 
 foo.assert{"foo should be true"}
@@ -643,13 +643,13 @@ foo.assert{"foo should be true"}
 
 Since the value is returned, it can continue being piped
 
-```blorp
+```fob
 foo.assert{"foo should be true"}.do_other_thing()
 ```
 
 `assert_not` does the opposite. It crashes if the boolean expression is true
 
-```blorp
+```fob
 path.empty?().assert_not{"path cannot be empty"}
 ```
 
@@ -657,11 +657,11 @@ path.empty?().assert_not{"path cannot be empty"}
 
 Its conceptual type is:
 
-```blorp
+```fob
 [T] (T, T -> Bool) -> T
 ```
 
-```blorp
+```fob
 foo.assert_that{
     (> 2),
     "foo should be greater than 2",
@@ -670,7 +670,7 @@ foo.assert_that{
 
 Since predicates are normal first-class functions, they can be passed directly
 
-```blorp
+```fob
 path.assert_that{
     empty?,
     "path should be empty",
@@ -679,7 +679,7 @@ path.assert_that{
 
 To assert that the path is not empty, the predicate can be negated using the `not` function
 
-```blorp
+```fob
 path.assert_that{
     empty?.not(),
     "path cannot be empty",
@@ -688,7 +688,7 @@ path.assert_that{
 
 The expression above is the same as:
 
-```blorp
+```fob
 path.assert_that{
     not(empty?),
     "path cannot be empty",
@@ -697,7 +697,7 @@ path.assert_that{
 
 `not` is a normal higher-order function that takes a predicate and returns its negation
 
-```blorp
+```fob
 fun [T] not(predicate: T -> Bool): T -> Bool =
     return value -> !predicate(value)
 end
@@ -707,7 +707,7 @@ end
 
 Binary operators can be partially applied by leaving one of their operands out inside parenthesis
 
-```blorp
+```fob
 (+ 1) // x -> x + 1
 (> 2) // x -> x > 2
 (2 >) // x -> 2 > x
@@ -715,7 +715,7 @@ Binary operators can be partially applied by leaving one of their operands out i
 
 These operator sections are normal function values
 
-```blorp
+```fob
 let increment := (+ 1)
 let greater_than_two := (> 2)
 
@@ -725,14 +725,14 @@ let valid := greater_than_two(5)
 
 They can be used with higher-order functions
 
-```blorp
+```fob
 let incremented := values.map((+ 1))
 let positive := values.filter((> 0))
 ```
 
 They can also be used as predicates for macros like `assert_that`
 
-```blorp
+```fob
 foo.assert_that{
     (> 2),
     "foo should be greater than 2",
@@ -741,7 +741,7 @@ foo.assert_that{
 
 The order of the operands matters for operators that are not commutative
 
-```blorp
+```fob
 (> 2) // x -> x > 2
 (2 >) // x -> 2 > x
 ```
@@ -752,7 +752,7 @@ The `..` token represents the general idea of spreading or collecting multiple v
 
 When used after a value inside a function call, it spreads the value into multiple arguments
 
-```blorp
+```fob
 let tup := (1, 2)
 
 foo(tup..)
@@ -761,7 +761,7 @@ foo(1, 2) // the same as above
 
 It can also be used inside tuple and array literals
 
-```blorp
+```fob
 let tup := (1, 2)
 let extended := (0, tup.., 3)
 
@@ -771,7 +771,7 @@ let extended_values := [0, values.., 3]
 
 Inside macro templates, `$..{value}` splices multiple syntax nodes into the surrounding syntax
 
-```blorp
+```fob
 template
     fun ${name}($..{parameters}): ${return_type} =
         ${body}
@@ -781,7 +781,7 @@ end
 
 Inside patterns, prefixing a binding with `..` collects the remaining values
 
-```blorp
+```fob
 match values in
     [] => println("empty")
     [only] => println("one value: {}", only)
@@ -794,7 +794,7 @@ end
 
 Initially, only one rest pattern is allowed and it must be the last element of the pattern
 
-```blorp
+```fob
 [head, ..tail]       // valid
 [a, b, ..rest]       // valid
 [..start, last]      // not valid initially
@@ -808,7 +808,7 @@ A plain `..` is not a range operator. Ranges use only `..<` and `..=`
 
 `Result` should eventually be a normal algebraic data type from the standard library
 
-```blorp
+```fob
 enum Result[T, E] =
     Ok(T),
     Err(E),
@@ -817,7 +817,7 @@ end
 
 The `or_return` macro propagates an error from a function
 
-```blorp
+```fob
 fun read_config(path: String): Result<Config, IOError> =
     let text := fs::read(path).or_return{}
     let config := parse_config(text).or_return{}
@@ -828,7 +828,7 @@ end
 
 It evaluates the result once and expands to the equivalent of:
 
-```blorp
+```fob
 match result in
     Ok(value) =>
         yield value
@@ -842,7 +842,7 @@ Since `return` exits the nearest function, an `Err` is returned from the functio
 
 For functions with different error types, the error can first be converted using `map_error`
 
-```blorp
+```fob
 fun read_config(path: String): Result<Config, AppError> =
     let text :=
         fs::read(path)
@@ -857,7 +857,7 @@ end
 
 The `with` macro provides a scoped way of working with resources
 
-```blorp
+```fob
 let text :=
     fs::open("file.txt").with{file ->
         return file.read_all()
@@ -866,7 +866,7 @@ let text :=
 
 The piped form above is equivalent to:
 
-```blorp
+```fob
 with{
     fs::open("file.txt"),
     file ->
@@ -883,7 +883,7 @@ The lambda creates a function boundary around the resource usage. Returning from
 
 `with` should expand into a standard library resource helper that guarantees the resource is closed after the lambda finishes, including when the lambda returns an error
 
-```blorp
+```fob
 std::resource::with(resource, callback)
 ```
 
