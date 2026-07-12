@@ -60,10 +60,25 @@ Program {
                                             },
                                         },
                                         args: [
-                                            Expr {
-                                                kind: Ident(
-                                                    "x",
-                                                ),
+                                            CallArgument {
+                                                name: None,
+                                                value: Expr {
+                                                    kind: Ident(
+                                                        "x",
+                                                    ),
+                                                    span: Span {
+                                                        start: SrcPos {
+                                                            line: 2,
+                                                            col: 10,
+                                                            idx: 25,
+                                                        },
+                                                        end: SrcPos {
+                                                            line: 2,
+                                                            col: 12,
+                                                            idx: 27,
+                                                        },
+                                                    },
+                                                },
                                                 span: Span {
                                                     start: SrcPos {
                                                         line: 2,

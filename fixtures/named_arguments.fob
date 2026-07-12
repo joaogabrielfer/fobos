@@ -1,0 +1,36 @@
+fun subtract(lhs: Int, rhs: Int): Int =
+    return lhs - rhs
+end
+
+fun describe(name: String, age: Int, active: Bool): String =
+    return name <> ":" <> age <> ":" <> active
+end
+
+fun connect(address: String, timeout: Int): String =
+    return address <> ":" <> timeout
+end
+
+// Positional calls still work for ordinary parameters.
+echo("positional: " <> subtract(10, 3))
+
+// All arguments can be named.
+echo("named: " <> subtract(lhs = 10, rhs = 3))
+
+// Named arguments can be reordered.
+echo("reordered: " <> subtract(rhs = 3, lhs = 10))
+
+// Positional arguments can be followed by named arguments.
+echo("mixed: " <> subtract(10, rhs = 3))
+
+echo( describe( active = true, name = "Alice", age = 30))
+
+// `timeout` is named-only.
+echo(connect("localhost", timeout = 10))
+
+// Ordinary parameters may still be passed by name.
+echo(connect(address = "example.com", timeout = 20))
+
+// named parameters are not implemented yet in the type level
+// let operation: (lhs: Int, rhs: Int) -> Int = subtract
+
+// echo("function value: " <> operation(rhs = 4, lhs = 12))

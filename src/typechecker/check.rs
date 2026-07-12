@@ -1,14 +1,12 @@
-use itertools::{EitherOrBoth, Itertools};
-
 use crate::{
-    ast::{BinaryOp, Block, Expr, ExprKind, Program, Stmt, TypeAnnotation, UnaryOp},
-    errors::{TypeError, TypeErrorKind},
-    interpreter::values::Value,
+    ast::{BinaryOp, Block, CallArgument, Expr, ExprKind, Program, Stmt, TypeAnnotation, UnaryOp},
+    errors::{ArgumentError, ArgumentErrorKind, TypeError, TypeErrorKind},
+    interpreter::values::normalize_arguments,
     source::Span,
     typechecker::{
         CheckedProgram, TypeChecker, TypeResult,
         ty::{
-            ParameterTypes,
+            ParameterType,
             Type::{self},
         },
     },
@@ -290,14 +288,89 @@ impl TypeChecker {
                     )),
                 }
             }
-            ExprKind::Call { callee, args: _ } => {
+            ExprKind::Call { callee, args } => {
                 let Type::Function {
-                    parameter_overloads: _,
+                    parameter_overloads,
                     return_type,
                 } = self.infer_expr(callee)?
                 else {
                     panic!("should be a function call")
                 };
+
+                let argument_types = args
+                    .iter()
+                    .map(|argument| {
+                        Ok(CallArgument {
+                            name: argument.name.clone(),
+                            value: self.infer_expr(&argument.value)?,
+                            span: argument.span,
+                        })
+                    })
+                    .collect::<TypeResult<Vec<_>>>()?;
+
+                let mut matches = 0;
+                let mut last_argument_error = None;
+                let mut last_type_mismatch = None;
+                for parameters in &parameter_overloads {
+                    let normalized = match normalize_arguments(parameters, &argument_types) {
+                        Ok(arguments) => arguments,
+                        Err(error) => {
+                            last_argument_error = Some(error);
+                            continue;
+                        }
+                    };
+
+                    let mismatch =
+                        parameters
+                            .iter()
+                            .zip(normalized)
+                            .find(|(parameter, argument)| {
+                                !TypeChecker::types_compatible(&parameter.ty, argument)
+                            });
+
+                    if let Some((parameter, argument)) = mismatch {
+                        last_type_mismatch = Some((parameter.ty.clone(), argument));
+                    } else {
+                        matches += 1;
+                    }
+                }
+
+                if matches == 0 {
+                    if let Some((expected, found)) = last_type_mismatch {
+                        return Err(self.error_at(
+                            callee.span,
+                            TypeErrorKind::MismatchedType {
+                                expected: expected.to_string(),
+                                found: found.to_string(),
+                            },
+                        ));
+                    }
+
+                    if let Some(error) = last_argument_error {
+                        let span = error.span.unwrap_or(callee.span);
+                        return Err(self.error_at(span, TypeErrorKind::ArgumentError { e: error }));
+                    }
+
+                    return Err(self.error_at(
+                        callee.span,
+                        TypeErrorKind::MismatchedType {
+                            expected: "a matching function signature".to_string(),
+                            found: "the provided argument types".to_string(),
+                        },
+                    ));
+                }
+
+                if matches > 1 {
+                    return Err(self.error_at(
+                        callee.span,
+                        TypeErrorKind::ArgumentError {
+                            e: Box::new(ArgumentError {
+                                kind: ArgumentErrorKind::Ambiguous,
+                                span: None,
+                            }),
+                        },
+                    ));
+                }
 
                 Ok(*return_type)
             }
@@ -398,7 +471,10 @@ impl TypeChecker {
                     let mut parameters_types = vec![];
 
                     for parameter in parameters {
-                        parameters_types.push(Type::Any);
+                        parameters_types.push(ParameterType {
+                            name: parameter.name.clone(),
+                            ty: Type::Any,
+                        });
                         self.env.define(parameter.name.clone(), Type::Any);
                     }
 
@@ -526,7 +602,10 @@ impl TypeChecker {
         let mut parameters_types = Vec::new();
 
         for param in parameters {
-            parameters_types.push(param.t.resolve_type_annotation());
+            parameters_types.push(ParameterType {
+                name: param.name.clone(),
+                ty: param.t.resolve_type_annotation(),
+            });
         }
 
         let return_type = Box::new(return_type.resolve_type_annotation());
@@ -607,27 +686,6 @@ impl TypeChecker {
         }
 
         Ok(())
-    }
-
-    // returns the matched index, not parameter length
-    pub fn check_function_call(
-        parameter_overloads: &[ParameterTypes],
-        args_values: &Vec<Value>,
-    ) -> Option<usize> {
-        for (i, parameter_list) in parameter_overloads.iter().enumerate() {
-            if parameter_list
-                .iter()
-                .zip_longest(args_values)
-                .all(|pair| match pair {
-                    EitherOrBoth::Both(a, b) => TypeChecker::types_compatible(a, &b.get_type()),
-                    _ => false,
-                })
-            {
-                return Some(i);
-            }
-        }
-
-        None
     }
 
     pub fn types_compatible(expected: &Type, found: &Type) -> bool {

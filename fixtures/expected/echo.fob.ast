@@ -89,75 +89,90 @@ Program {
                         },
                     },
                     args: [
-                        Expr {
-                            kind: Binary {
-                                lhs: Expr {
-                                    kind: Binary {
-                                        lhs: Expr {
-                                            kind: String(
-                                                "s1 <> s2 = ",
-                                            ),
-                                            span: Span {
-                                                start: SrcPos {
-                                                    line: 4,
-                                                    col: 6,
-                                                    idx: 38,
+                        CallArgument {
+                            name: None,
+                            value: Expr {
+                                kind: Binary {
+                                    lhs: Expr {
+                                        kind: Binary {
+                                            lhs: Expr {
+                                                kind: String(
+                                                    "s1 <> s2 = ",
+                                                ),
+                                                span: Span {
+                                                    start: SrcPos {
+                                                        line: 4,
+                                                        col: 6,
+                                                        idx: 38,
+                                                    },
+                                                    end: SrcPos {
+                                                        line: 4,
+                                                        col: 22,
+                                                        idx: 54,
+                                                    },
                                                 },
-                                                end: SrcPos {
-                                                    line: 4,
-                                                    col: 22,
-                                                    idx: 54,
+                                            },
+                                            op: Combine,
+                                            rhs: Expr {
+                                                kind: Ident(
+                                                    "s1",
+                                                ),
+                                                span: Span {
+                                                    start: SrcPos {
+                                                        line: 4,
+                                                        col: 23,
+                                                        idx: 55,
+                                                    },
+                                                    end: SrcPos {
+                                                        line: 4,
+                                                        col: 28,
+                                                        idx: 60,
+                                                    },
                                                 },
                                             },
                                         },
-                                        op: Combine,
-                                        rhs: Expr {
-                                            kind: Ident(
-                                                "s1",
-                                            ),
-                                            span: Span {
-                                                start: SrcPos {
-                                                    line: 4,
-                                                    col: 23,
-                                                    idx: 55,
-                                                },
-                                                end: SrcPos {
-                                                    line: 4,
-                                                    col: 28,
-                                                    idx: 60,
-                                                },
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 4,
+                                                col: 6,
+                                                idx: 38,
+                                            },
+                                            end: SrcPos {
+                                                line: 4,
+                                                col: 28,
+                                                idx: 60,
                                             },
                                         },
                                     },
-                                    span: Span {
-                                        start: SrcPos {
-                                            line: 4,
-                                            col: 6,
-                                            idx: 38,
-                                        },
-                                        end: SrcPos {
-                                            line: 4,
-                                            col: 28,
-                                            idx: 60,
+                                    op: Combine,
+                                    rhs: Expr {
+                                        kind: Ident(
+                                            "s2",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 4,
+                                                col: 29,
+                                                idx: 61,
+                                            },
+                                            end: SrcPos {
+                                                line: 4,
+                                                col: 32,
+                                                idx: 64,
+                                            },
                                         },
                                     },
                                 },
-                                op: Combine,
-                                rhs: Expr {
-                                    kind: Ident(
-                                        "s2",
-                                    ),
-                                    span: Span {
-                                        start: SrcPos {
-                                            line: 4,
-                                            col: 29,
-                                            idx: 61,
-                                        },
-                                        end: SrcPos {
-                                            line: 4,
-                                            col: 32,
-                                            idx: 64,
-                                        },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 4,
+                                        col: 6,
+                                        idx: 38,
+                                    },
+                                    end: SrcPos {
+                                        line: 4,
+                                        col: 32,
+                                        idx: 64,
                                     },
                                 },
                             },

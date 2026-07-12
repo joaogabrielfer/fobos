@@ -49,10 +49,25 @@ Program {
                                     },
                                 },
                                 args: [
-                                    Expr {
-                                        kind: String(
-                                            "hey",
-                                        ),
+                                    CallArgument {
+                                        name: None,
+                                        value: Expr {
+                                            kind: String(
+                                                "hey",
+                                            ),
+                                            span: Span {
+                                                start: SrcPos {
+                                                    line: 2,
+                                                    col: 10,
+                                                    idx: 54,
+                                                },
+                                                end: SrcPos {
+                                                    line: 2,
+                                                    col: 16,
+                                                    idx: 60,
+                                                },
+                                            },
+                                        },
                                         span: Span {
                                             start: SrcPos {
                                                 line: 2,
@@ -324,10 +339,25 @@ Program {
                                     },
                                 },
                                 args: [
-                                    Expr {
-                                        kind: String(
-                                            "hello world",
-                                        ),
+                                    CallArgument {
+                                        name: None,
+                                        value: Expr {
+                                            kind: String(
+                                                "hello world",
+                                            ),
+                                            span: Span {
+                                                start: SrcPos {
+                                                    line: 19,
+                                                    col: 21,
+                                                    idx: 261,
+                                                },
+                                                end: SrcPos {
+                                                    line: 19,
+                                                    col: 35,
+                                                    idx: 275,
+                                                },
+                                            },
+                                        },
                                         span: Span {
                                             start: SrcPos {
                                                 line: 19,

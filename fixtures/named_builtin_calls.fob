@@ -1,0 +1,11 @@
+echo(value = "hello")
+
+echo(range(end = 3))
+echo(range(end = 5, start = 2))
+echo(range(step = 2, end = 6, start = 0))
+
+var values := [1, 2]
+push(values, 3)
+push(target = values, value = 4)
+push(value = 5, target = values)
+echo(values)

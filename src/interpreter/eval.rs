@@ -4,11 +4,11 @@ use anyhow::Result;
 
 use crate::{
     ast::{
-        BinaryOp, Block, Expr, ExprKind, Program,
+        BinaryOp, Block, Expr, ExprArgument, ExprKind, Program,
         Stmt::{self},
-        TypeAnnotation, UnaryOp,
+        TypeAnnotation, UnaryOp, ValueArgument,
     },
-    errors::{RuntimeError, RuntimeErrorKind, render_types_from_value_vector},
+    errors::{ArgumentError, RuntimeError, RuntimeErrorKind},
     interpreter::{
         Interpreter,
         env::{Env, EnvFrame},
@@ -309,7 +309,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
     fn eval_call(
         &mut self,
         callee: Expr,
-        args: Vec<Expr>,
+        args: Vec<ExprArgument>,
         span: Span,
     ) -> Result<EvalFlow, Box<RuntimeError>> {
         let callee_span = callee.span;
@@ -322,18 +322,30 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 } else {
                     let mut args_values = vec![];
                     for arg in args {
-                        let value = value_or_flow!(self.eval_expr(arg, YieldMode::Capture)?);
-                        args_values.push(value);
+                        let value = value_or_flow!(self.eval_expr(arg.value, YieldMode::Capture)?);
+                        let arg_value = ValueArgument {
+                            name: arg.name,
+                            value,
+                            span: arg.span,
+                        };
+
+                        args_values.push(arg_value);
                     }
-                    self.call_builtin(builtin, &mut args_values, span)
+                    self.call_builtin(builtin, args_values, span)
                 }
             }
 
             Value::Function(fun) => {
                 let mut args_values = vec![];
                 for arg in args {
-                    let value = value_or_flow!(self.eval_expr(arg, YieldMode::Capture)?);
-                    args_values.push(value);
+                    let value = value_or_flow!(self.eval_expr(arg.value, YieldMode::Capture)?);
+                    let arg_value = ValueArgument {
+                        name: arg.name,
+                        value,
+                        span: arg.span,
+                    };
+
+                    args_values.push(arg_value);
                 }
                 self.call_function(fun, args_values, span)
             }
@@ -877,37 +889,38 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
     fn call_function(
         &mut self,
         fun: FunctionValue,
-        args: Vec<Value>,
+        args: Vec<ValueArgument>,
         span: Span,
     ) -> Result<EvalFlow, Box<RuntimeError>> {
-        let variant_index = fun.match_variant(&args).ok_or(self.error_at(
-            span,
-            RuntimeErrorKind::InvalidFunctionParameters(render_types_from_value_vector(
-                args.clone(),
-            )),
-        ))?;
+        let matched = fun
+            .match_variant(args)
+            .map_err(|e| self.argument_error(span, *e))?;
 
         let previous_env = self.env.clone();
         self.env = Env::from_ref(Rc::new(RefCell::new(EnvFrame {
             frame: HashMap::new(),
-            parent: Some(fun.overload_variants[variant_index].captured_env.clone()),
+            parent: Some(
+                fun.overload_variants[matched.variant_index]
+                    .captured_env
+                    .clone(),
+            ),
         })));
 
-        for (param, arg) in fun.overload_variants[variant_index]
-            .parameters
-            .iter()
-            .zip(args)
-        {
-            self.env.define(param.name.clone(), false, arg);
+        let variant = &fun.overload_variants[matched.variant_index];
+
+        for (parameter, argument) in variant.parameters.iter().zip(matched.arguments) {
+            self.env.define(parameter.name.clone(), false, argument);
         }
 
-        let flow = match fun.overload_variants[variant_index].body.clone() {
-            FunctionBody::Block(block) => self.eval_block(block, YieldMode::Bubble)?,
-            FunctionBody::Expr(expr) => self.eval_expr(expr, YieldMode::Capture)?,
+        let result = match variant.body.clone() {
+            FunctionBody::Block(block) => self.eval_block(block, YieldMode::Bubble),
+
+            FunctionBody::Expr(expr) => self.eval_expr(expr, YieldMode::Capture),
         };
 
         self.env = previous_env;
-        match flow {
+
+        match result? {
             EvalFlow::Continue(value) => Ok(EvalFlow::Continue(value)),
             EvalFlow::Return { value, .. } => Ok(EvalFlow::Continue(value)),
             EvalFlow::Yield { .. } => {
@@ -919,6 +932,17 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
     pub fn error_at(&self, span: Span, kind: RuntimeErrorKind) -> Box<RuntimeError> {
         Box::new(RuntimeError {
             kind,
+            span,
+            file_path: self.file_path.clone(),
+        })
+    }
+
+    pub fn argument_error(&self, span: Span, e: ArgumentError) -> Box<RuntimeError> {
+        let span = e.span.unwrap_or(span);
+        Box::new(RuntimeError {
+            kind: RuntimeErrorKind::ArgumentError {
+                e: Box::new(e.clone()),
+            },
             span,
             file_path: self.file_path.clone(),
         })

@@ -24,10 +24,25 @@ Program {
                         },
                     },
                     args: [
-                        Expr {
-                            kind: Int(
-                                0,
-                            ),
+                        CallArgument {
+                            name: None,
+                            value: Expr {
+                                kind: Int(
+                                    0,
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 1,
+                                        col: 16,
+                                        idx: 15,
+                                    },
+                                    end: SrcPos {
+                                        line: 1,
+                                        col: 18,
+                                        idx: 17,
+                                    },
+                                },
+                            },
                             span: Span {
                                 start: SrcPos {
                                     line: 1,
@@ -41,10 +56,25 @@ Program {
                                 },
                             },
                         },
-                        Expr {
-                            kind: Int(
-                                10,
-                            ),
+                        CallArgument {
+                            name: None,
+                            value: Expr {
+                                kind: Int(
+                                    10,
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 1,
+                                        col: 19,
+                                        idx: 18,
+                                    },
+                                    end: SrcPos {
+                                        line: 1,
+                                        col: 22,
+                                        idx: 21,
+                                    },
+                                },
+                            },
                             span: Span {
                                 start: SrcPos {
                                     line: 1,
@@ -58,10 +88,25 @@ Program {
                                 },
                             },
                         },
-                        Expr {
-                            kind: Int(
-                                0,
-                            ),
+                        CallArgument {
+                            name: None,
+                            value: Expr {
+                                kind: Int(
+                                    0,
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 1,
+                                        col: 23,
+                                        idx: 22,
+                                    },
+                                    end: SrcPos {
+                                        line: 1,
+                                        col: 25,
+                                        idx: 24,
+                                    },
+                                },
+                            },
                             span: Span {
                                 start: SrcPos {
                                     line: 1,

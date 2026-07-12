@@ -1,0 +1,23 @@
+RuntimeError {
+    kind: ArgumentError {
+        e: ArgumentError {
+            kind: Missing {
+                name: "value",
+            },
+            span: None,
+        },
+    },
+    span: Span {
+        start: SrcPos {
+            line: 1,
+            col: 1,
+            idx: 0,
+        },
+        end: SrcPos {
+            line: 2,
+            col: 1,
+            idx: 29,
+        },
+    },
+    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/raw_argument_arity.fob",
+}
