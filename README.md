@@ -24,9 +24,6 @@ Use `cargo test` to run the unit tests and ensure the result is the expected
 
 ## Todo
 
-```md
-## Todo
-
 - [x] variable definition
 - [x] blocks
 - [x] yield and return
@@ -90,7 +87,6 @@ Use `cargo test` to run the unit tests and ensure the result is the expected
 - [ ] refinement types
 - [ ] derivation system
 - [ ] user-extensible compile-time interfaces
-```
 
 ## Language syntax
 
