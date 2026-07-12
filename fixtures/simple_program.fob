@@ -3,7 +3,6 @@ var b := 10
 b = 29
 
 if true do
-	return a + b
+	let result := a + b
+	echo("result: " <> result)
 end
-
-return 0

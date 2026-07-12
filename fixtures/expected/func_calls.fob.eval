@@ -1,18 +1,8 @@
-RuntimeError {
-    kind: UndefinedVariable(
-        "add",
-    ),
-    span: Span {
-        start: SrcPos {
-            line: 1,
-            col: 10,
-            idx: 9,
-        },
-        end: SrcPos {
-            line: 1,
-            col: 14,
-            idx: 13,
-        },
-    },
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/func_calls.fob",
-}
+output:
+first: 3
+second: 15
+nested: 6
+arithmetic: 9
+
+result:
+Unit

@@ -1,0 +1,36 @@
+RuntimeError {
+    kind: ArgumentError {
+        e: ArgumentError {
+            kind: Duplicate {
+                name: "lhs",
+            },
+            span: Some(
+                Span {
+                    start: SrcPos {
+                        line: 5,
+                        col: 14,
+                        idx: 79,
+                    },
+                    end: SrcPos {
+                        line: 5,
+                        col: 23,
+                        idx: 88,
+                    },
+                },
+            ),
+        },
+    },
+    span: Span {
+        start: SrcPos {
+            line: 5,
+            col: 14,
+            idx: 79,
+        },
+        end: SrcPos {
+            line: 5,
+            col: 23,
+            idx: 88,
+        },
+    },
+    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/named_duplicate_argument.fob",
+}

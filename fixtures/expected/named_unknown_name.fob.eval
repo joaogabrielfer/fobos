@@ -1,0 +1,36 @@
+RuntimeError {
+    kind: ArgumentError {
+        e: ArgumentError {
+            kind: UnknownName {
+                name: "left",
+            },
+            span: Some(
+                Span {
+                    start: SrcPos {
+                        line: 5,
+                        col: 10,
+                        idx: 75,
+                    },
+                    end: SrcPos {
+                        line: 5,
+                        col: 14,
+                        idx: 79,
+                    },
+                },
+            ),
+        },
+    },
+    span: Span {
+        start: SrcPos {
+            line: 5,
+            col: 10,
+            idx: 75,
+        },
+        end: SrcPos {
+            line: 5,
+            col: 14,
+            idx: 79,
+        },
+    },
+    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/named_unknown_name.fob",
+}

@@ -1,0 +1,34 @@
+RuntimeError {
+    kind: ArgumentError {
+        e: ArgumentError {
+            kind: PositionalAfterNamed,
+            span: Some(
+                Span {
+                    start: SrcPos {
+                        line: 5,
+                        col: 20,
+                        idx: 85,
+                    },
+                    end: SrcPos {
+                        line: 5,
+                        col: 22,
+                        idx: 87,
+                    },
+                },
+            ),
+        },
+    },
+    span: Span {
+        start: SrcPos {
+            line: 5,
+            col: 20,
+            idx: 85,
+        },
+        end: SrcPos {
+            line: 5,
+            col: 22,
+            idx: 87,
+        },
+    },
+    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/named_positional_after_named.fob",
+}

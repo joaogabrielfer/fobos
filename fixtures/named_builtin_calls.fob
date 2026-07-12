@@ -9,3 +9,7 @@ push(values, 3)
 push(target = values, value = 4)
 push(value = 5, target = values)
 echo(values)
+
+var matrix := [[1], [2]]
+push(target = matrix[0], value = 9)
+echo(matrix)

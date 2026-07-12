@@ -1,18 +1,9 @@
-RuntimeError {
-    kind: UndefinedVariable(
-        "map",
-    ),
-    span: Span {
-        start: SrcPos {
-            line: 8,
-            col: 15,
-            idx: 106,
-        },
-        end: SrcPos {
-            line: 8,
-            col: 19,
-            idx: 110,
-        },
-    },
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/lambdas.fob",
-}
+output:
+add: 30
+inc: 5
+closure: 15
+label: big
+calc: 25
+
+result:
+Unit

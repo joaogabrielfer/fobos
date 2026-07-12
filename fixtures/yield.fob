@@ -1,79 +1,23 @@
-let a :=
-	let foo := 1
-	let bar := 2
-	yield foo + bar
+let sum := do
+    let left := 10
+    let right := 20
+    yield left + right
 end
 
-echo("a = " <> a)
-
-let b := do
-	yield 6
-	yield 5
+let selected := if true do
+    yield "yes"
+end else do
+    yield "no"
 end
-
-echo("b = " <> b)
-
-let c :=
-    let foo := if true do
-        yield 10
-    end
-
-	if true do
-		yield 15
-	end
-
-	yield foo
-	yield 20
-end
-
-echo("c = " <> c)
-
-let d :=
-    if true do
-        yield 10
-    end
-
-    yield 20
-end
-
-echo("d = " <> d)
-
-let e :=
-    var i := 0
-
-    let foo := while i < 10 do
-        if i == 4 do
-            yield i
-        end
-
-        i = i + 1
-    end
-
-	yield foo
-
-    yield 999
-end
-
-echo("e = " <> e)
-
-let f :=
-    let inner :=
-        let a := 5
-        yield a * 2
-    end
-
-    yield inner + 1
-end
-
-echo("f = " <> f)
 
 var i := 0
-let foo := while i < 10 do
-	if i == 4 do
-		yield i
-	end
-
-	i = i + 1
+let first_even := while i < 10 do
+    if i == 4 do
+        yield i
+    end
+    i = i + 1
 end
 
-echo("foo = " <> foo)
+echo("sum: " <> sum)
+echo("selected: " <> selected)
+echo("first_even: " <> first_even)

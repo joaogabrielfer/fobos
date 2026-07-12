@@ -1,18 +1,8 @@
-RuntimeError {
-    kind: UndefinedVariable(
-        "add",
-    ),
-    span: Span {
-        start: SrcPos {
-            line: 5,
-            col: 10,
-            idx: 80,
-        },
-        end: SrcPos {
-            line: 5,
-            col: 23,
-            idx: 93,
-        },
-    },
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/tuples.fob",
-}
+output:
+t0: ()
+t1: 10
+t2: ((10, 2))
+t3: ((10, 2), 3)
+
+result:
+Unit

@@ -1,10 +1,17 @@
-let x := add()
-let x := add(1)
-let x := add(1, 2)
-let x := add(1 + 2, 3 * 4)
-let x := double(add(1, 2))
-let x := add(1, 2) * 3
-let x := add_curried(1)(2)
+fun add(x: Int, y: Int): Int =
+    return x + y
+end
 
-let x := foo.len(bar)
-let x := len(foo, bar)
+fun double(value: Int): Int =
+    return value * 2
+end
+
+let first := add(1, 2)
+let second := add(1 + 2, 3 * 4)
+let nested := double(add(1, 2))
+let arithmetic := add(1, 2) * 3
+
+echo("first: " <> first)
+echo("second: " <> second)
+echo("nested: " <> nested)
+echo("arithmetic: " <> arithmetic)

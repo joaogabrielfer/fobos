@@ -1,0 +1,10 @@
+fun describe(value: Int): String =
+    return "int: " <> value
+end
+
+fun describe(value: String): String =
+    return "string: " <> value
+end
+
+echo(describe(value = 10))
+echo(describe(value = "hello"))

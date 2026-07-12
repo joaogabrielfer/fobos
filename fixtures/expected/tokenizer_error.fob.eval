@@ -1,16 +1,16 @@
 LexerError {
     kind: UnterminatedString,
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/tokeninzer_error.fob",
+    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/tokenizer_error.fob",
     pos: Span {
         start: SrcPos {
             line: 1,
-            col: 13,
-            idx: 12,
+            col: 12,
+            idx: 11,
         },
         end: SrcPos {
             line: 2,
             col: 1,
-            idx: 32,
+            idx: 31,
         },
     },
 }

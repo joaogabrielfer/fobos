@@ -1,29 +1,30 @@
-fun add_and_print_hey(x: Int, y: Int): Int =
-	println("hey")
-	return x + y
+fun add(x: Int, y: Int): Int =
+    return x + y
 end
 
- fun foo(): Int =
-     return 10
- end
+fun answer(): Int =
+    return 10
+end
 
 fun identity(x: Int): Int =
     return x
 end
 
- fun greet(): String =
-     return "hello"
- end
-
-fun no_return_type(): () =
-	do_effectful_thing("hello world")
+fun greet(): String =
+    return "hello"
 end
 
-fun inferred_type(x: Foo) :=
+fun unit_value(): () =
+    return ()
 end
 
-fun [T] generic_over_T(foo: T): T =
+fun inferred_return(x: Int) :=
+    return x + 1
 end
 
-fun [A, B] generic_over_AB(x: A, y: B): () =
-end
+echo(add(10, 20))
+echo(answer())
+echo(identity(7))
+echo(greet())
+echo(unit_value())
+echo(inferred_return(9))

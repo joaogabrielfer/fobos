@@ -128,8 +128,11 @@ Program {
                         kind: Block(
                             Block {
                                 statements: [
-                                    Return(
-                                        Expr {
+                                    Bind {
+                                        mutable: false,
+                                        name: "result",
+                                        type_annotation: Inferred,
+                                        value: Expr {
                                             kind: Binary {
                                                 lhs: Expr {
                                                     kind: Ident(
@@ -138,13 +141,13 @@ Program {
                                                     span: Span {
                                                         start: SrcPos {
                                                             line: 6,
-                                                            col: 9,
-                                                            idx: 50,
+                                                            col: 16,
+                                                            idx: 57,
                                                         },
                                                         end: SrcPos {
                                                             line: 6,
-                                                            col: 12,
-                                                            idx: 53,
+                                                            col: 19,
+                                                            idx: 60,
                                                         },
                                                     },
                                                 },
@@ -156,13 +159,13 @@ Program {
                                                     span: Span {
                                                         start: SrcPos {
                                                             line: 6,
-                                                            col: 13,
-                                                            idx: 54,
+                                                            col: 20,
+                                                            idx: 61,
                                                         },
                                                         end: SrcPos {
                                                             line: 7,
                                                             col: 1,
-                                                            idx: 56,
+                                                            idx: 63,
                                                         },
                                                     },
                                                 },
@@ -170,13 +173,128 @@ Program {
                                             span: Span {
                                                 start: SrcPos {
                                                     line: 6,
-                                                    col: 9,
-                                                    idx: 50,
+                                                    col: 16,
+                                                    idx: 57,
                                                 },
                                                 end: SrcPos {
                                                     line: 7,
                                                     col: 1,
-                                                    idx: 56,
+                                                    idx: 63,
+                                                },
+                                            },
+                                        },
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 6,
+                                                col: 2,
+                                                idx: 43,
+                                            },
+                                            end: SrcPos {
+                                                line: 7,
+                                                col: 1,
+                                                idx: 63,
+                                            },
+                                        },
+                                    },
+                                    Expr(
+                                        Expr {
+                                            kind: Call {
+                                                callee: Expr {
+                                                    kind: Ident(
+                                                        "echo",
+                                                    ),
+                                                    span: Span {
+                                                        start: SrcPos {
+                                                            line: 7,
+                                                            col: 2,
+                                                            idx: 64,
+                                                        },
+                                                        end: SrcPos {
+                                                            line: 7,
+                                                            col: 7,
+                                                            idx: 69,
+                                                        },
+                                                    },
+                                                },
+                                                args: [
+                                                    CallArgument {
+                                                        name: None,
+                                                        value: Expr {
+                                                            kind: Binary {
+                                                                lhs: Expr {
+                                                                    kind: String(
+                                                                        "result: ",
+                                                                    ),
+                                                                    span: Span {
+                                                                        start: SrcPos {
+                                                                            line: 7,
+                                                                            col: 7,
+                                                                            idx: 69,
+                                                                        },
+                                                                        end: SrcPos {
+                                                                            line: 7,
+                                                                            col: 20,
+                                                                            idx: 82,
+                                                                        },
+                                                                    },
+                                                                },
+                                                                op: Combine,
+                                                                rhs: Expr {
+                                                                    kind: Ident(
+                                                                        "result",
+                                                                    ),
+                                                                    span: Span {
+                                                                        start: SrcPos {
+                                                                            line: 7,
+                                                                            col: 21,
+                                                                            idx: 83,
+                                                                        },
+                                                                        end: SrcPos {
+                                                                            line: 7,
+                                                                            col: 28,
+                                                                            idx: 90,
+                                                                        },
+                                                                    },
+                                                                },
+                                                            },
+                                                            span: Span {
+                                                                start: SrcPos {
+                                                                    line: 7,
+                                                                    col: 7,
+                                                                    idx: 69,
+                                                                },
+                                                                end: SrcPos {
+                                                                    line: 7,
+                                                                    col: 28,
+                                                                    idx: 90,
+                                                                },
+                                                            },
+                                                        },
+                                                        span: Span {
+                                                            start: SrcPos {
+                                                                line: 7,
+                                                                col: 7,
+                                                                idx: 69,
+                                                            },
+                                                            end: SrcPos {
+                                                                line: 7,
+                                                                col: 28,
+                                                                idx: 90,
+                                                            },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                            span: Span {
+                                                start: SrcPos {
+                                                    line: 7,
+                                                    col: 2,
+                                                    idx: 64,
+                                                },
+                                                end: SrcPos {
+                                                    line: 8,
+                                                    col: 1,
+                                                    idx: 91,
                                                 },
                                             },
                                         },
@@ -191,9 +309,9 @@ Program {
                                 idx: 39,
                             },
                             end: SrcPos {
-                                line: 8,
+                                line: 9,
                                 col: 1,
-                                idx: 60,
+                                idx: 95,
                             },
                         },
                     },
@@ -206,28 +324,9 @@ Program {
                         idx: 31,
                     },
                     end: SrcPos {
-                        line: 8,
-                        col: 1,
-                        idx: 60,
-                    },
-                },
-            },
-        ),
-        Return(
-            Expr {
-                kind: Int(
-                    0,
-                ),
-                span: Span {
-                    start: SrcPos {
                         line: 9,
-                        col: 8,
-                        idx: 68,
-                    },
-                    end: SrcPos {
-                        line: 10,
                         col: 1,
-                        idx: 70,
+                        idx: 95,
                     },
                 },
             },

@@ -1,18 +1,12 @@
-RuntimeError {
-    kind: UndefinedVariable(
-        "a",
-    ),
-    span: Span {
-        start: SrcPos {
-            line: 4,
-            col: 10,
-            idx: 76,
-        },
-        end: SrcPos {
-            line: 4,
-            col: 14,
-            idx: 80,
-        },
-    },
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/operations.fob",
-}
+output:
+foo: 2
+bar: 7
+baz: 9
+x: true
+y: true
+z: 36.900000000000006
+w: -20
+f: false
+
+result:
+Unit

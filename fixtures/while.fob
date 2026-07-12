@@ -5,3 +5,6 @@ end
 
 var b := 10
 while b > 0 do b = b - 1
+
+echo("a: " <> a)
+echo("b: " <> b)

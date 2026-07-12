@@ -43,7 +43,7 @@ Use `cargo test` to run the unit tests and ensure the result is the expected
 ### Language foundation
 
 - [ ] module loading and imports
-- [ ] named function arguments
+- [x] named function arguments
 - [ ] required named parameters
 - [x] trailing commas
 - [ ] boolean identifiers ending in `?`

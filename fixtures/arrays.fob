@@ -1,11 +1,9 @@
 let empty := []
 let nums := [10, 20, 30]
-let mixed := [1, "hello", true, ()]
 let nested := [[1, 2], [3, 4], [5, 6]]
 
 echo("empty: " <> empty)
 echo("nums: " <> nums)
-echo("mixed: " <> mixed)
 echo("nested: " <> nested)
 
 let first := nums[0]

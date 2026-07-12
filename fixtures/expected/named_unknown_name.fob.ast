@@ -1,0 +1,233 @@
+Program {
+    statements: [
+        FunDecl {
+            name: "subtract",
+            generics: [],
+            parameters: [
+                Parameter {
+                    name: "lhs",
+                    t: Explicit(
+                        Named(
+                            "Int",
+                        ),
+                    ),
+                },
+                Parameter {
+                    name: "rhs",
+                    t: Explicit(
+                        Named(
+                            "Int",
+                        ),
+                    ),
+                },
+            ],
+            return_type: Explicit(
+                Named(
+                    "Int",
+                ),
+            ),
+            body: Block {
+                statements: [
+                    Return(
+                        Expr {
+                            kind: Binary {
+                                lhs: Expr {
+                                    kind: Ident(
+                                        "lhs",
+                                    ),
+                                    span: Span {
+                                        start: SrcPos {
+                                            line: 2,
+                                            col: 12,
+                                            idx: 51,
+                                        },
+                                        end: SrcPos {
+                                            line: 2,
+                                            col: 17,
+                                            idx: 56,
+                                        },
+                                    },
+                                },
+                                op: Sub,
+                                rhs: Expr {
+                                    kind: Ident(
+                                        "rhs",
+                                    ),
+                                    span: Span {
+                                        start: SrcPos {
+                                            line: 2,
+                                            col: 18,
+                                            idx: 57,
+                                        },
+                                        end: SrcPos {
+                                            line: 3,
+                                            col: 1,
+                                            idx: 61,
+                                        },
+                                    },
+                                },
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 2,
+                                    col: 12,
+                                    idx: 51,
+                                },
+                                end: SrcPos {
+                                    line: 3,
+                                    col: 1,
+                                    idx: 61,
+                                },
+                            },
+                        },
+                    ),
+                ],
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 1,
+                    idx: 0,
+                },
+                end: SrcPos {
+                    line: 1,
+                    col: 40,
+                    idx: 39,
+                },
+            },
+        },
+        Expr(
+            Expr {
+                kind: Call {
+                    callee: Expr {
+                        kind: Ident(
+                            "subtract",
+                        ),
+                        span: Span {
+                            start: SrcPos {
+                                line: 5,
+                                col: 1,
+                                idx: 66,
+                            },
+                            end: SrcPos {
+                                line: 5,
+                                col: 10,
+                                idx: 75,
+                            },
+                        },
+                    },
+                    args: [
+                        CallArgument {
+                            name: Some(
+                                ArgumentName {
+                                    value: "left",
+                                    span: Span {
+                                        start: SrcPos {
+                                            line: 5,
+                                            col: 10,
+                                            idx: 75,
+                                        },
+                                        end: SrcPos {
+                                            line: 5,
+                                            col: 14,
+                                            idx: 79,
+                                        },
+                                    },
+                                },
+                            ),
+                            value: Expr {
+                                kind: Int(
+                                    10,
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 5,
+                                        col: 17,
+                                        idx: 82,
+                                    },
+                                    end: SrcPos {
+                                        line: 5,
+                                        col: 20,
+                                        idx: 85,
+                                    },
+                                },
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 5,
+                                    col: 10,
+                                    idx: 75,
+                                },
+                                end: SrcPos {
+                                    line: 5,
+                                    col: 20,
+                                    idx: 85,
+                                },
+                            },
+                        },
+                        CallArgument {
+                            name: Some(
+                                ArgumentName {
+                                    value: "rhs",
+                                    span: Span {
+                                        start: SrcPos {
+                                            line: 5,
+                                            col: 21,
+                                            idx: 86,
+                                        },
+                                        end: SrcPos {
+                                            line: 5,
+                                            col: 24,
+                                            idx: 89,
+                                        },
+                                    },
+                                },
+                            ),
+                            value: Expr {
+                                kind: Int(
+                                    3,
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 5,
+                                        col: 27,
+                                        idx: 92,
+                                    },
+                                    end: SrcPos {
+                                        line: 5,
+                                        col: 29,
+                                        idx: 94,
+                                    },
+                                },
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 5,
+                                    col: 21,
+                                    idx: 86,
+                                },
+                                end: SrcPos {
+                                    line: 5,
+                                    col: 29,
+                                    idx: 94,
+                                },
+                            },
+                        },
+                    ],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 5,
+                        col: 1,
+                        idx: 66,
+                    },
+                    end: SrcPos {
+                        line: 6,
+                        col: 1,
+                        idx: 95,
+                    },
+                },
+            },
+        ),
+    ],
+}

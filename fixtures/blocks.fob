@@ -1,5 +1,7 @@
-let foo :=
-	let a := 10
-	let b := 20
-	return a + b
+let foo := do
+    let a := 10
+    let b := 20
+    yield a + b
 end
+
+echo("foo: " <> foo)

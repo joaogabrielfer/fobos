@@ -1,8 +1,17 @@
 let foo: Int = 1 + 1
 let bar := 1 + 2 * 3
 let baz := 5 + 2 * 4 / 2
-let x := a == b
-let y: Bool = a + b == c
-let z: Int = (10.3 + 2) * 3
+let x := foo == 2
+let y: Bool = foo + bar == 9
+let z: Float = (10.3 + 2.0) * 3.0
 let w: Int = -10 * 2
 let f := !true
+
+echo("foo: " <> foo)
+echo("bar: " <> bar)
+echo("baz: " <> baz)
+echo("x: " <> x)
+echo("y: " <> y)
+echo("z: " <> z)
+echo("w: " <> w)
+echo("f: " <> f)
