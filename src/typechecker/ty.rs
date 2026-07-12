@@ -22,7 +22,19 @@ pub enum Type {
     TypeVar(String),
 }
 
-pub type ParameterTypes = Vec<Type>;
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ParameterType {
+    pub name: String,
+    pub ty: Type,
+}
+
+impl crate::ast::CallParameter for ParameterType {
+    fn name(&self) -> &str {
+        &self.name
+    }
+}
+
+pub type ParameterTypes = Vec<ParameterType>;
 
 impl Display for Type {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -51,7 +63,7 @@ impl Display for Type {
                 write!(f, "(")?;
                 for (i, parameters_types) in overloaded_parameters.iter().enumerate() {
                     for (j, param) in parameters_types.iter().enumerate() {
-                        write!(f, "{param}")?;
+                        write!(f, "{}", param.ty)?;
                         if j < parameters_types.len() - 1 {
                             write!(f, ", ")?;
                         }

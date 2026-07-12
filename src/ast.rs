@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use crate::{source::Span, typechecker::ty::Type};
+use crate::{interpreter::values::Value, source::Span, typechecker::ty::Type};
 
 #[derive(Debug, Clone)]
 pub struct Program {
@@ -96,9 +96,11 @@ impl TypeAnnotation {
             } => {
                 let parameters = parameters
                     .iter()
-                    .map(|p| {
-                        TypeAnnotation::Explicit(TypeExpr::Named(p.clone()))
-                            .resolve_type_annotation()
+                    .enumerate()
+                    .map(|(index, p)| crate::typechecker::ty::ParameterType {
+                        name: format!("_{index}"),
+                        ty: TypeAnnotation::Explicit(TypeExpr::Named(p.clone()))
+                            .resolve_type_annotation(),
                     })
                     .collect();
 
@@ -134,9 +136,6 @@ impl TypeExpr {
             TypeExpr::Named(name) if name == "String" => Type::String,
             TypeExpr::Named(name) => Type::TypeVar(name.clone()), // temporary for generics
             TypeExpr::Unit => Type::Unit,
-            // TODO: Array isnt
-            // implemented in the
-            // tokenizer yet
             TypeExpr::Array(inner) => Type::Array(Box::new(
                 TypeAnnotation::Explicit(TypeExpr::Named(inner.clone())).resolve_type_annotation(),
             )),
@@ -158,9 +157,11 @@ impl TypeExpr {
             } => {
                 let parameters = parameters
                     .iter()
-                    .map(|p| {
-                        TypeAnnotation::Explicit(TypeExpr::Named(p.clone()))
-                            .resolve_type_annotation()
+                    .enumerate()
+                    .map(|(index, p)| crate::typechecker::ty::ParameterType {
+                        name: format!("_{index}"),
+                        ty: TypeAnnotation::Explicit(TypeExpr::Named(p.clone()))
+                            .resolve_type_annotation(),
                     })
                     .collect();
 
@@ -214,7 +215,7 @@ pub enum ExprKind {
 
     Call {
         callee: Box<Expr>,
-        args: Vec<Expr>,
+        args: Vec<ExprArgument>,
     },
 
     If {
@@ -243,11 +244,6 @@ pub enum ExprKind {
         target: Box<Expr>,
         index: Box<Expr>,
     },
-
-    NamedArg {
-        name: String,
-        value: Box<Expr>,
-    }
 }
 
 impl Display for ExprKind {
@@ -270,8 +266,34 @@ impl Display for ExprKind {
             ExprKind::For { .. } => write!(f, "for loop"),
             ExprKind::Lambda { .. } => write!(f, "lambda"),
             ExprKind::Index { .. } => write!(f, "index"),
-            ExprKind::NamedArg { .. } => write!(f, "named argument"),
         }
+    }
+}
+
+pub type ExprArgument = CallArgument<Expr>;
+pub type ValueArgument = CallArgument<Value>;
+pub type TypeArgument = CallArgument<Type>;
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct ArgumentName {
+    pub value: String,
+    pub span: Span,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct CallArgument<T> {
+    pub name: Option<ArgumentName>,
+    pub value: T,
+    pub span: Span,
+}
+
+pub trait CallParameter {
+    fn name(&self) -> &str;
+}
+
+impl CallParameter for Parameter {
+    fn name(&self) -> &str {
+        &self.name
     }
 }
 

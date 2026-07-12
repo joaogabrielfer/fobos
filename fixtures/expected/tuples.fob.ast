@@ -281,45 +281,60 @@ Program {
                         },
                     },
                     args: [
-                        Expr {
-                            kind: Tuple(
-                                [
-                                    Expr {
-                                        kind: Int(
-                                            1,
-                                        ),
-                                        span: Span {
-                                            start: SrcPos {
-                                                line: 5,
-                                                col: 12,
-                                                idx: 82,
-                                            },
-                                            end: SrcPos {
-                                                line: 5,
-                                                col: 14,
-                                                idx: 84,
-                                            },
-                                        },
-                                    },
-                                    Expr {
-                                        kind: Int(
-                                            2,
-                                        ),
-                                        span: Span {
-                                            start: SrcPos {
-                                                line: 5,
-                                                col: 15,
-                                                idx: 85,
-                                            },
-                                            end: SrcPos {
-                                                line: 5,
-                                                col: 17,
-                                                idx: 87,
+                        CallArgument {
+                            name: None,
+                            value: Expr {
+                                kind: Tuple(
+                                    [
+                                        Expr {
+                                            kind: Int(
+                                                1,
+                                            ),
+                                            span: Span {
+                                                start: SrcPos {
+                                                    line: 5,
+                                                    col: 12,
+                                                    idx: 82,
+                                                },
+                                                end: SrcPos {
+                                                    line: 5,
+                                                    col: 14,
+                                                    idx: 84,
+                                                },
                                             },
                                         },
+                                        Expr {
+                                            kind: Int(
+                                                2,
+                                            ),
+                                            span: Span {
+                                                start: SrcPos {
+                                                    line: 5,
+                                                    col: 15,
+                                                    idx: 85,
+                                                },
+                                                end: SrcPos {
+                                                    line: 5,
+                                                    col: 17,
+                                                    idx: 87,
+                                                },
+                                            },
+                                        },
+                                    ],
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 5,
+                                        col: 11,
+                                        idx: 81,
                                     },
-                                ],
-                            ),
+                                    end: SrcPos {
+                                        line: 5,
+                                        col: 18,
+                                        idx: 88,
+                                    },
+                                },
+                            },
                             span: Span {
                                 start: SrcPos {
                                     line: 5,

@@ -1,18 +1,45 @@
 use crate::{
-    ast::{Expr, ExprKind},
-    errors::{
-        RuntimeError, RuntimeErrorKind, render_parameter_types, render_types_from_value_vector,
-    },
+    ast::{CallParameter, ExprArgument, ExprKind, ValueArgument},
+    errors::{RuntimeError, RuntimeErrorKind},
     interpreter::{
         Interpreter,
         env::Env,
         eval::{EvalFlow, YieldMode},
-        values::{self, RangeValue, Value},
+        values::{self, MatchedCall, RangeValue, Value, normalize_arguments},
     },
     source::Span,
-    typechecker::{TypeChecker, env::TypeEnv, ty::Type},
+    typechecker::{
+        TypeChecker,
+        env::TypeEnv,
+        ty::{ParameterType, Type},
+    },
     value_or_flow,
 };
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BuiltinParameterMode {
+    Value,
+    Place,
+}
+
+#[derive(Debug, Clone)]
+pub struct BuiltinParameter {
+    pub name: &'static str,
+    pub ty: Type,
+    pub mode: BuiltinParameterMode,
+}
+
+impl CallParameter for BuiltinParameter {
+    fn name(&self) -> &str {
+        self.name
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct BuiltinVariant {
+    pub parameters: Vec<BuiltinParameter>,
+    pub return_type: Type,
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum BuiltinFunction {
@@ -22,24 +49,96 @@ pub enum BuiltinFunction {
 }
 
 impl BuiltinFunction {
-    pub fn get_type(&self) -> Type {
+    pub fn variants(&self) -> Vec<BuiltinVariant> {
         match self {
-            BuiltinFunction::Echo => Type::Function {
-                parameter_overloads: vec![vec![Type::Any]],
-                return_type: Box::new(Type::Range),
-            },
-            BuiltinFunction::Range => Type::Function {
-                parameter_overloads: vec![
-                    vec![Type::Int],
-                    vec![Type::Int, Type::Int],
-                    vec![Type::Int, Type::Int, Type::Int],
+            BuiltinFunction::Echo => vec![BuiltinVariant {
+                parameters: vec![BuiltinParameter {
+                    name: "value",
+                    ty: Type::Any,
+                    mode: BuiltinParameterMode::Value,
+                }],
+                return_type: Type::Unit,
+            }],
+            BuiltinFunction::Range => vec![
+                BuiltinVariant {
+                    parameters: vec![BuiltinParameter {
+                        name: "end",
+                        ty: Type::Int,
+                        mode: BuiltinParameterMode::Value,
+                    }],
+                    return_type: Type::Range,
+                },
+                BuiltinVariant {
+                    parameters: vec![
+                        BuiltinParameter {
+                            name: "start",
+                            ty: Type::Int,
+                            mode: BuiltinParameterMode::Value,
+                        },
+                        BuiltinParameter {
+                            name: "end",
+                            ty: Type::Int,
+                            mode: BuiltinParameterMode::Value,
+                        },
+                    ],
+                    return_type: Type::Range,
+                },
+                BuiltinVariant {
+                    parameters: vec![
+                        BuiltinParameter {
+                            name: "start",
+                            ty: Type::Int,
+                            mode: BuiltinParameterMode::Value,
+                        },
+                        BuiltinParameter {
+                            name: "end",
+                            ty: Type::Int,
+                            mode: BuiltinParameterMode::Value,
+                        },
+                        BuiltinParameter {
+                            name: "step",
+                            ty: Type::Int,
+                            mode: BuiltinParameterMode::Value,
+                        },
+                    ],
+                    return_type: Type::Range,
+                },
+            ],
+            BuiltinFunction::Push => vec![BuiltinVariant {
+                parameters: vec![
+                    BuiltinParameter {
+                        name: "target",
+                        ty: Type::Array(Box::new(Type::Any)),
+                        mode: BuiltinParameterMode::Place,
+                    },
+                    BuiltinParameter {
+                        name: "value",
+                        ty: Type::Any,
+                        mode: BuiltinParameterMode::Value,
+                    },
                 ],
-                return_type: Box::new(Type::Range),
-            },
-            BuiltinFunction::Push => Type::Function {
-                parameter_overloads: vec![vec![Type::Array(Box::new(Type::Any)), Type::Any]],
-                return_type: Box::new(Type::Array(Box::new(Type::Any))),
-            },
+                return_type: Type::Unit,
+            }],
+        }
+    }
+
+    pub fn get_type(&self) -> Type {
+        let variants = self.variants();
+        Type::Function {
+            parameter_overloads: variants
+                .iter()
+                .map(|variant| {
+                    variant
+                        .parameters
+                        .iter()
+                        .map(|parameter| ParameterType {
+                            name: parameter.name.to_string(),
+                            ty: parameter.ty.clone(),
+                        })
+                        .collect()
+                })
+                .collect(),
+            return_type: Box::new(variants[0].return_type.clone()),
         }
     }
 
@@ -50,220 +149,152 @@ impl BuiltinFunction {
 
 impl Env {
     pub fn load_builtins(&mut self) {
-        self.define(
-            "echo".to_string(),
-            false,
-            values::Value::BuiltinFunction(BuiltinFunction::Echo),
-        );
-        self.define(
-            "range".to_string(),
-            false,
-            values::Value::BuiltinFunction(BuiltinFunction::Range),
-        );
-        self.define(
-            "push".to_string(),
-            false,
-            values::Value::BuiltinFunction(BuiltinFunction::Push),
-        );
+        for (name, builtin) in [
+            ("echo", BuiltinFunction::Echo),
+            ("range", BuiltinFunction::Range),
+            ("push", BuiltinFunction::Push),
+        ] {
+            self.define(
+                name.to_string(),
+                false,
+                values::Value::BuiltinFunction(builtin),
+            );
+        }
     }
 }
 
 impl TypeEnv {
     pub fn load_builtins(&mut self) {
-        self.define("echo".to_string(), BuiltinFunction::Echo.get_type());
-        self.define("range".to_string(), BuiltinFunction::Range.get_type());
-        self.define("push".to_string(), BuiltinFunction::Push.get_type());
+        for (name, builtin) in [
+            ("echo", BuiltinFunction::Echo),
+            ("range", BuiltinFunction::Range),
+            ("push", BuiltinFunction::Push),
+        ] {
+            self.define(name.to_string(), builtin.get_type());
+        }
     }
 }
 
 impl<'a, W: std::io::Write> Interpreter<'a, W> {
+    fn match_builtin_values(
+        &self,
+        builtin: &BuiltinFunction,
+        arguments: &[ValueArgument],
+    ) -> Result<MatchedCall<Value>, Box<RuntimeErrorKind>> {
+        let variants = builtin.variants();
+        let mut matches = Vec::new();
+        let mut last_error = None;
+
+        for (variant_index, variant) in variants.iter().enumerate() {
+            let normalized = match normalize_arguments(&variant.parameters, arguments) {
+                Ok(arguments) => arguments,
+                Err(error) => {
+                    last_error = Some(error);
+                    continue;
+                }
+            };
+
+            if variant
+                .parameters
+                .iter()
+                .zip(&normalized)
+                .all(|(parameter, value)| {
+                    TypeChecker::types_compatible(&parameter.ty, &value.get_type())
+                })
+            {
+                matches.push(MatchedCall {
+                    variant_index,
+                    arguments: normalized,
+                });
+            }
+        }
+
+        match matches.len() {
+            1 => Ok(matches.remove(0)),
+            0 => match last_error {
+                Some(error) => Err(Box::new(RuntimeErrorKind::ArgumentError { e: error })),
+                None => Err(Box::new(RuntimeErrorKind::SignatureMismatch {
+                    expected: builtin.get_type().to_string(),
+                    found: arguments
+                        .iter()
+                        .map(|argument| argument.value.get_type().to_string())
+                        .collect::<Vec<_>>()
+                        .join(", "),
+                })),
+            },
+            _ => Err(Box::new(RuntimeErrorKind::SignatureMismatch {
+                expected: builtin.get_type().to_string(),
+                found: "ambiguous arguments".to_string(),
+            })),
+        }
+    }
+
     pub fn call_builtin(
         &mut self,
         builtin: BuiltinFunction,
-        args_values: &mut Vec<Value>,
-        span: crate::source::Span,
+        arguments: Vec<ValueArgument>,
+        span: Span,
     ) -> Result<EvalFlow, Box<RuntimeError>> {
-        match builtin {
-            BuiltinFunction::Echo => {
-                let Type::Function {
-                    parameter_overloads,
-                    ..
-                } = builtin.get_type()
-                else {
-                    panic!("builtin types should always be functions")
-                };
+        let matched = self
+            .match_builtin_values(&builtin, &arguments)
+            .map_err(|kind| self.error_at(span, *kind))?;
 
-                if let Some(0) = TypeChecker::check_function_call(&parameter_overloads, args_values)
-                {
-                    self.writeln_output(format!("{}", args_values[0]))?;
-                    Ok(EvalFlow::Continue(Value::Unit))
-                } else {
-                    Err(self.error_at(
-                        span,
-                        RuntimeErrorKind::SignatureMismatch {
-                            expected: render_parameter_types(parameter_overloads),
-                            found: render_types_from_value_vector(args_values.clone()),
-                        },
-                    ))
-                }
+        match (builtin, matched.variant_index, matched.arguments.as_slice()) {
+            (BuiltinFunction::Echo, 0, [value]) => {
+                self.writeln_output(value.to_string())?;
+                Ok(EvalFlow::Continue(Value::Unit))
             }
-            BuiltinFunction::Range => {
-                let Type::Function {
-                    parameter_overloads,
-                    ..
-                } = builtin.get_type()
-                else {
-                    panic!("builtin types should always be functions")
-                };
-
-                // check_function_call here returns the index of the parameter list that matched
-                match TypeChecker::check_function_call(&parameter_overloads, args_values) {
-                    Some(0) => {
-                        let Value::Int(end) = args_values[0] else {
-                            return Err(self.error_at(
-                                span,
-                                RuntimeErrorKind::SignatureMismatch {
-                                    expected: render_parameter_types(parameter_overloads),
-                                    found: render_types_from_value_vector(args_values.clone()),
-                                },
-                            ));
-                        };
-
-                        Ok(EvalFlow::Continue(Value::Range(RangeValue {
-                            start: 0,
-                            end,
-                            inclusive: false,
-                            step: 1,
-                        })))
-                    }
-                    Some(1) => {
-                        let Value::Int(start) = args_values[0] else {
-                            return Err(self.error_at(
-                                span,
-                                RuntimeErrorKind::SignatureMismatch {
-                                    expected: render_parameter_types(parameter_overloads),
-                                    found: render_types_from_value_vector(args_values.clone()),
-                                },
-                            ));
-                        };
-
-                        let Value::Int(end) = args_values[1] else {
-                            return Err(self.error_at(
-                                span,
-                                RuntimeErrorKind::InvalidFunctionParameter(
-                                    args_values[0].to_string(),
-                                ),
-                            ));
-                        };
-
-                        Ok(EvalFlow::Continue(Value::Range(RangeValue {
-                            start,
-                            end,
-                            inclusive: false,
-                            step: 1,
-                        })))
-                    }
-                    Some(2) => {
-                        let Value::Int(start) = args_values[0] else {
-                            return Err(self.error_at(
-                                span,
-                                RuntimeErrorKind::SignatureMismatch {
-                                    expected: render_parameter_types(parameter_overloads),
-                                    found: render_types_from_value_vector(args_values.clone()),
-                                },
-                            ));
-                        };
-
-                        let Value::Int(end) = args_values[1] else {
-                            return Err(self.error_at(
-                                span,
-                                RuntimeErrorKind::SignatureMismatch {
-                                    expected: render_parameter_types(parameter_overloads),
-                                    found: render_types_from_value_vector(args_values.clone()),
-                                },
-                            ));
-                        };
-
-                        let Value::Int(step) = args_values[2] else {
-                            return Err(self.error_at(
-                                span,
-                                RuntimeErrorKind::SignatureMismatch {
-                                    expected: render_parameter_types(parameter_overloads),
-                                    found: render_types_from_value_vector(args_values.clone()),
-                                },
-                            ));
-                        };
-
-                        if step == 0 {
-                            return Err(self.error_at(
-                                span,
-                                RuntimeErrorKind::BadRangeStep {
-                                    found: step.to_string(),
-                                },
-                            ));
-                        }
-
-                        Ok(EvalFlow::Continue(Value::Range(RangeValue {
-                            start,
-                            end,
-                            inclusive: false,
-                            step,
-                        })))
-                    }
-                    _ => Err(self.error_at(
-                        span,
-                        RuntimeErrorKind::SignatureMismatch {
-                            expected: render_parameter_types(parameter_overloads),
-                            found: render_types_from_value_vector(args_values.clone()),
-                        },
-                    )),
-                }
+            (BuiltinFunction::Range, 0, [Value::Int(end)]) => {
+                Ok(EvalFlow::Continue(Value::Range(RangeValue {
+                    start: 0,
+                    end: *end,
+                    inclusive: false,
+                    step: 1,
+                })))
             }
-            _ => unreachable!("raw builtin passed to regular call_builtin"),
+            (BuiltinFunction::Range, 1, [Value::Int(start), Value::Int(end)]) => {
+                Ok(EvalFlow::Continue(Value::Range(RangeValue {
+                    start: *start,
+                    end: *end,
+                    inclusive: false,
+                    step: 1,
+                })))
+            }
+            (BuiltinFunction::Range, 2, [Value::Int(start), Value::Int(end), Value::Int(step)]) => {
+                if *step == 0 {
+                    return Err(self.error_at(
+                        span,
+                        RuntimeErrorKind::BadRangeStep {
+                            found: step.to_string(),
+                        },
+                    ));
+                }
+                Ok(EvalFlow::Continue(Value::Range(RangeValue {
+                    start: *start,
+                    end: *end,
+                    inclusive: false,
+                    step: *step,
+                })))
+            }
+            _ => unreachable!("builtin matching returned an invalid signature"),
         }
     }
 
     pub fn call_builtin_raw(
         &mut self,
         builtin: BuiltinFunction,
-        args: Vec<Expr>,
+        arguments: Vec<ExprArgument>,
         call_span: Span,
     ) -> Result<EvalFlow, Box<RuntimeError>> {
-        match builtin {
-            BuiltinFunction::Push => {
-                let Type::Function {
-                    parameter_overloads,
-                    ..
-                } = builtin.get_type()
-                else {
-                    panic!("builtin types should always be functions")
-                };
+        let variants = builtin.variants();
+        let variant = &variants[0];
+        let arguments = normalize_arguments(&variant.parameters, &arguments)
+            .map_err(|error| self.argument_error(call_span, *error))?;
 
-                if args.len() != 2 {
-                    let eval_flows_for_printing = args
-                        .into_iter()
-                        .map(|e| self.eval_expr(e, YieldMode::Capture))
-                        .collect::<Result<Vec<_>, _>>()?;
-
-                    let mut values_for_printing = vec![];
-                    for e in eval_flows_for_printing {
-                        values_for_printing.push(value_or_flow!(e));
-                    }
-
-                    return Err(self.error_at(
-                        call_span,
-                        RuntimeErrorKind::SignatureMismatch {
-                            expected: render_parameter_types(parameter_overloads),
-                            found: render_types_from_value_vector(values_for_printing.clone()),
-                        },
-                    ));
-                }
-
-                let target = &args[0];
-                let value_expr = args[1].clone();
-
-                let value = value_or_flow!(self.eval_expr(value_expr, YieldMode::Capture)?);
-
+        match (builtin, arguments.as_slice()) {
+            (BuiltinFunction::Push, [target, value_expression]) => {
+                let value =
+                    value_or_flow!(self.eval_expr(value_expression.clone(), YieldMode::Capture)?);
                 match &target.kind {
                     ExprKind::Ident(name) => {
                         self.env
@@ -273,28 +304,29 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                                         name.clone(),
                                     ));
                                 }
-
                                 match &mut binding.value {
                                     Value::Array(items) => {
                                         items.push(value);
                                         Ok(())
                                     }
-
                                     other => Err(RuntimeErrorKind::ExpectedArray {
                                         found: other.type_name().to_string(),
                                     }),
                                 }
                             })
                             .map_err(|kind| self.error_at(target.span, kind))?;
-
                         Ok(EvalFlow::Continue(Value::Unit))
                     }
-
-                    ExprKind::Index { target, index } => {
+                    ExprKind::Index {
+                        target: indexed_target,
+                        index,
+                    } => {
                         let index_span = index.span;
-                        let (name, mut indices) =
-                            self.resolve_nested_index(*target.clone(), *index.clone(), vec![])?;
-
+                        let (name, mut indices) = self.resolve_nested_index(
+                            *indexed_target.clone(),
+                            *index.clone(),
+                            vec![],
+                        )?;
                         self.env
                             .mutate_binding(&name, |binding| {
                                 if !binding.mutable {
@@ -306,46 +338,40 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                                     Value::Array(ref mut array) => array,
                                     _ => {
                                         return Err(RuntimeErrorKind::InvalidIndexingTarget(
-                                            target.kind.to_string(),
+                                            indexed_target.kind.to_string(),
                                         ));
                                     }
                                 };
                                 indices.reverse();
-                                while let Some(idx) = indices.pop() {
-                                    if idx as usize >= array.len() || idx < 0 {
-                                        return Err(RuntimeErrorKind::OutOfBounds(idx));
+                                while let Some(index) = indices.pop() {
+                                    if index < 0 || index as usize >= array.len() {
+                                        return Err(RuntimeErrorKind::OutOfBounds(index));
                                     }
-
                                     if indices.is_empty() {
-                                        let Value::Array(new_array) =
-                                            array
-                                                .get_mut(idx as usize)
-                                                .ok_or(RuntimeErrorKind::OutOfBounds(idx))?
+                                        let Value::Array(new_array) = array
+                                            .get_mut(index as usize)
+                                            .ok_or(RuntimeErrorKind::OutOfBounds(index))?
                                         else {
                                             return Err(RuntimeErrorKind::InvalidIndexingTarget(
-                                                target.kind.to_string(),
+                                                indexed_target.kind.to_string(),
                                             ));
                                         };
-
                                         array = new_array;
                                     }
                                 }
-
                                 array.push(value);
-
-                                Ok(EvalFlow::Continue(Value::Unit))
+                                Ok(())
                             })
-                            .map_err(|kind| self.error_at(index_span, kind))
+                            .map_err(|kind| self.error_at(index_span, kind))?;
+                        Ok(EvalFlow::Continue(Value::Unit))
                     }
-
                     other => Err(self.error_at(
                         target.span,
                         RuntimeErrorKind::InvalidAssignmentTarget(other.to_string()),
                     )),
                 }
             }
-
-            _ => unreachable!("non-raw builtin passed to call_builtin_raw"),
+            _ => unreachable!("raw builtin matching returned an invalid signature"),
         }
     }
 }

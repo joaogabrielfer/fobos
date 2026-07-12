@@ -177,25 +177,6 @@ Program {
                 },
             },
         ),
-        Return(
-            Expr {
-                kind: Ident(
-                    "a",
-                ),
-                span: Span {
-                    start: SrcPos {
-                        line: 5,
-                        col: 8,
-                        idx: 49,
-                    },
-                    end: SrcPos {
-                        line: 6,
-                        col: 1,
-                        idx: 51,
-                    },
-                },
-            },
-        ),
         Bind {
             mutable: true,
             name: "b",
@@ -206,27 +187,27 @@ Program {
                 ),
                 span: Span {
                     start: SrcPos {
-                        line: 7,
+                        line: 6,
                         col: 10,
-                        idx: 61,
+                        idx: 52,
                     },
                     end: SrcPos {
-                        line: 8,
+                        line: 7,
                         col: 1,
-                        idx: 64,
+                        idx: 55,
                     },
                 },
             },
             span: Span {
                 start: SrcPos {
-                    line: 7,
+                    line: 6,
                     col: 1,
-                    idx: 52,
+                    idx: 43,
                 },
                 end: SrcPos {
-                    line: 8,
+                    line: 7,
                     col: 1,
-                    idx: 64,
+                    idx: 55,
                 },
             },
         },
@@ -241,14 +222,14 @@ Program {
                                 ),
                                 span: Span {
                                     start: SrcPos {
-                                        line: 8,
+                                        line: 7,
                                         col: 7,
-                                        idx: 70,
+                                        idx: 61,
                                     },
                                     end: SrcPos {
-                                        line: 8,
+                                        line: 7,
                                         col: 10,
-                                        idx: 73,
+                                        idx: 64,
                                     },
                                 },
                             },
@@ -259,28 +240,28 @@ Program {
                                 ),
                                 span: Span {
                                     start: SrcPos {
-                                        line: 8,
+                                        line: 7,
                                         col: 11,
-                                        idx: 74,
+                                        idx: 65,
                                     },
                                     end: SrcPos {
-                                        line: 8,
+                                        line: 7,
                                         col: 15,
-                                        idx: 78,
+                                        idx: 69,
                                     },
                                 },
                             },
                         },
                         span: Span {
                             start: SrcPos {
-                                line: 8,
+                                line: 7,
                                 col: 7,
-                                idx: 70,
+                                idx: 61,
                             },
                             end: SrcPos {
-                                line: 8,
+                                line: 7,
                                 col: 15,
-                                idx: 78,
+                                idx: 69,
                             },
                         },
                     },
@@ -293,14 +274,14 @@ Program {
                                     ),
                                     span: Span {
                                         start: SrcPos {
-                                            line: 8,
+                                            line: 7,
                                             col: 16,
-                                            idx: 79,
+                                            idx: 70,
                                         },
                                         end: SrcPos {
-                                            line: 8,
+                                            line: 7,
                                             col: 19,
-                                            idx: 82,
+                                            idx: 73,
                                         },
                                     },
                                 },
@@ -312,14 +293,14 @@ Program {
                                             ),
                                             span: Span {
                                                 start: SrcPos {
-                                                    line: 8,
+                                                    line: 7,
                                                     col: 20,
-                                                    idx: 83,
+                                                    idx: 74,
                                                 },
                                                 end: SrcPos {
-                                                    line: 8,
+                                                    line: 7,
                                                     col: 23,
-                                                    idx: 86,
+                                                    idx: 77,
                                                 },
                                             },
                                         },
@@ -330,28 +311,28 @@ Program {
                                             ),
                                             span: Span {
                                                 start: SrcPos {
-                                                    line: 8,
+                                                    line: 7,
                                                     col: 24,
-                                                    idx: 87,
+                                                    idx: 78,
                                                 },
                                                 end: SrcPos {
-                                                    line: 9,
+                                                    line: 8,
                                                     col: 1,
-                                                    idx: 89,
+                                                    idx: 80,
                                                 },
                                             },
                                         },
                                     },
                                     span: Span {
                                         start: SrcPos {
-                                            line: 8,
+                                            line: 7,
                                             col: 20,
-                                            idx: 83,
+                                            idx: 74,
                                         },
                                         end: SrcPos {
-                                            line: 9,
+                                            line: 8,
                                             col: 1,
-                                            idx: 89,
+                                            idx: 80,
                                         },
                                     },
                                 },
@@ -361,14 +342,14 @@ Program {
                 },
                 span: Span {
                     start: SrcPos {
-                        line: 9,
+                        line: 8,
                         col: 0,
-                        idx: 88,
+                        idx: 79,
                     },
                     end: SrcPos {
-                        line: 9,
+                        line: 8,
                         col: 1,
-                        idx: 89,
+                        idx: 80,
                     },
                 },
             },

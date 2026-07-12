@@ -1,5 +1,7 @@
-use itertools::{EitherOrBoth, Itertools};
+use itertools::Itertools;
 
+use crate::ast::{CallArgument, CallParameter, ValueArgument};
+use crate::errors::{ArgumentError, ArgumentErrorKind};
 use crate::interpreter::builtins::BuiltinFunction;
 use crate::typechecker::TypeChecker;
 use crate::typechecker::ty::Type;
@@ -23,11 +25,6 @@ pub enum Value {
     Function(FunctionValue),
 
     Range(RangeValue),
-
-    NamedArg {
-        name: String,
-        value: Box<Value>,
-    }
 }
 
 impl Value {
@@ -53,18 +50,16 @@ impl Value {
                     .map(|v| {
                         v.parameters
                             .iter()
-                            .map(|p| p.t.resolve_type_annotation())
+                            .map(|p| crate::typechecker::ty::ParameterType {
+                                name: p.name.clone(),
+                                ty: p.t.resolve_type_annotation(),
+                            })
                             .collect()
                     })
                     .collect(),
                 return_type: Box::new(function_value.return_type.resolve_type_annotation()),
             },
             Value::Range(_) => Type::Range,
-            Value::NamedArg { value: _, .. } => Type::Any, //TODO: This is being done to satisfy the
-                                                        //runtime parameter checker because if this
-                                                        //is any other type, it can raise an error
-                                                        //if the named parameter is in another
-                                                        //parameter position
         }
     }
 }
@@ -84,29 +79,165 @@ pub struct FunctionValue {
     pub return_type: TypeAnnotation,
 }
 
-impl FunctionValue {
-    pub fn match_variant(&self, caller_parameters: &[Value]) -> Option<usize> {
-        for (i, variant) in self.overload_variants.iter().enumerate() {
-            if variant
-                .parameters
-                .iter()
-                .map(|p| p.t.resolve_type_annotation())
-                .zip_longest(
-                    caller_parameters
-                        .iter()
-                        .map(|v| v.get_type())
-                        .collect::<Vec<Type>>(),
-                )
-                .all(|pair| match pair {
-                    EitherOrBoth::Both(a, b) => TypeChecker::types_compatible(&a, &b),
-                    _ => false,
-                }) // TODO: This does not check types for named arguments, so `add(x = "foo", 10)`
-                   // is valid as of now
-            {
-                return Some(i);
+pub struct MatchedCall<T> {
+    pub variant_index: usize,
+    pub arguments: Vec<T>,
+}
+
+pub fn normalize_arguments<P, T>(
+    parameters: &[P],
+    arguments: &[CallArgument<T>],
+) -> Result<Vec<T>, Box<ArgumentError>>
+where
+    P: CallParameter,
+    T: Clone,
+{
+    let mut bound: Vec<Option<T>> = vec![None; parameters.len()];
+    let mut positional_index = 0;
+    let mut saw_named_argument = false;
+
+    for argument in arguments {
+        match &argument.name {
+            Some(name) => {
+                saw_named_argument = true;
+
+                let parameter_index = parameters
+                    .iter()
+                    .position(|parameter| parameter.name() == name.value)
+                    .ok_or_else(|| {
+                        Box::new(ArgumentError {
+                            kind: ArgumentErrorKind::UnknownName {
+                                name: name.value.clone(),
+                            },
+                            span: Some(name.span),
+                        })
+                    })?;
+
+                if bound[parameter_index].is_some() {
+                    return Err(Box::new(ArgumentError {
+                        kind: ArgumentErrorKind::Duplicate {
+                            name: name.value.clone(),
+                        },
+                        span: Some(argument.span),
+                    }));
+                }
+
+                bound[parameter_index] = Some(argument.value.clone());
+            }
+
+            None => {
+                if saw_named_argument {
+                    return Err(Box::new(ArgumentError {
+                        kind: { ArgumentErrorKind::PositionalAfterNamed },
+                        span: Some(argument.span),
+                    }));
+                }
+
+                while positional_index < bound.len() && bound[positional_index].is_some() {
+                    positional_index += 1;
+                }
+
+                if positional_index >= parameters.len() {
+                    return Err(Box::new(ArgumentError {
+                        kind: ArgumentErrorKind::TooMany,
+                        span: Some(argument.span),
+                    }));
+                }
+
+                bound[positional_index] = Some(argument.value.clone());
+                positional_index += 1;
             }
         }
-        None
+    }
+
+    parameters
+        .iter()
+        .zip(bound)
+        .map(|(parameter, argument)| {
+            argument.ok_or_else(|| {
+                Box::new(ArgumentError {
+                    kind: ArgumentErrorKind::Missing {
+                        name: parameter.name().to_string(),
+                    },
+                    span: None,
+                })
+            })
+        })
+        .collect()
+}
+
+pub fn arguments_match(parameters: &[Type], arguments: &[Type]) -> bool {
+    parameters
+        .iter()
+        .zip(arguments)
+        .all(|(parameter, argument)| TypeChecker::types_compatible(parameter, argument))
+}
+
+impl FunctionValue {
+    pub fn match_variant(
+        &self,
+        arguments: Vec<ValueArgument>,
+    ) -> Result<MatchedCall<Value>, Box<ArgumentError>> {
+        let mut matches = Vec::new();
+        let mut last_error = None;
+
+        for (variant_index, variant) in self.overload_variants.iter().enumerate() {
+            let normalized = match normalize_arguments(&variant.parameters, &arguments) {
+                Ok(arguments) => arguments,
+                Err(error) => {
+                    last_error = Some(error);
+                    continue;
+                }
+            };
+
+            let parameter_types = variant
+                .parameters
+                .iter()
+                .map(|parameter| parameter.t.resolve_type_annotation())
+                .collect_vec();
+            let argument_types = normalized.iter().map(Value::get_type).collect_vec();
+
+            if arguments_match(&parameter_types, &argument_types) {
+                matches.push(MatchedCall {
+                    variant_index,
+                    arguments: normalized,
+                });
+            } else if let Some((parameter, found)) = variant
+                .parameters
+                .iter()
+                .zip(argument_types)
+                .find(|(parameter, found)| {
+                    !TypeChecker::types_compatible(&parameter.t.resolve_type_annotation(), found)
+                })
+            {
+                last_error = Some(Box::new(ArgumentError {
+                    kind: ArgumentErrorKind::TypeMismatch {
+                        parameter: parameter.name.clone(),
+                        expected: parameter.t.resolve_type_annotation(),
+                        found,
+                    },
+                    span: None,
+                }));
+            }
+        }
+
+        match matches.len() {
+            1 => Ok(matches.remove(0)),
+
+            0 => Err(last_error.unwrap_or_else(|| {
+                Box::new(ArgumentError {
+                    kind: ArgumentErrorKind::Missing {
+                        name: "<matching overload>".to_string(),
+                    },
+                    span: None,
+                })
+            })),
+
+            _ => Err(Box::new(ArgumentError {
+                kind: ArgumentErrorKind::Ambiguous,
+                span: None,
+            })),
+        }
     }
 }
 
@@ -163,7 +294,6 @@ impl std::fmt::Display for Value {
                 if r.inclusive { "=" } else { "<" },
                 r.end
             ),
-            Value::NamedArg { value, name } => write!(f, "{name} = {value}"),
         }
     }
 }
@@ -204,7 +334,6 @@ impl Value {
                 if r.inclusive { "=" } else { "<" },
                 r.end
             ),
-            Value::NamedArg { name, value } => format!("Argument '{name} = {value}'"),
         }
     }
 }

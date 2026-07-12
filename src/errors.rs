@@ -11,7 +11,7 @@ use crate::{
     diagnostic::render_source_span,
     interpreter::values::Value,
     source::Span,
-    typechecker::ty::ParameterTypes,
+    typechecker::ty::{ParameterTypes, Type},
 };
 
 fn render_vec_tokens(tks: Vec<String>) -> String {
@@ -45,7 +45,7 @@ pub fn render_parameter_types(overloaded_parameters: Vec<ParameterTypes>) -> Str
     s = format!("{s}(");
     for (i, parameters_types) in overloaded_parameters.iter().enumerate() {
         for (j, param) in parameters_types.iter().enumerate() {
-            s = format!("{s}{param}");
+            s = format!("{s}{}", param.ty);
             if j < parameters_types.len() - 1 {
                 s = format!("{s}, ");
             }
@@ -263,8 +263,8 @@ pub enum RuntimeErrorKind {
     ExpectedArray { found: String },
     #[error("mismatched returned types, expected '{expected}', but got '{found}'")]
     MismatchedReturnTypes { expected: String, found: String },
-    #[error("could not find an argument '{found}' for function {function}")]
-    InvalidNamedArgument { found: String, function: String },
+    #[error("argument error: {e}")]
+    ArgumentError { e: Box<ArgumentError> },
 }
 
 #[derive(Debug, Error)]
@@ -296,6 +296,8 @@ impl Display for TypeError {
 
 #[derive(Debug, Error)]
 pub enum TypeErrorKind {
+    #[error("{e}")]
+    ArgumentError { e: Box<ArgumentError> },
     #[error("mismatched types, expected '{expected}' but got '{found}'")]
     MismatchedType { expected: String, found: String },
     #[error("mismatched array members types, expected '{expected} for array' but got '{found}'")]
@@ -326,4 +328,39 @@ pub enum TypeErrorKind {
     ReturnOutsideFunction,
     #[error("yield used outside of an effect handler")]
     YieldOutsideHandler,
+}
+
+#[derive(Debug, Error, Clone)]
+#[error("{kind}")]
+pub struct ArgumentError {
+    pub kind: ArgumentErrorKind,
+    pub span: Option<Span>,
+}
+
+#[derive(Debug, Error, Clone)]
+pub enum ArgumentErrorKind {
+    #[error("could not find parameter with name '{name}'")]
+    UnknownName { name: String },
+
+    #[error("duplicate parameter '{name}'")]
+    Duplicate { name: String },
+
+    #[error("missing parameter '{name}'")]
+    Missing { name: String },
+
+    #[error("too many arguments")]
+    TooMany,
+
+    #[error("a named argument cannot be followed by a positional one")]
+    PositionalAfterNamed,
+
+    #[error("ambiguous function call")]
+    Ambiguous,
+
+    #[error("expected type '{expected}' for parameter '{parameter}', but found '{found}'")]
+    TypeMismatch {
+        parameter: String,
+        expected: Type,
+        found: Type,
+    },
 }

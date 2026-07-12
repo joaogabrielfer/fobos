@@ -30,7 +30,7 @@ echo(connect("localhost", timeout = 10))
 // Ordinary parameters may still be passed by name.
 echo(connect(address = "example.com", timeout = 20))
 
-// Parameter names remain available through function values.
+// named parameters are not implemented yet in the type level
 // let operation: (lhs: Int, rhs: Int) -> Int = subtract
 
 // echo("function value: " <> operation(rhs = 4, lhs = 12))

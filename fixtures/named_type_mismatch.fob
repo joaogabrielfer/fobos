@@ -1,0 +1,5 @@
+fun subtract(lhs: Int, rhs: Int): Int =
+    return lhs - rhs
+end
+
+subtract(rhs = "wrong", lhs = 10)

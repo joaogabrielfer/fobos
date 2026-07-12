@@ -1,5 +1,5 @@
 use crate::{
-    ast::{self, BinaryOp, Expr, ExprKind, Parameter, TypeAnnotation, TypeExpr},
+    ast::{self, BinaryOp, Expr, ExprArgument, ExprKind, Parameter, TypeAnnotation, TypeExpr},
     errors::{ParserError, ParserErrorKind},
     lexer::{
         Token, TokenKind,
@@ -314,7 +314,6 @@ impl<'a> Parser<'a> {
     fn parse_unary_expr(&mut self) -> Result<ast::Expr, Box<ParserError>> {
         let start_span = self.current().span;
         if self.check_and_advance(TokenTag::Bang) {
-
             let expr = self.parse_unary_expr()?;
             return Ok(self.new_expr(
                 start_span,
@@ -326,7 +325,6 @@ impl<'a> Parser<'a> {
         }
 
         if self.check_and_advance(TokenTag::Minus) {
-
             let expr = self.parse_unary_expr()?;
             return Ok(self.new_expr(
                 start_span,
@@ -374,21 +372,6 @@ impl<'a> Parser<'a> {
 
                     continue;
                 }
-                TokenTag::Equals => {
-                    self.expect(TokenTag::Equals)?;
-                    let name = match expr.kind {
-                        ExprKind::Ident(i) => i,
-                        other => {
-                            return Err(self.error(ParserErrorKind::ExpectedIdentifier {
-                                found: format!("{other:?}"),
-                            }));
-                        },
-                    };
-                    let value = Box::new(self.parse_expr()?);
-
-                    expr = self.new_expr(start_span, ExprKind::NamedArg { name, value });
-                    break;
-                }
                 TokenTag::Dot => {
                     self.advance();
 
@@ -406,10 +389,24 @@ impl<'a> Parser<'a> {
 
                     if let ExprKind::Tuple(mut t) = expr.kind {
                         while let Some(e) = t.pop() {
-                            args.insert(0, e);
+                            args.insert(
+                                0,
+                                ExprArgument {
+                                    name: None,
+                                    span: e.span,
+                                    value: e,
+                                },
+                            );
                         }
                     } else {
-                        args.insert(0, expr);
+                        args.insert(
+                            0,
+                            ExprArgument {
+                                name: None,
+                                span: expr.span,
+                                value: expr,
+                            },
+                        );
                     }
 
                     expr = self.new_expr(
@@ -435,7 +432,7 @@ impl<'a> Parser<'a> {
         Ok(expr)
     }
 
-    fn parse_call_args(&mut self) -> Result<Vec<ast::Expr>, Box<ParserError>> {
+    fn parse_call_args(&mut self) -> Result<Vec<ExprArgument>, Box<ParserError>> {
         self.expect(TokenTag::LParen)?;
         let mut args = vec![];
 
@@ -443,18 +440,42 @@ impl<'a> Parser<'a> {
             return Ok(args);
         }
 
-
         self.check_and_advance(TokenTag::NewLine);
 
         loop {
-            let expr = self.parse_expr()?;
-            args.push(expr);
+            let start = self.current().span;
+
+            let name = if self
+                .tokens
+                .get(self.index + 1)
+                .is_some_and(|token| token.kind.tag() == TokenTag::Equals)
+            {
+                let name_span = self.current().span;
+                let ident = self.current().origin.to_string();
+                self.advance();
+                self.expect(TokenTag::Equals)?;
+                Some(ast::ArgumentName {
+                    value: ident,
+                    span: name_span,
+                })
+            } else {
+                None
+            };
+
+            let value = self.parse_expr()?;
+            let span = Span {
+                start: start.start,
+                end: self.current().span.end,
+            };
+
+            let arg = ExprArgument { name, value, span };
+            args.push(arg);
 
             if self.check_and_advance(TokenTag::Comma) {
                 // here it cannot be collapsed because its not lazy i guess (it had some problems
                 // once i did it)
                 #[allow(clippy::collapsible_if)]
-                if self.check_and_advance(TokenTag::NewLine){
+                if self.check_and_advance(TokenTag::NewLine) {
                     if self.check(TokenTag::RParen) {
                         break;
                     }
