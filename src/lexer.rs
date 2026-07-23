@@ -85,6 +85,7 @@ pub enum TokenKind<'a> {
     Else,
     Import,
     As,
+    Pub,
 
     NewLine,
     Eof,
@@ -146,6 +147,7 @@ impl<'a> TokenKind<'a> {
             TokenKind::Else => TokenTag::Else,
             TokenKind::Import => TokenTag::Import,
             TokenKind::As => TokenTag::As,
+            TokenKind::Pub => TokenTag::Pub,
 
             TokenKind::NewLine => TokenTag::NewLine,
             TokenKind::Eof => TokenTag::Eof,
@@ -208,6 +210,7 @@ pub enum TokenTag {
     Else,
     Import,
     As,
+    Pub,
 
     NewLine,
     Eof,
@@ -290,6 +293,7 @@ impl std::fmt::Display for TokenTag {
             TokenTag::Else => "else",
             TokenTag::Import => "import",
             TokenTag::As => "as",
+            TokenTag::Pub => "pub",
 
             TokenTag::NewLine => "newline",
             TokenTag::Eof => "EOF",
@@ -468,6 +472,7 @@ impl<'a> Lexer<'a> {
                     "else" => Ok(self.new_token(TokenKind::Else, "else")),
                     "import" => Ok(self.new_token(TokenKind::Import, "import")),
                     "as" => Ok(self.new_token(TokenKind::As, "as")),
+                    "pub" => Ok(self.new_token(TokenKind::Pub, "pub")),
                     _ => Ok(self.new_token(TokenKind::Ident(s), s)),
                 }
             }
