@@ -186,6 +186,10 @@ pub enum ParserErrorKind {
     ExpectedTypeAnnotation,
     #[error("cannot chain more than one range operations")]
     ChainingRanges,
+    #[error("{found} is not a valid import")]
+    InvalidImport { found: String },
+    #[error("{found} is not a valid part of a module path")]
+    InvalidModulePath { found: String },
 }
 
 #[derive(Debug, Error)]

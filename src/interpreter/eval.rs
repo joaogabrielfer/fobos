@@ -226,6 +226,9 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 self.env.define(name, false, fun);
                 Ok(EvalFlow::Continue(Value::Unit))
             }
+            Stmt::ImportDecl { source, span } => {
+                Err(self.error_at(span, RuntimeErrorKind::NotImplemented))
+            }
         }
     }
 

@@ -1,0 +1,62 @@
+Program {
+    statements: [
+        ImportDecl {
+            source: Module {
+                tree: Glob {
+                    module_path: [
+                        "std",
+                        "foo",
+                    ],
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 8,
+                    idx: 7,
+                },
+                end: SrcPos {
+                    line: 3,
+                    col: 1,
+                    idx: 20,
+                },
+            },
+        },
+        Expr(
+            Expr {
+                kind: Call {
+                    callee: Expr {
+                        kind: Ident(
+                            "bar",
+                        ),
+                        span: Span {
+                            start: SrcPos {
+                                line: 3,
+                                col: 1,
+                                idx: 20,
+                            },
+                            end: SrcPos {
+                                line: 3,
+                                col: 5,
+                                idx: 24,
+                            },
+                        },
+                    },
+                    args: [],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 3,
+                        col: 1,
+                        idx: 20,
+                    },
+                    end: SrcPos {
+                        line: 4,
+                        col: 1,
+                        idx: 26,
+                    },
+                },
+            },
+        ),
+    ],
+}

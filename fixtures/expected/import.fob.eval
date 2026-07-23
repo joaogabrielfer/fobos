@@ -1,0 +1,16 @@
+RuntimeError {
+    kind: NotImplemented,
+    span: Span {
+        start: SrcPos {
+            line: 1,
+            col: 1,
+            idx: 0,
+        },
+        end: SrcPos {
+            line: 3,
+            col: 1,
+            idx: 18,
+        },
+    },
+    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/import.fob",
+}

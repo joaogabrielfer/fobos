@@ -1,5 +1,8 @@
 use crate::{
-    ast::{self, BinaryOp, Expr, ExprArgument, ExprKind, Parameter, TypeAnnotation, TypeExpr},
+    ast::{
+        self, BinaryOp, Expr, ExprArgument, ExprKind, ImportItem, ImportSource, ImportTree,
+        Parameter, RelativeImportMode, TypeAnnotation, TypeExpr,
+    },
     errors::{ParserError, ParserErrorKind},
     lexer::{
         Token, TokenKind,
@@ -51,6 +54,135 @@ impl<'a> Parser<'a> {
             TokenKind::Yield => {
                 self.advance();
                 Ok(ast::Stmt::Yield(self.parse_expr()?))
+            }
+            TokenKind::Import => {
+                let start_span = self.current().span;
+                self.advance();
+                match self.current_tag() {
+                    TokenTag::String => {
+                        let TokenKind::String(path) = self.current().kind else {
+                            return Err(self.error(ParserErrorKind::ExpectedToken {
+                                expected: TokenTag::String.to_string(),
+                                found: self.current_tag().to_string(),
+                            }));
+                        };
+                        let path = path.to_string();
+                        self.expect(TokenTag::String)?;
+                        let mut alias = None;
+                        if self.check_and_advance(TokenTag::As) {
+                            alias = Some(self.expect_ident()?);
+                        }
+                        self.expect(TokenTag::NewLine)?;
+                        let mode = match alias {
+                            Some(alias) => RelativeImportMode::Namespace { alias },
+                            None => RelativeImportMode::Glob,
+                        };
+                        Ok(ast::Stmt::ImportDecl {
+                            source: ImportSource::Relative { path, mode },
+                            span: Span {
+                                start: start_span.start,
+                                end: self.current().span.end,
+                            },
+                        })
+                    }
+                    TokenTag::Ident => {
+                        let start_span = self.current().span;
+                        let mut module_path = vec![];
+                        module_path.push(self.expect_ident()?);
+
+                        while self.check_and_advance(TokenTag::ColonColon) {
+                            if let TokenTag::Ident = self.current_tag() {
+                                module_path.push(self.expect_ident()?);
+                            } else {
+                                break;
+                            }
+                        }
+
+                        match self.current_tag() {
+                            TokenTag::NewLine => {
+                                self.expect(TokenTag::NewLine)?;
+                                Ok(ast::Stmt::ImportDecl {
+                                    source: ImportSource::Module {
+                                        tree: ImportTree::Path {
+                                            segments: module_path,
+                                            alias: None,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: start_span.start,
+                                        end: self.current().span.end,
+                                    },
+                                })
+                            }
+                            TokenTag::Star => {
+                                self.expect(TokenTag::Star)?;
+                                self.expect(TokenTag::NewLine)?;
+                                Ok(ast::Stmt::ImportDecl {
+                                    source: ImportSource::Module {
+                                        tree: ImportTree::Glob { module_path },
+                                    },
+                                    span: Span {
+                                        start: start_span.start,
+                                        end: self.current().span.end,
+                                    },
+                                })
+                            }
+                            TokenTag::LCurly => {
+                                self.expect(TokenTag::LCurly)?;
+                                let mut items = vec![];
+                                while !self.check_and_advance(TokenTag::RCurly) {
+                                    let item_span = self.current().span;
+                                    let name = self.expect_ident()?;
+                                    let alias = if self.check_and_advance(TokenTag::As) {
+                                        Some(self.expect_ident()?)
+                                    } else {
+                                        None
+                                    };
+                                    items.push(ImportItem {
+                                        name,
+                                        alias,
+                                        span: item_span,
+                                    });
+                                    if self.current_tag() != TokenTag::RCurly {
+                                        self.expect(TokenTag::Comma)?;
+                                    }
+                                }
+                                self.expect(TokenTag::NewLine)?;
+                                Ok(ast::Stmt::ImportDecl {
+                                    source: ImportSource::Module {
+                                        tree: ImportTree::Group { module_path, items },
+                                    },
+                                    span: Span {
+                                        start: start_span.start,
+                                        end: self.current().span.end,
+                                    },
+                                })
+                            }
+                            TokenTag::As => {
+                                self.expect(TokenTag::As)?;
+                                let alias = Some(self.expect_ident()?);
+                                Ok(ast::Stmt::ImportDecl {
+                                    source: ImportSource::Module {
+                                        tree: ImportTree::Path {
+                                            segments: module_path,
+                                            alias,
+                                        },
+                                    },
+                                    span: Span {
+                                        start: start_span.start,
+                                        end: self.current().span.end,
+                                    },
+                                })
+                            }
+                            other => Err(self.error(ParserErrorKind::InvalidModulePath {
+                                found: other.to_string(),
+                            })),
+                        }
+                    }
+                    _ => Err(self.error(ParserErrorKind::InvalidImport {
+                        found: self.current_tag().to_string(),
+                    })),
+                }
             }
             _ => {
                 let starting_span = self.current().span;

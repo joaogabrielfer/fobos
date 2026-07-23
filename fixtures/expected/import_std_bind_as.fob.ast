@@ -1,0 +1,66 @@
+Program {
+    statements: [
+        ImportDecl {
+            source: Module {
+                tree: Path {
+                    segments: [
+                        "std",
+                        "foo",
+                        "bar",
+                    ],
+                    alias: Some(
+                        "b",
+                    ),
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 8,
+                    idx: 7,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 26,
+                },
+            },
+        },
+        Expr(
+            Expr {
+                kind: Call {
+                    callee: Expr {
+                        kind: Ident(
+                            "b",
+                        ),
+                        span: Span {
+                            start: SrcPos {
+                                line: 3,
+                                col: 1,
+                                idx: 27,
+                            },
+                            end: SrcPos {
+                                line: 3,
+                                col: 3,
+                                idx: 29,
+                            },
+                        },
+                    },
+                    args: [],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 3,
+                        col: 1,
+                        idx: 27,
+                    },
+                    end: SrcPos {
+                        line: 4,
+                        col: 1,
+                        idx: 31,
+                    },
+                },
+            },
+        ),
+    ],
+}

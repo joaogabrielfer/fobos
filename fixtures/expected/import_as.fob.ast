@@ -1,0 +1,19 @@
+ParserError {
+    kind: ExpectedToken {
+        expected: "newline",
+        found: "::",
+    },
+    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/import_as.fob",
+    pos: Span {
+        start: SrcPos {
+            line: 3,
+            col: 2,
+            idx: 24,
+        },
+        end: SrcPos {
+            line: 3,
+            col: 4,
+            idx: 26,
+        },
+    },
+}

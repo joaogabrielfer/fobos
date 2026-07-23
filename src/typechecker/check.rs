@@ -172,6 +172,7 @@ impl TypeChecker {
                 }
             }
             Stmt::FunDecl { .. } => Ok(StmtCheck::normal(Type::Unit)),
+            Stmt::ImportDecl { source, span } => todo!(),
         }
     }
     fn infer_expr(&mut self, expr: &Expr) -> TypeResult<Type> {

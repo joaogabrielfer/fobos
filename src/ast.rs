@@ -34,6 +34,11 @@ pub enum Stmt {
         body: Block,
         span: Span,
     },
+
+    ImportDecl {
+        source: ImportSource,
+        span: Span,
+    },
 }
 
 impl Stmt {
@@ -48,8 +53,52 @@ impl Stmt {
                 end: value.span.end,
             },
             Stmt::FunDecl { span, .. } => *span,
+            Stmt::ImportDecl { span, .. } => *span,
         }
     }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum ImportSource {
+    Relative {
+        path: String,
+        mode: RelativeImportMode,
+    },
+
+    Module {
+        tree: ImportTree,
+    },
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum RelativeImportMode {
+    Glob,
+
+    Namespace { alias: String },
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum ImportTree {
+    Path {
+        segments: Vec<String>,
+        alias: Option<String>,
+    },
+
+    Group {
+        module_path: Vec<String>,
+        items: Vec<ImportItem>,
+    },
+
+    Glob {
+        module_path: Vec<String>,
+    },
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct ImportItem {
+    pub name: String,
+    pub alias: Option<String>,
+    pub span: Span,
 }
 
 #[derive(Debug, Clone, PartialEq)]
