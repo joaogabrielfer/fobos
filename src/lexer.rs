@@ -41,11 +41,12 @@ pub enum TokenKind<'a> {
     LCurly, // {
     RCurly, // }
 
-    Colon,    // :
-    Comma,    // ,
-    Dot,      // .
-    RArrow,   // ->
-    FatArrow, // =>
+    Colon,      // :
+    Comma,      // ,
+    Dot,        // .
+    RArrow,     // ->
+    FatArrow,   // =>
+    ColonColon, // ::
 
     Equals,  // =
     Plus,    // +
@@ -82,6 +83,8 @@ pub enum TokenKind<'a> {
     Match,
     If,
     Else,
+    Import,
+    As,
 
     NewLine,
     Eof,
@@ -104,6 +107,7 @@ impl<'a> TokenKind<'a> {
             TokenKind::Dot => TokenTag::Dot,
             TokenKind::RArrow => TokenTag::RArrow,
             TokenKind::FatArrow => TokenTag::FatArrow,
+            TokenKind::ColonColon => TokenTag::ColonColon,
 
             TokenKind::Equals => TokenTag::Equals,
             TokenKind::Plus => TokenTag::Plus,
@@ -140,6 +144,8 @@ impl<'a> TokenKind<'a> {
             TokenKind::Match => TokenTag::Match,
             TokenKind::If => TokenTag::If,
             TokenKind::Else => TokenTag::Else,
+            TokenKind::Import => TokenTag::Import,
+            TokenKind::As => TokenTag::As,
 
             TokenKind::NewLine => TokenTag::NewLine,
             TokenKind::Eof => TokenTag::Eof,
@@ -163,6 +169,7 @@ pub enum TokenTag {
     Dot,
     RArrow,
     FatArrow,
+    ColonColon,
 
     Equals,
     Plus,
@@ -199,6 +206,8 @@ pub enum TokenTag {
     Match,
     If,
     Else,
+    Import,
+    As,
 
     NewLine,
     Eof,
@@ -242,6 +251,7 @@ impl std::fmt::Display for TokenTag {
             TokenTag::Dot => ".",
             TokenTag::RArrow => "->",
             TokenTag::FatArrow => "=>",
+            TokenTag::ColonColon => "::",
 
             TokenTag::Equals => "=",
             TokenTag::Plus => "+",
@@ -278,6 +288,8 @@ impl std::fmt::Display for TokenTag {
             TokenTag::Match => "match",
             TokenTag::If => "if",
             TokenTag::Else => "else",
+            TokenTag::Import => "import",
+            TokenTag::As => "as",
 
             TokenTag::NewLine => "newline",
             TokenTag::Eof => "EOF",
@@ -341,8 +353,14 @@ impl<'a> Lexer<'a> {
             Some('}') => Ok(self.new_token(TokenKind::RCurly, "}")),
             Some('[') => Ok(self.new_token(TokenKind::LBrace, "[")),
             Some(']') => Ok(self.new_token(TokenKind::RBrace, "]")),
-            Some(':') => Ok(self.new_token(TokenKind::Colon, ":")),
             Some(',') => Ok(self.new_token(TokenKind::Comma, ",")),
+            Some(':') => match self.source.peek().copied() {
+                Some(':') => {
+                    self.advance();
+                    Ok(self.new_token(TokenKind::ColonColon, "::"))
+                }
+                _ => Ok(self.new_token(TokenKind::Colon, ":")),
+            },
             Some('.') => match self.source.peek() {
                 Some('.') => {
                     self.advance();
@@ -448,6 +466,8 @@ impl<'a> Lexer<'a> {
                     "match" => Ok(self.new_token(TokenKind::Match, "match")),
                     "if" => Ok(self.new_token(TokenKind::If, "if")),
                     "else" => Ok(self.new_token(TokenKind::Else, "else")),
+                    "import" => Ok(self.new_token(TokenKind::Import, "import")),
+                    "as" => Ok(self.new_token(TokenKind::As, "as")),
                     _ => Ok(self.new_token(TokenKind::Ident(s), s)),
                 }
             }
