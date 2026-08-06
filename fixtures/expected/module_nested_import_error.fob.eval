@@ -1,2 +1,18 @@
-result:
-Unit
+ParserError {
+    kind: UnexpectedToken {
+        found: "import",
+    },
+    file_path: "$FIXTURE_PATH",
+    pos: Span {
+        start: SrcPos {
+            line: 2,
+            col: 5,
+            idx: 24,
+        },
+        end: SrcPos {
+            line: 2,
+            col: 11,
+            idx: 30,
+        },
+    },
+}

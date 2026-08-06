@@ -1,1 +1,18 @@
-"import at 2:1 must appear before declarations and statements in '/home/joaogabriel/personal/programming/projects/fobos/fixtures/module_late_import_error.fob'"
+ParserError {
+    kind: ExpectedTopLevelItem {
+        found: "let",
+    },
+    file_path: "$FIXTURE_PATH",
+    pos: Span {
+        start: SrcPos {
+            line: 1,
+            col: 1,
+            idx: 0,
+        },
+        end: SrcPos {
+            line: 1,
+            col: 4,
+            idx: 3,
+        },
+    },
+}

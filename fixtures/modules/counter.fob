@@ -1,6 +1,7 @@
-var count: Int = 0
+pub const STEP: Int = 1
 
-pub fun next(): Int =
-    count = count + 1
-    return count
+const HIDDEN: Int = 99
+
+pub fun next(value: Int): Int =
+    return value + STEP
 end

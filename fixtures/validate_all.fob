@@ -1,3 +1,4 @@
+fun main(): () =
 let unit_value: () = ()
 let int_value: Int = 10
 let float_value := 10.5
@@ -122,3 +123,5 @@ echo("lambda_block_result:" <> lambda_block_result)
 echo("fifteen:" <> fifteen)
 echo("label_result_1:" <> label_result_1)
 echo("label_result_2:" <> label_result_2)
+
+end

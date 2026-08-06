@@ -1,0 +1,39 @@
+import std::foo as tools
+
+const BASE: Int = tools::DEFAULT_COUNT
+const LIMIT: Int = BASE * 2
+const LABEL: String = if LIMIT > 5 "many" else "few"
+const SEEDS: Arr<Int> = [1, BASE, LIMIT]
+
+fun scale(value: Int, factor: Int): Int =
+    return value * factor
+end
+
+fun describe(value: Int): String =
+    return "int=" <> value
+end
+
+fun describe(value: String): String =
+    return "string=" <> value
+end
+
+fun main(): () =
+    var values := SEEDS
+    values.push(BASE + LIMIT)
+
+    let transform := value -> scale(value, factor = 2)
+    var total := 0
+
+    for value in values do
+        total = total + transform(value)
+    end
+
+    if total > 0 do
+        echo(LABEL <> ": " <> describe(total))
+    end else do
+        echo("unexpected")
+    end
+
+    echo(describe("count=" <> values[3]))
+    tools::bar()
+end

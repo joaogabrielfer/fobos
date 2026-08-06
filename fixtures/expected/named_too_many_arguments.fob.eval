@@ -1,18 +1,18 @@
-RuntimeError {
+TypeError {
     kind: ArgumentError {
         e: ArgumentError {
             kind: TooMany,
             span: Some(
                 Span {
                     start: SrcPos {
-                        line: 5,
+                        line: 6,
                         col: 17,
-                        idx: 82,
+                        idx: 99,
                     },
                     end: SrcPos {
-                        line: 5,
+                        line: 6,
                         col: 19,
-                        idx: 84,
+                        idx: 101,
                     },
                 },
             ),
@@ -20,15 +20,15 @@ RuntimeError {
     },
     span: Span {
         start: SrcPos {
-            line: 5,
+            line: 6,
             col: 17,
-            idx: 82,
+            idx: 99,
         },
         end: SrcPos {
-            line: 5,
+            line: 6,
             col: 19,
-            idx: 84,
+            idx: 101,
         },
     },
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/named_too_many_arguments.fob",
+    file_path: "$FIXTURE_PATH",
 }

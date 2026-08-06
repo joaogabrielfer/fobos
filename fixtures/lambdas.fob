@@ -1,3 +1,4 @@
+fun main(): () =
 let add := (x, y) -> do
 	return x + y
 end
@@ -18,3 +19,5 @@ echo("inc: " <> inc(4))
 echo("closure: " <> make_adder(10)(5))
 echo("label: " <> label(20))
 echo("calc: " <> calc(10, 5))
+
+end

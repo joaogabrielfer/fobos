@@ -1,44 +1,73 @@
 Program {
-    statements: [
-        ImportDecl {
-            source: Relative {
-                path: "foo.fob",
-                mode: Glob,
-            },
-            span: Span {
-                start: SrcPos {
-                    line: 1,
-                    col: 1,
-                    idx: 0,
+    items: [
+        Import(
+            ImportDecl {
+                source: Relative {
+                    path: "foo.fob",
+                    mode: Glob,
                 },
-                end: SrcPos {
-                    line: 2,
-                    col: 1,
-                    idx: 17,
-                },
-            },
-        },
-        Expr(
-            Expr {
-                kind: Call {
-                    callee: Expr {
-                        kind: Ident(
-                            "bar",
-                        ),
-                        span: Span {
-                            start: SrcPos {
-                                line: 3,
-                                col: 1,
-                                idx: 18,
-                            },
-                            end: SrcPos {
-                                line: 3,
-                                col: 5,
-                                idx: 22,
-                            },
-                        },
+                span: Span {
+                    start: SrcPos {
+                        line: 1,
+                        col: 1,
+                        idx: 0,
                     },
-                    args: [],
+                    end: SrcPos {
+                        line: 2,
+                        col: 1,
+                        idx: 17,
+                    },
+                },
+            },
+        ),
+        Function(
+            FunctionDecl {
+                public: false,
+                name: "main",
+                generics: [],
+                parameters: [],
+                return_type: Explicit(
+                    Unit,
+                ),
+                body: Block {
+                    statements: [
+                        Expr(
+                            Expr {
+                                kind: Call {
+                                    callee: Expr {
+                                        kind: Ident(
+                                            "bar",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 4,
+                                                col: 5,
+                                                idx: 39,
+                                            },
+                                            end: SrcPos {
+                                                line: 4,
+                                                col: 9,
+                                                idx: 43,
+                                            },
+                                        },
+                                    },
+                                    args: [],
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 4,
+                                        col: 5,
+                                        idx: 39,
+                                    },
+                                    end: SrcPos {
+                                        line: 5,
+                                        col: 1,
+                                        idx: 45,
+                                    },
+                                },
+                            },
+                        ),
+                    ],
                 },
                 span: Span {
                     start: SrcPos {
@@ -47,9 +76,9 @@ Program {
                         idx: 18,
                     },
                     end: SrcPos {
-                        line: 4,
-                        col: 1,
-                        idx: 24,
+                        line: 3,
+                        col: 17,
+                        idx: 34,
                     },
                 },
             },

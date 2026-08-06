@@ -1,4 +1,7 @@
+fun main(): () =
 let s1 := "foo"
 let s2 := "bar"
 
 echo("s1 <> s2 = " <> s1 <> s2)
+
+end

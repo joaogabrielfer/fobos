@@ -1,4 +1,4 @@
-RuntimeError {
+TypeError {
     kind: ArgumentError {
         e: ArgumentError {
             kind: Missing {
@@ -9,15 +9,15 @@ RuntimeError {
     },
     span: Span {
         start: SrcPos {
-            line: 1,
+            line: 2,
             col: 1,
-            idx: 0,
+            idx: 17,
         },
         end: SrcPos {
             line: 2,
-            col: 1,
-            idx: 29,
+            col: 6,
+            idx: 22,
         },
     },
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/raw_argument_arity.fob",
+    file_path: "$FIXTURE_PATH",
 }

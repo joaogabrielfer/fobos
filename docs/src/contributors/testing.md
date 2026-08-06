@@ -28,10 +28,9 @@ change is a deliberate snapshot update.
 Module fixtures keep dependency files under `fixtures/modules/` so the
 top-level fixture scanner does not execute dependencies as entry programs.
 Focused Rust tests additionally verify all supported import forms, shared
-state across importers, private-export errors, collisions, invalid import
-placement, external assignment rejection, and cycle diagnostics.
+declarative constants across importers, private-export errors, collisions,
+invalid top-level items, external assignment rejection, and cycle diagnostics.
 
-There is a current portability issue: diagnostic snapshots include absolute
-paths from the checkout that generated them. Tests can fail after cloning to a
-different directory even when behavior is unchanged. Normalize paths before
-treating the fixture suite as a portable CI gate.
+Diagnostic snapshots normalize source paths to `$FIXTURE_PATH`, so fixture
+output is portable across checkout locations. Keep generated snapshots in that
+form rather than replacing the marker with a local absolute path.

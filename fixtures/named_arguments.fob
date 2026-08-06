@@ -1,3 +1,4 @@
+fun main(): () =
 fun subtract(lhs: Int, rhs: Int): Int =
     return lhs - rhs
 end
@@ -29,3 +30,5 @@ echo(connect("localhost", timeout = 10))
 
 // Ordinary parameters may still be passed by name.
 echo(connect(address = "example.com", timeout = 20))
+
+end

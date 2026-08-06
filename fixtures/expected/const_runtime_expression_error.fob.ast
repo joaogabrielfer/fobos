@@ -1,0 +1,90 @@
+Program {
+    items: [
+        Const(
+            ConstDecl {
+                public: false,
+                name: "VALUE",
+                type_annotation: Named(
+                    "Int",
+                ),
+                value: Expr {
+                    kind: Block(
+                        Block {
+                            statements: [
+                                Yield(
+                                    Expr {
+                                        kind: Int(
+                                            1,
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 2,
+                                                col: 11,
+                                                idx: 32,
+                                            },
+                                            end: SrcPos {
+                                                line: 3,
+                                                col: 1,
+                                                idx: 34,
+                                            },
+                                        },
+                                    },
+                                ),
+                            ],
+                        },
+                    ),
+                    span: Span {
+                        start: SrcPos {
+                            line: 1,
+                            col: 20,
+                            idx: 19,
+                        },
+                        end: SrcPos {
+                            line: 4,
+                            col: 1,
+                            idx: 38,
+                        },
+                    },
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 1,
+                        col: 1,
+                        idx: 0,
+                    },
+                    end: SrcPos {
+                        line: 4,
+                        col: 1,
+                        idx: 38,
+                    },
+                },
+            },
+        ),
+        Function(
+            FunctionDecl {
+                public: false,
+                name: "main",
+                generics: [],
+                parameters: [],
+                return_type: Explicit(
+                    Unit,
+                ),
+                body: Block {
+                    statements: [],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 5,
+                        col: 1,
+                        idx: 39,
+                    },
+                    end: SrcPos {
+                        line: 5,
+                        col: 17,
+                        idx: 55,
+                    },
+                },
+            },
+        ),
+    ],
+}

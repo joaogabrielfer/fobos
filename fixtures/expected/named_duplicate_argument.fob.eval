@@ -1,4 +1,4 @@
-RuntimeError {
+TypeError {
     kind: ArgumentError {
         e: ArgumentError {
             kind: Duplicate {
@@ -7,14 +7,14 @@ RuntimeError {
             span: Some(
                 Span {
                     start: SrcPos {
-                        line: 5,
+                        line: 6,
                         col: 14,
-                        idx: 79,
+                        idx: 96,
                     },
                     end: SrcPos {
-                        line: 5,
+                        line: 6,
                         col: 23,
-                        idx: 88,
+                        idx: 105,
                     },
                 },
             ),
@@ -22,15 +22,15 @@ RuntimeError {
     },
     span: Span {
         start: SrcPos {
-            line: 5,
+            line: 6,
             col: 14,
-            idx: 79,
+            idx: 96,
         },
         end: SrcPos {
-            line: 5,
+            line: 6,
             col: 23,
-            idx: 88,
+            idx: 105,
         },
     },
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/named_duplicate_argument.fob",
+    file_path: "$FIXTURE_PATH",
 }

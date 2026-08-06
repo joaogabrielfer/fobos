@@ -1,52 +1,56 @@
 Program {
-    statements: [
-        FunDecl {
-            public: true,
-            name: "foo",
-            generics: [],
-            parameters: [],
-            return_type: Explicit(
-                Unit,
-            ),
-            body: Block {
-                statements: [],
-            },
-            span: Span {
-                start: SrcPos {
-                    line: 1,
-                    col: 5,
-                    idx: 4,
+    items: [
+        Function(
+            FunctionDecl {
+                public: true,
+                name: "foo",
+                generics: [],
+                parameters: [],
+                return_type: Explicit(
+                    Unit,
+                ),
+                body: Block {
+                    statements: [],
                 },
-                end: SrcPos {
-                    line: 1,
-                    col: 20,
-                    idx: 19,
-                },
-            },
-        },
-        FunDecl {
-            public: true,
-            name: "bar",
-            generics: [],
-            parameters: [],
-            return_type: Explicit(
-                Unit,
-            ),
-            body: Block {
-                statements: [],
-            },
-            span: Span {
-                start: SrcPos {
-                    line: 4,
-                    col: 5,
-                    idx: 29,
-                },
-                end: SrcPos {
-                    line: 4,
-                    col: 20,
-                    idx: 44,
+                span: Span {
+                    start: SrcPos {
+                        line: 1,
+                        col: 5,
+                        idx: 4,
+                    },
+                    end: SrcPos {
+                        line: 1,
+                        col: 20,
+                        idx: 19,
+                    },
                 },
             },
-        },
+        ),
+        Function(
+            FunctionDecl {
+                public: true,
+                name: "bar",
+                generics: [],
+                parameters: [],
+                return_type: Explicit(
+                    Unit,
+                ),
+                body: Block {
+                    statements: [],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 4,
+                        col: 5,
+                        idx: 29,
+                    },
+                    end: SrcPos {
+                        line: 4,
+                        col: 20,
+                        idx: 44,
+                    },
+                },
+            },
+        ),
     ],
 }

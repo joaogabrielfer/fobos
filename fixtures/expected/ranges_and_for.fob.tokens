@@ -1,8 +1,8 @@
 Ok(
     [
         Token {
-            kind: Let,
-            origin: "let",
+            kind: Fun,
+            origin: "fun",
             span: Span {
                 start: SrcPos {
                     line: 1,
@@ -18,9 +18,9 @@ Ok(
         },
         Token {
             kind: Ident(
-                "range_exclusive",
+                "main",
             ),
-            origin: "range_exclusive",
+            origin: "main",
             span: Span {
                 start: SrcPos {
                     line: 1,
@@ -29,8 +29,40 @@ Ok(
                 },
                 end: SrcPos {
                     line: 1,
-                    col: 20,
-                    idx: 19,
+                    col: 9,
+                    idx: 8,
+                },
+            },
+        },
+        Token {
+            kind: LParen,
+            origin: "(",
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 9,
+                    idx: 8,
+                },
+                end: SrcPos {
+                    line: 1,
+                    col: 10,
+                    idx: 9,
+                },
+            },
+        },
+        Token {
+            kind: RParen,
+            origin: ")",
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 10,
+                    idx: 9,
+                },
+                end: SrcPos {
+                    line: 1,
+                    col: 11,
+                    idx: 10,
                 },
             },
         },
@@ -40,13 +72,45 @@ Ok(
             span: Span {
                 start: SrcPos {
                     line: 1,
-                    col: 21,
-                    idx: 20,
+                    col: 11,
+                    idx: 10,
                 },
                 end: SrcPos {
                     line: 1,
-                    col: 22,
-                    idx: 21,
+                    col: 12,
+                    idx: 11,
+                },
+            },
+        },
+        Token {
+            kind: LParen,
+            origin: "(",
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 13,
+                    idx: 12,
+                },
+                end: SrcPos {
+                    line: 1,
+                    col: 14,
+                    idx: 13,
+                },
+            },
+        },
+        Token {
+            kind: RParen,
+            origin: ")",
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 14,
+                    idx: 13,
+                },
+                end: SrcPos {
+                    line: 1,
+                    col: 15,
+                    idx: 14,
                 },
             },
         },
@@ -56,65 +120,13 @@ Ok(
             span: Span {
                 start: SrcPos {
                     line: 1,
-                    col: 22,
-                    idx: 21,
+                    col: 16,
+                    idx: 15,
                 },
                 end: SrcPos {
                     line: 1,
-                    col: 23,
-                    idx: 22,
-                },
-            },
-        },
-        Token {
-            kind: Int(
-                0,
-            ),
-            origin: "0",
-            span: Span {
-                start: SrcPos {
-                    line: 1,
-                    col: 24,
-                    idx: 23,
-                },
-                end: SrcPos {
-                    line: 1,
-                    col: 25,
-                    idx: 24,
-                },
-            },
-        },
-        Token {
-            kind: DotDotLess,
-            origin: "..<",
-            span: Span {
-                start: SrcPos {
-                    line: 1,
-                    col: 25,
-                    idx: 24,
-                },
-                end: SrcPos {
-                    line: 1,
-                    col: 28,
-                    idx: 27,
-                },
-            },
-        },
-        Token {
-            kind: Int(
-                3,
-            ),
-            origin: "3",
-            span: Span {
-                start: SrcPos {
-                    line: 1,
-                    col: 28,
-                    idx: 27,
-                },
-                end: SrcPos {
-                    line: 1,
-                    col: 29,
-                    idx: 28,
+                    col: 17,
+                    idx: 16,
                 },
             },
         },
@@ -125,12 +137,12 @@ Ok(
                 start: SrcPos {
                     line: 2,
                     col: 0,
-                    idx: 28,
+                    idx: 16,
                 },
                 end: SrcPos {
                     line: 2,
                     col: 1,
-                    idx: 29,
+                    idx: 17,
                 },
             },
         },
@@ -141,30 +153,30 @@ Ok(
                 start: SrcPos {
                     line: 2,
                     col: 1,
-                    idx: 29,
+                    idx: 17,
                 },
                 end: SrcPos {
                     line: 2,
                     col: 4,
-                    idx: 32,
+                    idx: 20,
                 },
             },
         },
         Token {
             kind: Ident(
-                "range_inclusive",
+                "range_exclusive",
             ),
-            origin: "range_inclusive",
+            origin: "range_exclusive",
             span: Span {
                 start: SrcPos {
                     line: 2,
                     col: 5,
-                    idx: 33,
+                    idx: 21,
                 },
                 end: SrcPos {
                     line: 2,
                     col: 20,
-                    idx: 48,
+                    idx: 36,
                 },
             },
         },
@@ -175,12 +187,12 @@ Ok(
                 start: SrcPos {
                     line: 2,
                     col: 21,
-                    idx: 49,
+                    idx: 37,
                 },
                 end: SrcPos {
                     line: 2,
                     col: 22,
-                    idx: 50,
+                    idx: 38,
                 },
             },
         },
@@ -191,12 +203,12 @@ Ok(
                 start: SrcPos {
                     line: 2,
                     col: 22,
-                    idx: 50,
+                    idx: 38,
                 },
                 end: SrcPos {
                     line: 2,
                     col: 23,
-                    idx: 51,
+                    idx: 39,
                 },
             },
         },
@@ -209,28 +221,28 @@ Ok(
                 start: SrcPos {
                     line: 2,
                     col: 24,
-                    idx: 52,
+                    idx: 40,
                 },
                 end: SrcPos {
                     line: 2,
                     col: 25,
-                    idx: 53,
+                    idx: 41,
                 },
             },
         },
         Token {
-            kind: DotDotEqual,
-            origin: "..=",
+            kind: DotDotLess,
+            origin: "..<",
             span: Span {
                 start: SrcPos {
                     line: 2,
                     col: 25,
-                    idx: 53,
+                    idx: 41,
                 },
                 end: SrcPos {
                     line: 2,
                     col: 28,
-                    idx: 56,
+                    idx: 44,
                 },
             },
         },
@@ -243,12 +255,12 @@ Ok(
                 start: SrcPos {
                     line: 2,
                     col: 28,
-                    idx: 56,
+                    idx: 44,
                 },
                 end: SrcPos {
                     line: 2,
                     col: 29,
-                    idx: 57,
+                    idx: 45,
                 },
             },
         },
@@ -259,12 +271,130 @@ Ok(
                 start: SrcPos {
                     line: 3,
                     col: 0,
-                    idx: 57,
+                    idx: 45,
                 },
                 end: SrcPos {
                     line: 3,
                     col: 1,
-                    idx: 58,
+                    idx: 46,
+                },
+            },
+        },
+        Token {
+            kind: Let,
+            origin: "let",
+            span: Span {
+                start: SrcPos {
+                    line: 3,
+                    col: 1,
+                    idx: 46,
+                },
+                end: SrcPos {
+                    line: 3,
+                    col: 4,
+                    idx: 49,
+                },
+            },
+        },
+        Token {
+            kind: Ident(
+                "range_inclusive",
+            ),
+            origin: "range_inclusive",
+            span: Span {
+                start: SrcPos {
+                    line: 3,
+                    col: 5,
+                    idx: 50,
+                },
+                end: SrcPos {
+                    line: 3,
+                    col: 20,
+                    idx: 65,
+                },
+            },
+        },
+        Token {
+            kind: Colon,
+            origin: ":",
+            span: Span {
+                start: SrcPos {
+                    line: 3,
+                    col: 21,
+                    idx: 66,
+                },
+                end: SrcPos {
+                    line: 3,
+                    col: 22,
+                    idx: 67,
+                },
+            },
+        },
+        Token {
+            kind: Equals,
+            origin: "=",
+            span: Span {
+                start: SrcPos {
+                    line: 3,
+                    col: 22,
+                    idx: 67,
+                },
+                end: SrcPos {
+                    line: 3,
+                    col: 23,
+                    idx: 68,
+                },
+            },
+        },
+        Token {
+            kind: Int(
+                0,
+            ),
+            origin: "0",
+            span: Span {
+                start: SrcPos {
+                    line: 3,
+                    col: 24,
+                    idx: 69,
+                },
+                end: SrcPos {
+                    line: 3,
+                    col: 25,
+                    idx: 70,
+                },
+            },
+        },
+        Token {
+            kind: DotDotEqual,
+            origin: "..=",
+            span: Span {
+                start: SrcPos {
+                    line: 3,
+                    col: 25,
+                    idx: 70,
+                },
+                end: SrcPos {
+                    line: 3,
+                    col: 28,
+                    idx: 73,
+                },
+            },
+        },
+        Token {
+            kind: Int(
+                3,
+            ),
+            origin: "3",
+            span: Span {
+                start: SrcPos {
+                    line: 3,
+                    col: 28,
+                    idx: 73,
+                },
+                end: SrcPos {
+                    line: 3,
+                    col: 29,
+                    idx: 74,
                 },
             },
         },
@@ -275,12 +405,28 @@ Ok(
                 start: SrcPos {
                     line: 4,
                     col: 0,
-                    idx: 58,
+                    idx: 74,
                 },
                 end: SrcPos {
                     line: 4,
                     col: 1,
-                    idx: 59,
+                    idx: 75,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 5,
+                    col: 0,
+                    idx: 75,
+                },
+                end: SrcPos {
+                    line: 5,
+                    col: 1,
+                    idx: 76,
                 },
             },
         },
@@ -291,14 +437,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 4,
+                    line: 5,
                     col: 1,
-                    idx: 59,
+                    idx: 76,
                 },
                 end: SrcPos {
-                    line: 4,
+                    line: 5,
                     col: 5,
-                    idx: 63,
+                    idx: 80,
                 },
             },
         },
@@ -307,14 +453,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 4,
+                    line: 5,
                     col: 5,
-                    idx: 63,
+                    idx: 80,
                 },
                 end: SrcPos {
-                    line: 4,
+                    line: 5,
                     col: 6,
-                    idx: 64,
+                    idx: 81,
                 },
             },
         },
@@ -325,14 +471,14 @@ Ok(
             origin: "\"range_exclusive: \"",
             span: Span {
                 start: SrcPos {
-                    line: 4,
+                    line: 5,
                     col: 6,
-                    idx: 64,
+                    idx: 81,
                 },
                 end: SrcPos {
-                    line: 4,
+                    line: 5,
                     col: 25,
-                    idx: 83,
+                    idx: 100,
                 },
             },
         },
@@ -341,14 +487,14 @@ Ok(
             origin: "<>",
             span: Span {
                 start: SrcPos {
-                    line: 4,
+                    line: 5,
                     col: 26,
-                    idx: 84,
+                    idx: 101,
                 },
                 end: SrcPos {
-                    line: 4,
+                    line: 5,
                     col: 28,
-                    idx: 86,
+                    idx: 103,
                 },
             },
         },
@@ -359,14 +505,14 @@ Ok(
             origin: "range_exclusive",
             span: Span {
                 start: SrcPos {
-                    line: 4,
+                    line: 5,
                     col: 29,
-                    idx: 87,
+                    idx: 104,
                 },
                 end: SrcPos {
-                    line: 4,
+                    line: 5,
                     col: 44,
-                    idx: 102,
+                    idx: 119,
                 },
             },
         },
@@ -375,14 +521,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 4,
+                    line: 5,
                     col: 44,
-                    idx: 102,
+                    idx: 119,
                 },
                 end: SrcPos {
-                    line: 4,
+                    line: 5,
                     col: 45,
-                    idx: 103,
+                    idx: 120,
                 },
             },
         },
@@ -391,14 +537,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 5,
+                    line: 6,
                     col: 0,
-                    idx: 103,
+                    idx: 120,
                 },
                 end: SrcPos {
-                    line: 5,
+                    line: 6,
                     col: 1,
-                    idx: 104,
+                    idx: 121,
                 },
             },
         },
@@ -409,14 +555,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 5,
+                    line: 6,
                     col: 1,
-                    idx: 104,
+                    idx: 121,
                 },
                 end: SrcPos {
-                    line: 5,
+                    line: 6,
                     col: 5,
-                    idx: 108,
+                    idx: 125,
                 },
             },
         },
@@ -425,14 +571,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 5,
+                    line: 6,
                     col: 5,
-                    idx: 108,
+                    idx: 125,
                 },
                 end: SrcPos {
-                    line: 5,
+                    line: 6,
                     col: 6,
-                    idx: 109,
+                    idx: 126,
                 },
             },
         },
@@ -443,14 +589,14 @@ Ok(
             origin: "\"range_inclusive: \"",
             span: Span {
                 start: SrcPos {
-                    line: 5,
+                    line: 6,
                     col: 6,
-                    idx: 109,
+                    idx: 126,
                 },
                 end: SrcPos {
-                    line: 5,
+                    line: 6,
                     col: 25,
-                    idx: 128,
+                    idx: 145,
                 },
             },
         },
@@ -459,14 +605,14 @@ Ok(
             origin: "<>",
             span: Span {
                 start: SrcPos {
-                    line: 5,
+                    line: 6,
                     col: 26,
-                    idx: 129,
+                    idx: 146,
                 },
                 end: SrcPos {
-                    line: 5,
+                    line: 6,
                     col: 28,
-                    idx: 131,
+                    idx: 148,
                 },
             },
         },
@@ -477,14 +623,14 @@ Ok(
             origin: "range_inclusive",
             span: Span {
                 start: SrcPos {
-                    line: 5,
+                    line: 6,
                     col: 29,
-                    idx: 132,
+                    idx: 149,
                 },
                 end: SrcPos {
-                    line: 5,
+                    line: 6,
                     col: 44,
-                    idx: 147,
+                    idx: 164,
                 },
             },
         },
@@ -493,30 +639,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 5,
+                    line: 6,
                     col: 44,
-                    idx: 147,
+                    idx: 164,
                 },
                 end: SrcPos {
-                    line: 5,
+                    line: 6,
                     col: 45,
-                    idx: 148,
-                },
-            },
-        },
-        Token {
-            kind: NewLine,
-            origin: "\n",
-            span: Span {
-                start: SrcPos {
-                    line: 6,
-                    col: 0,
-                    idx: 148,
-                },
-                end: SrcPos {
-                    line: 6,
-                    col: 1,
-                    idx: 149,
+                    idx: 165,
                 },
             },
         },
@@ -527,12 +657,28 @@ Ok(
                 start: SrcPos {
                     line: 7,
                     col: 0,
-                    idx: 149,
+                    idx: 165,
                 },
                 end: SrcPos {
                     line: 7,
                     col: 1,
-                    idx: 150,
+                    idx: 166,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 8,
+                    col: 0,
+                    idx: 166,
+                },
+                end: SrcPos {
+                    line: 8,
+                    col: 1,
+                    idx: 167,
                 },
             },
         },
@@ -541,14 +687,14 @@ Ok(
             origin: "let",
             span: Span {
                 start: SrcPos {
-                    line: 7,
+                    line: 8,
                     col: 1,
-                    idx: 150,
+                    idx: 167,
                 },
                 end: SrcPos {
-                    line: 7,
+                    line: 8,
                     col: 4,
-                    idx: 153,
+                    idx: 170,
                 },
             },
         },
@@ -559,14 +705,14 @@ Ok(
             origin: "builtin_range_end",
             span: Span {
                 start: SrcPos {
-                    line: 7,
+                    line: 8,
                     col: 5,
-                    idx: 154,
+                    idx: 171,
                 },
                 end: SrcPos {
-                    line: 7,
+                    line: 8,
                     col: 22,
-                    idx: 171,
+                    idx: 188,
                 },
             },
         },
@@ -575,14 +721,14 @@ Ok(
             origin: ":",
             span: Span {
                 start: SrcPos {
-                    line: 7,
+                    line: 8,
                     col: 23,
-                    idx: 172,
+                    idx: 189,
                 },
                 end: SrcPos {
-                    line: 7,
+                    line: 8,
                     col: 24,
-                    idx: 173,
+                    idx: 190,
                 },
             },
         },
@@ -591,14 +737,14 @@ Ok(
             origin: "=",
             span: Span {
                 start: SrcPos {
-                    line: 7,
+                    line: 8,
                     col: 24,
-                    idx: 173,
+                    idx: 190,
                 },
                 end: SrcPos {
-                    line: 7,
+                    line: 8,
                     col: 25,
-                    idx: 174,
+                    idx: 191,
                 },
             },
         },
@@ -609,14 +755,14 @@ Ok(
             origin: "range",
             span: Span {
                 start: SrcPos {
-                    line: 7,
+                    line: 8,
                     col: 26,
-                    idx: 175,
+                    idx: 192,
                 },
                 end: SrcPos {
-                    line: 7,
+                    line: 8,
                     col: 31,
-                    idx: 180,
+                    idx: 197,
                 },
             },
         },
@@ -625,14 +771,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 7,
+                    line: 8,
                     col: 31,
-                    idx: 180,
+                    idx: 197,
                 },
                 end: SrcPos {
-                    line: 7,
+                    line: 8,
                     col: 32,
-                    idx: 181,
+                    idx: 198,
                 },
             },
         },
@@ -643,14 +789,14 @@ Ok(
             origin: "3",
             span: Span {
                 start: SrcPos {
-                    line: 7,
+                    line: 8,
                     col: 32,
-                    idx: 181,
+                    idx: 198,
                 },
                 end: SrcPos {
-                    line: 7,
+                    line: 8,
                     col: 33,
-                    idx: 182,
+                    idx: 199,
                 },
             },
         },
@@ -659,14 +805,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 7,
+                    line: 8,
                     col: 33,
-                    idx: 182,
+                    idx: 199,
                 },
                 end: SrcPos {
-                    line: 7,
+                    line: 8,
                     col: 34,
-                    idx: 183,
+                    idx: 200,
                 },
             },
         },
@@ -675,14 +821,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 0,
-                    idx: 183,
+                    idx: 200,
                 },
                 end: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 1,
-                    idx: 184,
+                    idx: 201,
                 },
             },
         },
@@ -691,14 +837,14 @@ Ok(
             origin: "let",
             span: Span {
                 start: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 1,
-                    idx: 184,
+                    idx: 201,
                 },
                 end: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 4,
-                    idx: 187,
+                    idx: 204,
                 },
             },
         },
@@ -709,14 +855,14 @@ Ok(
             origin: "builtin_range_start_end",
             span: Span {
                 start: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 5,
-                    idx: 188,
+                    idx: 205,
                 },
                 end: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 28,
-                    idx: 211,
+                    idx: 228,
                 },
             },
         },
@@ -725,14 +871,14 @@ Ok(
             origin: ":",
             span: Span {
                 start: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 29,
-                    idx: 212,
+                    idx: 229,
                 },
                 end: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 30,
-                    idx: 213,
+                    idx: 230,
                 },
             },
         },
@@ -741,14 +887,14 @@ Ok(
             origin: "=",
             span: Span {
                 start: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 30,
-                    idx: 213,
+                    idx: 230,
                 },
                 end: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 31,
-                    idx: 214,
+                    idx: 231,
                 },
             },
         },
@@ -759,14 +905,14 @@ Ok(
             origin: "range",
             span: Span {
                 start: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 32,
-                    idx: 215,
+                    idx: 232,
                 },
                 end: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 37,
-                    idx: 220,
+                    idx: 237,
                 },
             },
         },
@@ -775,14 +921,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 37,
-                    idx: 220,
+                    idx: 237,
                 },
                 end: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 38,
-                    idx: 221,
+                    idx: 238,
                 },
             },
         },
@@ -793,14 +939,14 @@ Ok(
             origin: "1",
             span: Span {
                 start: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 38,
-                    idx: 221,
+                    idx: 238,
                 },
                 end: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 39,
-                    idx: 222,
+                    idx: 239,
                 },
             },
         },
@@ -809,14 +955,14 @@ Ok(
             origin: ",",
             span: Span {
                 start: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 39,
-                    idx: 222,
+                    idx: 239,
                 },
                 end: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 40,
-                    idx: 223,
+                    idx: 240,
                 },
             },
         },
@@ -827,14 +973,14 @@ Ok(
             origin: "4",
             span: Span {
                 start: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 41,
-                    idx: 224,
+                    idx: 241,
                 },
                 end: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 42,
-                    idx: 225,
+                    idx: 242,
                 },
             },
         },
@@ -843,14 +989,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 42,
-                    idx: 225,
+                    idx: 242,
                 },
                 end: SrcPos {
-                    line: 8,
+                    line: 9,
                     col: 43,
-                    idx: 226,
+                    idx: 243,
                 },
             },
         },
@@ -859,14 +1005,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 0,
-                    idx: 226,
+                    idx: 243,
                 },
                 end: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 1,
-                    idx: 227,
+                    idx: 244,
                 },
             },
         },
@@ -875,14 +1021,14 @@ Ok(
             origin: "let",
             span: Span {
                 start: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 1,
-                    idx: 227,
+                    idx: 244,
                 },
                 end: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 4,
-                    idx: 230,
+                    idx: 247,
                 },
             },
         },
@@ -893,14 +1039,14 @@ Ok(
             origin: "builtin_range_step",
             span: Span {
                 start: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 5,
-                    idx: 231,
+                    idx: 248,
                 },
                 end: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 23,
-                    idx: 249,
+                    idx: 266,
                 },
             },
         },
@@ -909,14 +1055,14 @@ Ok(
             origin: ":",
             span: Span {
                 start: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 24,
-                    idx: 250,
+                    idx: 267,
                 },
                 end: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 25,
-                    idx: 251,
+                    idx: 268,
                 },
             },
         },
@@ -925,14 +1071,14 @@ Ok(
             origin: "=",
             span: Span {
                 start: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 25,
-                    idx: 251,
+                    idx: 268,
                 },
                 end: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 26,
-                    idx: 252,
+                    idx: 269,
                 },
             },
         },
@@ -943,14 +1089,14 @@ Ok(
             origin: "range",
             span: Span {
                 start: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 27,
-                    idx: 253,
+                    idx: 270,
                 },
                 end: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 32,
-                    idx: 258,
+                    idx: 275,
                 },
             },
         },
@@ -959,14 +1105,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 32,
-                    idx: 258,
+                    idx: 275,
                 },
                 end: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 33,
-                    idx: 259,
+                    idx: 276,
                 },
             },
         },
@@ -977,14 +1123,14 @@ Ok(
             origin: "1",
             span: Span {
                 start: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 33,
-                    idx: 259,
+                    idx: 276,
                 },
                 end: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 34,
-                    idx: 260,
+                    idx: 277,
                 },
             },
         },
@@ -993,14 +1139,14 @@ Ok(
             origin: ",",
             span: Span {
                 start: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 34,
-                    idx: 260,
+                    idx: 277,
                 },
                 end: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 35,
-                    idx: 261,
+                    idx: 278,
                 },
             },
         },
@@ -1011,14 +1157,14 @@ Ok(
             origin: "6",
             span: Span {
                 start: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 36,
-                    idx: 262,
+                    idx: 279,
                 },
                 end: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 37,
-                    idx: 263,
+                    idx: 280,
                 },
             },
         },
@@ -1027,14 +1173,14 @@ Ok(
             origin: ",",
             span: Span {
                 start: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 37,
-                    idx: 263,
+                    idx: 280,
                 },
                 end: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 38,
-                    idx: 264,
+                    idx: 281,
                 },
             },
         },
@@ -1045,14 +1191,14 @@ Ok(
             origin: "2",
             span: Span {
                 start: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 39,
-                    idx: 265,
+                    idx: 282,
                 },
                 end: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 40,
-                    idx: 266,
+                    idx: 283,
                 },
             },
         },
@@ -1061,30 +1207,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 40,
-                    idx: 266,
+                    idx: 283,
                 },
                 end: SrcPos {
-                    line: 9,
+                    line: 10,
                     col: 41,
-                    idx: 267,
-                },
-            },
-        },
-        Token {
-            kind: NewLine,
-            origin: "\n",
-            span: Span {
-                start: SrcPos {
-                    line: 10,
-                    col: 0,
-                    idx: 267,
-                },
-                end: SrcPos {
-                    line: 10,
-                    col: 1,
-                    idx: 268,
+                    idx: 284,
                 },
             },
         },
@@ -1095,12 +1225,28 @@ Ok(
                 start: SrcPos {
                     line: 11,
                     col: 0,
-                    idx: 268,
+                    idx: 284,
                 },
                 end: SrcPos {
                     line: 11,
                     col: 1,
-                    idx: 269,
+                    idx: 285,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 12,
+                    col: 0,
+                    idx: 285,
+                },
+                end: SrcPos {
+                    line: 12,
+                    col: 1,
+                    idx: 286,
                 },
             },
         },
@@ -1111,14 +1257,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 11,
+                    line: 12,
                     col: 1,
-                    idx: 269,
+                    idx: 286,
                 },
                 end: SrcPos {
-                    line: 11,
+                    line: 12,
                     col: 5,
-                    idx: 273,
+                    idx: 290,
                 },
             },
         },
@@ -1127,14 +1273,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 11,
+                    line: 12,
                     col: 5,
-                    idx: 273,
+                    idx: 290,
                 },
                 end: SrcPos {
-                    line: 11,
+                    line: 12,
                     col: 6,
-                    idx: 274,
+                    idx: 291,
                 },
             },
         },
@@ -1145,14 +1291,14 @@ Ok(
             origin: "\"builtin_range_end: \"",
             span: Span {
                 start: SrcPos {
-                    line: 11,
+                    line: 12,
                     col: 6,
-                    idx: 274,
+                    idx: 291,
                 },
                 end: SrcPos {
-                    line: 11,
+                    line: 12,
                     col: 27,
-                    idx: 295,
+                    idx: 312,
                 },
             },
         },
@@ -1161,14 +1307,14 @@ Ok(
             origin: "<>",
             span: Span {
                 start: SrcPos {
-                    line: 11,
+                    line: 12,
                     col: 28,
-                    idx: 296,
+                    idx: 313,
                 },
                 end: SrcPos {
-                    line: 11,
+                    line: 12,
                     col: 30,
-                    idx: 298,
+                    idx: 315,
                 },
             },
         },
@@ -1179,14 +1325,14 @@ Ok(
             origin: "builtin_range_end",
             span: Span {
                 start: SrcPos {
-                    line: 11,
+                    line: 12,
                     col: 31,
-                    idx: 299,
+                    idx: 316,
                 },
                 end: SrcPos {
-                    line: 11,
+                    line: 12,
                     col: 48,
-                    idx: 316,
+                    idx: 333,
                 },
             },
         },
@@ -1195,14 +1341,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 11,
+                    line: 12,
                     col: 48,
-                    idx: 316,
+                    idx: 333,
                 },
                 end: SrcPos {
-                    line: 11,
+                    line: 12,
                     col: 49,
-                    idx: 317,
+                    idx: 334,
                 },
             },
         },
@@ -1211,14 +1357,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 12,
+                    line: 13,
                     col: 0,
-                    idx: 317,
+                    idx: 334,
                 },
                 end: SrcPos {
-                    line: 12,
+                    line: 13,
                     col: 1,
-                    idx: 318,
+                    idx: 335,
                 },
             },
         },
@@ -1229,14 +1375,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 12,
+                    line: 13,
                     col: 1,
-                    idx: 318,
+                    idx: 335,
                 },
                 end: SrcPos {
-                    line: 12,
+                    line: 13,
                     col: 5,
-                    idx: 322,
+                    idx: 339,
                 },
             },
         },
@@ -1245,14 +1391,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 12,
+                    line: 13,
                     col: 5,
-                    idx: 322,
+                    idx: 339,
                 },
                 end: SrcPos {
-                    line: 12,
+                    line: 13,
                     col: 6,
-                    idx: 323,
+                    idx: 340,
                 },
             },
         },
@@ -1263,14 +1409,14 @@ Ok(
             origin: "\"builtin_range_start_end: \"",
             span: Span {
                 start: SrcPos {
-                    line: 12,
+                    line: 13,
                     col: 6,
-                    idx: 323,
+                    idx: 340,
                 },
                 end: SrcPos {
-                    line: 12,
+                    line: 13,
                     col: 33,
-                    idx: 350,
+                    idx: 367,
                 },
             },
         },
@@ -1279,14 +1425,14 @@ Ok(
             origin: "<>",
             span: Span {
                 start: SrcPos {
-                    line: 12,
+                    line: 13,
                     col: 34,
-                    idx: 351,
+                    idx: 368,
                 },
                 end: SrcPos {
-                    line: 12,
+                    line: 13,
                     col: 36,
-                    idx: 353,
+                    idx: 370,
                 },
             },
         },
@@ -1297,14 +1443,14 @@ Ok(
             origin: "builtin_range_start_end",
             span: Span {
                 start: SrcPos {
-                    line: 12,
+                    line: 13,
                     col: 37,
-                    idx: 354,
+                    idx: 371,
                 },
                 end: SrcPos {
-                    line: 12,
+                    line: 13,
                     col: 60,
-                    idx: 377,
+                    idx: 394,
                 },
             },
         },
@@ -1313,14 +1459,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 12,
+                    line: 13,
                     col: 60,
-                    idx: 377,
+                    idx: 394,
                 },
                 end: SrcPos {
-                    line: 12,
+                    line: 13,
                     col: 61,
-                    idx: 378,
+                    idx: 395,
                 },
             },
         },
@@ -1329,14 +1475,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 13,
+                    line: 14,
                     col: 0,
-                    idx: 378,
+                    idx: 395,
                 },
                 end: SrcPos {
-                    line: 13,
+                    line: 14,
                     col: 1,
-                    idx: 379,
+                    idx: 396,
                 },
             },
         },
@@ -1347,14 +1493,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 13,
+                    line: 14,
                     col: 1,
-                    idx: 379,
+                    idx: 396,
                 },
                 end: SrcPos {
-                    line: 13,
+                    line: 14,
                     col: 5,
-                    idx: 383,
+                    idx: 400,
                 },
             },
         },
@@ -1363,14 +1509,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 13,
+                    line: 14,
                     col: 5,
-                    idx: 383,
+                    idx: 400,
                 },
                 end: SrcPos {
-                    line: 13,
+                    line: 14,
                     col: 6,
-                    idx: 384,
+                    idx: 401,
                 },
             },
         },
@@ -1381,14 +1527,14 @@ Ok(
             origin: "\"builtin_range_step: \"",
             span: Span {
                 start: SrcPos {
-                    line: 13,
+                    line: 14,
                     col: 6,
-                    idx: 384,
+                    idx: 401,
                 },
                 end: SrcPos {
-                    line: 13,
+                    line: 14,
                     col: 28,
-                    idx: 406,
+                    idx: 423,
                 },
             },
         },
@@ -1397,14 +1543,14 @@ Ok(
             origin: "<>",
             span: Span {
                 start: SrcPos {
-                    line: 13,
+                    line: 14,
                     col: 29,
-                    idx: 407,
+                    idx: 424,
                 },
                 end: SrcPos {
-                    line: 13,
+                    line: 14,
                     col: 31,
-                    idx: 409,
+                    idx: 426,
                 },
             },
         },
@@ -1415,14 +1561,14 @@ Ok(
             origin: "builtin_range_step",
             span: Span {
                 start: SrcPos {
-                    line: 13,
+                    line: 14,
                     col: 32,
-                    idx: 410,
+                    idx: 427,
                 },
                 end: SrcPos {
-                    line: 13,
+                    line: 14,
                     col: 50,
-                    idx: 428,
+                    idx: 445,
                 },
             },
         },
@@ -1431,30 +1577,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 13,
+                    line: 14,
                     col: 50,
-                    idx: 428,
+                    idx: 445,
                 },
                 end: SrcPos {
-                    line: 13,
+                    line: 14,
                     col: 51,
-                    idx: 429,
-                },
-            },
-        },
-        Token {
-            kind: NewLine,
-            origin: "\n",
-            span: Span {
-                start: SrcPos {
-                    line: 14,
-                    col: 0,
-                    idx: 429,
-                },
-                end: SrcPos {
-                    line: 14,
-                    col: 1,
-                    idx: 430,
+                    idx: 446,
                 },
             },
         },
@@ -1465,12 +1595,28 @@ Ok(
                 start: SrcPos {
                     line: 15,
                     col: 0,
-                    idx: 430,
+                    idx: 446,
                 },
                 end: SrcPos {
                     line: 15,
                     col: 1,
-                    idx: 431,
+                    idx: 447,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 16,
+                    col: 0,
+                    idx: 447,
+                },
+                end: SrcPos {
+                    line: 16,
+                    col: 1,
+                    idx: 448,
                 },
             },
         },
@@ -1481,14 +1627,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 15,
+                    line: 16,
                     col: 1,
-                    idx: 431,
+                    idx: 448,
                 },
                 end: SrcPos {
-                    line: 15,
+                    line: 16,
                     col: 5,
-                    idx: 435,
+                    idx: 452,
                 },
             },
         },
@@ -1497,14 +1643,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 15,
+                    line: 16,
                     col: 5,
-                    idx: 435,
+                    idx: 452,
                 },
                 end: SrcPos {
-                    line: 15,
+                    line: 16,
                     col: 6,
-                    idx: 436,
+                    idx: 453,
                 },
             },
         },
@@ -1515,14 +1661,14 @@ Ok(
             origin: "\"for exclusive:\"",
             span: Span {
                 start: SrcPos {
-                    line: 15,
+                    line: 16,
                     col: 6,
-                    idx: 436,
+                    idx: 453,
                 },
                 end: SrcPos {
-                    line: 15,
+                    line: 16,
                     col: 22,
-                    idx: 452,
+                    idx: 469,
                 },
             },
         },
@@ -1531,14 +1677,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 15,
+                    line: 16,
                     col: 22,
-                    idx: 452,
+                    idx: 469,
                 },
                 end: SrcPos {
-                    line: 15,
+                    line: 16,
                     col: 23,
-                    idx: 453,
+                    idx: 470,
                 },
             },
         },
@@ -1547,14 +1693,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 16,
+                    line: 17,
                     col: 0,
-                    idx: 453,
+                    idx: 470,
                 },
                 end: SrcPos {
-                    line: 16,
+                    line: 17,
                     col: 1,
-                    idx: 454,
+                    idx: 471,
                 },
             },
         },
@@ -1563,14 +1709,14 @@ Ok(
             origin: "for",
             span: Span {
                 start: SrcPos {
-                    line: 16,
+                    line: 17,
                     col: 1,
-                    idx: 454,
+                    idx: 471,
                 },
                 end: SrcPos {
-                    line: 16,
+                    line: 17,
                     col: 4,
-                    idx: 457,
+                    idx: 474,
                 },
             },
         },
@@ -1581,14 +1727,14 @@ Ok(
             origin: "x",
             span: Span {
                 start: SrcPos {
-                    line: 16,
+                    line: 17,
                     col: 5,
-                    idx: 458,
+                    idx: 475,
                 },
                 end: SrcPos {
-                    line: 16,
+                    line: 17,
                     col: 6,
-                    idx: 459,
+                    idx: 476,
                 },
             },
         },
@@ -1597,14 +1743,14 @@ Ok(
             origin: "in",
             span: Span {
                 start: SrcPos {
-                    line: 16,
+                    line: 17,
                     col: 7,
-                    idx: 460,
+                    idx: 477,
                 },
                 end: SrcPos {
-                    line: 16,
+                    line: 17,
                     col: 9,
-                    idx: 462,
+                    idx: 479,
                 },
             },
         },
@@ -1615,14 +1761,14 @@ Ok(
             origin: "0",
             span: Span {
                 start: SrcPos {
-                    line: 16,
+                    line: 17,
                     col: 10,
-                    idx: 463,
+                    idx: 480,
                 },
                 end: SrcPos {
-                    line: 16,
+                    line: 17,
                     col: 11,
-                    idx: 464,
+                    idx: 481,
                 },
             },
         },
@@ -1631,14 +1777,14 @@ Ok(
             origin: "..<",
             span: Span {
                 start: SrcPos {
-                    line: 16,
+                    line: 17,
                     col: 11,
-                    idx: 464,
+                    idx: 481,
                 },
                 end: SrcPos {
-                    line: 16,
+                    line: 17,
                     col: 14,
-                    idx: 467,
+                    idx: 484,
                 },
             },
         },
@@ -1649,14 +1795,14 @@ Ok(
             origin: "3",
             span: Span {
                 start: SrcPos {
-                    line: 16,
+                    line: 17,
                     col: 14,
-                    idx: 467,
+                    idx: 484,
                 },
                 end: SrcPos {
-                    line: 16,
+                    line: 17,
                     col: 15,
-                    idx: 468,
+                    idx: 485,
                 },
             },
         },
@@ -1665,14 +1811,14 @@ Ok(
             origin: "do",
             span: Span {
                 start: SrcPos {
-                    line: 16,
+                    line: 17,
                     col: 16,
-                    idx: 469,
+                    idx: 486,
                 },
                 end: SrcPos {
-                    line: 16,
+                    line: 17,
                     col: 18,
-                    idx: 471,
+                    idx: 488,
                 },
             },
         },
@@ -1681,14 +1827,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 17,
+                    line: 18,
                     col: 0,
-                    idx: 471,
+                    idx: 488,
                 },
                 end: SrcPos {
-                    line: 17,
+                    line: 18,
                     col: 1,
-                    idx: 472,
+                    idx: 489,
                 },
             },
         },
@@ -1699,14 +1845,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 17,
+                    line: 18,
                     col: 5,
-                    idx: 476,
+                    idx: 493,
                 },
                 end: SrcPos {
-                    line: 17,
+                    line: 18,
                     col: 9,
-                    idx: 480,
+                    idx: 497,
                 },
             },
         },
@@ -1715,14 +1861,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 17,
+                    line: 18,
                     col: 9,
-                    idx: 480,
+                    idx: 497,
                 },
                 end: SrcPos {
-                    line: 17,
+                    line: 18,
                     col: 10,
-                    idx: 481,
+                    idx: 498,
                 },
             },
         },
@@ -1733,14 +1879,14 @@ Ok(
             origin: "x",
             span: Span {
                 start: SrcPos {
-                    line: 17,
+                    line: 18,
                     col: 10,
-                    idx: 481,
+                    idx: 498,
                 },
                 end: SrcPos {
-                    line: 17,
+                    line: 18,
                     col: 11,
-                    idx: 482,
+                    idx: 499,
                 },
             },
         },
@@ -1749,14 +1895,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 17,
+                    line: 18,
                     col: 11,
-                    idx: 482,
+                    idx: 499,
                 },
                 end: SrcPos {
-                    line: 17,
+                    line: 18,
                     col: 12,
-                    idx: 483,
+                    idx: 500,
                 },
             },
         },
@@ -1765,14 +1911,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 18,
+                    line: 19,
                     col: 0,
-                    idx: 483,
+                    idx: 500,
                 },
                 end: SrcPos {
-                    line: 18,
+                    line: 19,
                     col: 1,
-                    idx: 484,
+                    idx: 501,
                 },
             },
         },
@@ -1781,30 +1927,14 @@ Ok(
             origin: "end",
             span: Span {
                 start: SrcPos {
-                    line: 18,
+                    line: 19,
                     col: 1,
-                    idx: 484,
+                    idx: 501,
                 },
                 end: SrcPos {
-                    line: 18,
+                    line: 19,
                     col: 4,
-                    idx: 487,
-                },
-            },
-        },
-        Token {
-            kind: NewLine,
-            origin: "\n",
-            span: Span {
-                start: SrcPos {
-                    line: 19,
-                    col: 0,
-                    idx: 487,
-                },
-                end: SrcPos {
-                    line: 19,
-                    col: 1,
-                    idx: 488,
+                    idx: 504,
                 },
             },
         },
@@ -1815,12 +1945,28 @@ Ok(
                 start: SrcPos {
                     line: 20,
                     col: 0,
-                    idx: 488,
+                    idx: 504,
                 },
                 end: SrcPos {
                     line: 20,
                     col: 1,
-                    idx: 489,
+                    idx: 505,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 21,
+                    col: 0,
+                    idx: 505,
+                },
+                end: SrcPos {
+                    line: 21,
+                    col: 1,
+                    idx: 506,
                 },
             },
         },
@@ -1831,14 +1977,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 20,
+                    line: 21,
                     col: 1,
-                    idx: 489,
+                    idx: 506,
                 },
                 end: SrcPos {
-                    line: 20,
+                    line: 21,
                     col: 5,
-                    idx: 493,
+                    idx: 510,
                 },
             },
         },
@@ -1847,14 +1993,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 20,
+                    line: 21,
                     col: 5,
-                    idx: 493,
+                    idx: 510,
                 },
                 end: SrcPos {
-                    line: 20,
+                    line: 21,
                     col: 6,
-                    idx: 494,
+                    idx: 511,
                 },
             },
         },
@@ -1865,14 +2011,14 @@ Ok(
             origin: "\"for inclusive:\"",
             span: Span {
                 start: SrcPos {
-                    line: 20,
+                    line: 21,
                     col: 6,
-                    idx: 494,
+                    idx: 511,
                 },
                 end: SrcPos {
-                    line: 20,
+                    line: 21,
                     col: 22,
-                    idx: 510,
+                    idx: 527,
                 },
             },
         },
@@ -1881,14 +2027,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 20,
+                    line: 21,
                     col: 22,
-                    idx: 510,
+                    idx: 527,
                 },
                 end: SrcPos {
-                    line: 20,
+                    line: 21,
                     col: 23,
-                    idx: 511,
+                    idx: 528,
                 },
             },
         },
@@ -1897,14 +2043,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 21,
+                    line: 22,
                     col: 0,
-                    idx: 511,
+                    idx: 528,
                 },
                 end: SrcPos {
-                    line: 21,
+                    line: 22,
                     col: 1,
-                    idx: 512,
+                    idx: 529,
                 },
             },
         },
@@ -1913,14 +2059,14 @@ Ok(
             origin: "for",
             span: Span {
                 start: SrcPos {
-                    line: 21,
+                    line: 22,
                     col: 1,
-                    idx: 512,
+                    idx: 529,
                 },
                 end: SrcPos {
-                    line: 21,
+                    line: 22,
                     col: 4,
-                    idx: 515,
+                    idx: 532,
                 },
             },
         },
@@ -1931,14 +2077,14 @@ Ok(
             origin: "x",
             span: Span {
                 start: SrcPos {
-                    line: 21,
+                    line: 22,
                     col: 5,
-                    idx: 516,
+                    idx: 533,
                 },
                 end: SrcPos {
-                    line: 21,
+                    line: 22,
                     col: 6,
-                    idx: 517,
+                    idx: 534,
                 },
             },
         },
@@ -1947,14 +2093,14 @@ Ok(
             origin: "in",
             span: Span {
                 start: SrcPos {
-                    line: 21,
+                    line: 22,
                     col: 7,
-                    idx: 518,
+                    idx: 535,
                 },
                 end: SrcPos {
-                    line: 21,
+                    line: 22,
                     col: 9,
-                    idx: 520,
+                    idx: 537,
                 },
             },
         },
@@ -1965,14 +2111,14 @@ Ok(
             origin: "0",
             span: Span {
                 start: SrcPos {
-                    line: 21,
+                    line: 22,
                     col: 10,
-                    idx: 521,
+                    idx: 538,
                 },
                 end: SrcPos {
-                    line: 21,
+                    line: 22,
                     col: 11,
-                    idx: 522,
+                    idx: 539,
                 },
             },
         },
@@ -1981,14 +2127,14 @@ Ok(
             origin: "..=",
             span: Span {
                 start: SrcPos {
-                    line: 21,
+                    line: 22,
                     col: 11,
-                    idx: 522,
+                    idx: 539,
                 },
                 end: SrcPos {
-                    line: 21,
+                    line: 22,
                     col: 14,
-                    idx: 525,
+                    idx: 542,
                 },
             },
         },
@@ -1999,14 +2145,14 @@ Ok(
             origin: "3",
             span: Span {
                 start: SrcPos {
-                    line: 21,
+                    line: 22,
                     col: 14,
-                    idx: 525,
+                    idx: 542,
                 },
                 end: SrcPos {
-                    line: 21,
+                    line: 22,
                     col: 15,
-                    idx: 526,
+                    idx: 543,
                 },
             },
         },
@@ -2015,14 +2161,14 @@ Ok(
             origin: "do",
             span: Span {
                 start: SrcPos {
-                    line: 21,
+                    line: 22,
                     col: 16,
-                    idx: 527,
+                    idx: 544,
                 },
                 end: SrcPos {
-                    line: 21,
+                    line: 22,
                     col: 18,
-                    idx: 529,
+                    idx: 546,
                 },
             },
         },
@@ -2031,14 +2177,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 22,
+                    line: 23,
                     col: 0,
-                    idx: 529,
+                    idx: 546,
                 },
                 end: SrcPos {
-                    line: 22,
+                    line: 23,
                     col: 1,
-                    idx: 530,
+                    idx: 547,
                 },
             },
         },
@@ -2049,14 +2195,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 22,
+                    line: 23,
                     col: 5,
-                    idx: 534,
+                    idx: 551,
                 },
                 end: SrcPos {
-                    line: 22,
+                    line: 23,
                     col: 9,
-                    idx: 538,
+                    idx: 555,
                 },
             },
         },
@@ -2065,14 +2211,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 22,
+                    line: 23,
                     col: 9,
-                    idx: 538,
+                    idx: 555,
                 },
                 end: SrcPos {
-                    line: 22,
+                    line: 23,
                     col: 10,
-                    idx: 539,
+                    idx: 556,
                 },
             },
         },
@@ -2083,14 +2229,14 @@ Ok(
             origin: "x",
             span: Span {
                 start: SrcPos {
-                    line: 22,
+                    line: 23,
                     col: 10,
-                    idx: 539,
+                    idx: 556,
                 },
                 end: SrcPos {
-                    line: 22,
+                    line: 23,
                     col: 11,
-                    idx: 540,
+                    idx: 557,
                 },
             },
         },
@@ -2099,14 +2245,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 22,
+                    line: 23,
                     col: 11,
-                    idx: 540,
+                    idx: 557,
                 },
                 end: SrcPos {
-                    line: 22,
+                    line: 23,
                     col: 12,
-                    idx: 541,
+                    idx: 558,
                 },
             },
         },
@@ -2115,14 +2261,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 23,
+                    line: 24,
                     col: 0,
-                    idx: 541,
+                    idx: 558,
                 },
                 end: SrcPos {
-                    line: 23,
+                    line: 24,
                     col: 1,
-                    idx: 542,
+                    idx: 559,
                 },
             },
         },
@@ -2131,30 +2277,14 @@ Ok(
             origin: "end",
             span: Span {
                 start: SrcPos {
-                    line: 23,
+                    line: 24,
                     col: 1,
-                    idx: 542,
+                    idx: 559,
                 },
                 end: SrcPos {
-                    line: 23,
+                    line: 24,
                     col: 4,
-                    idx: 545,
-                },
-            },
-        },
-        Token {
-            kind: NewLine,
-            origin: "\n",
-            span: Span {
-                start: SrcPos {
-                    line: 24,
-                    col: 0,
-                    idx: 545,
-                },
-                end: SrcPos {
-                    line: 24,
-                    col: 1,
-                    idx: 546,
+                    idx: 562,
                 },
             },
         },
@@ -2165,12 +2295,28 @@ Ok(
                 start: SrcPos {
                     line: 25,
                     col: 0,
-                    idx: 546,
+                    idx: 562,
                 },
                 end: SrcPos {
                     line: 25,
                     col: 1,
-                    idx: 547,
+                    idx: 563,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 26,
+                    col: 0,
+                    idx: 563,
+                },
+                end: SrcPos {
+                    line: 26,
+                    col: 1,
+                    idx: 564,
                 },
             },
         },
@@ -2181,14 +2327,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 25,
+                    line: 26,
                     col: 1,
-                    idx: 547,
+                    idx: 564,
                 },
                 end: SrcPos {
-                    line: 25,
+                    line: 26,
                     col: 5,
-                    idx: 551,
+                    idx: 568,
                 },
             },
         },
@@ -2197,14 +2343,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 25,
+                    line: 26,
                     col: 5,
-                    idx: 551,
+                    idx: 568,
                 },
                 end: SrcPos {
-                    line: 25,
+                    line: 26,
                     col: 6,
-                    idx: 552,
+                    idx: 569,
                 },
             },
         },
@@ -2215,14 +2361,14 @@ Ok(
             origin: "\"for builtin range:\"",
             span: Span {
                 start: SrcPos {
-                    line: 25,
+                    line: 26,
                     col: 6,
-                    idx: 552,
+                    idx: 569,
                 },
                 end: SrcPos {
-                    line: 25,
+                    line: 26,
                     col: 26,
-                    idx: 572,
+                    idx: 589,
                 },
             },
         },
@@ -2231,14 +2377,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 25,
+                    line: 26,
                     col: 26,
-                    idx: 572,
+                    idx: 589,
                 },
                 end: SrcPos {
-                    line: 25,
+                    line: 26,
                     col: 27,
-                    idx: 573,
+                    idx: 590,
                 },
             },
         },
@@ -2247,14 +2393,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 26,
+                    line: 27,
                     col: 0,
-                    idx: 573,
+                    idx: 590,
                 },
                 end: SrcPos {
-                    line: 26,
+                    line: 27,
                     col: 1,
-                    idx: 574,
+                    idx: 591,
                 },
             },
         },
@@ -2263,14 +2409,14 @@ Ok(
             origin: "for",
             span: Span {
                 start: SrcPos {
-                    line: 26,
+                    line: 27,
                     col: 1,
-                    idx: 574,
+                    idx: 591,
                 },
                 end: SrcPos {
-                    line: 26,
+                    line: 27,
                     col: 4,
-                    idx: 577,
+                    idx: 594,
                 },
             },
         },
@@ -2281,14 +2427,14 @@ Ok(
             origin: "x",
             span: Span {
                 start: SrcPos {
-                    line: 26,
+                    line: 27,
                     col: 5,
-                    idx: 578,
+                    idx: 595,
                 },
                 end: SrcPos {
-                    line: 26,
+                    line: 27,
                     col: 6,
-                    idx: 579,
+                    idx: 596,
                 },
             },
         },
@@ -2297,14 +2443,14 @@ Ok(
             origin: "in",
             span: Span {
                 start: SrcPos {
-                    line: 26,
+                    line: 27,
                     col: 7,
-                    idx: 580,
+                    idx: 597,
                 },
                 end: SrcPos {
-                    line: 26,
+                    line: 27,
                     col: 9,
-                    idx: 582,
+                    idx: 599,
                 },
             },
         },
@@ -2315,14 +2461,14 @@ Ok(
             origin: "range",
             span: Span {
                 start: SrcPos {
-                    line: 26,
+                    line: 27,
                     col: 10,
-                    idx: 583,
+                    idx: 600,
                 },
                 end: SrcPos {
-                    line: 26,
+                    line: 27,
                     col: 15,
-                    idx: 588,
+                    idx: 605,
                 },
             },
         },
@@ -2331,14 +2477,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 26,
+                    line: 27,
                     col: 15,
-                    idx: 588,
+                    idx: 605,
                 },
                 end: SrcPos {
-                    line: 26,
+                    line: 27,
                     col: 16,
-                    idx: 589,
+                    idx: 606,
                 },
             },
         },
@@ -2349,14 +2495,14 @@ Ok(
             origin: "3",
             span: Span {
                 start: SrcPos {
-                    line: 26,
+                    line: 27,
                     col: 16,
-                    idx: 589,
+                    idx: 606,
                 },
                 end: SrcPos {
-                    line: 26,
+                    line: 27,
                     col: 17,
-                    idx: 590,
+                    idx: 607,
                 },
             },
         },
@@ -2365,14 +2511,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 26,
+                    line: 27,
                     col: 17,
-                    idx: 590,
+                    idx: 607,
                 },
                 end: SrcPos {
-                    line: 26,
+                    line: 27,
                     col: 18,
-                    idx: 591,
+                    idx: 608,
                 },
             },
         },
@@ -2381,14 +2527,14 @@ Ok(
             origin: "do",
             span: Span {
                 start: SrcPos {
-                    line: 26,
+                    line: 27,
                     col: 19,
-                    idx: 592,
+                    idx: 609,
                 },
                 end: SrcPos {
-                    line: 26,
+                    line: 27,
                     col: 21,
-                    idx: 594,
+                    idx: 611,
                 },
             },
         },
@@ -2397,14 +2543,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 27,
+                    line: 28,
                     col: 0,
-                    idx: 594,
+                    idx: 611,
                 },
                 end: SrcPos {
-                    line: 27,
+                    line: 28,
                     col: 1,
-                    idx: 595,
+                    idx: 612,
                 },
             },
         },
@@ -2415,14 +2561,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 27,
+                    line: 28,
                     col: 5,
-                    idx: 599,
+                    idx: 616,
                 },
                 end: SrcPos {
-                    line: 27,
+                    line: 28,
                     col: 9,
-                    idx: 603,
+                    idx: 620,
                 },
             },
         },
@@ -2431,14 +2577,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 27,
+                    line: 28,
                     col: 9,
-                    idx: 603,
+                    idx: 620,
                 },
                 end: SrcPos {
-                    line: 27,
+                    line: 28,
                     col: 10,
-                    idx: 604,
+                    idx: 621,
                 },
             },
         },
@@ -2449,14 +2595,14 @@ Ok(
             origin: "x",
             span: Span {
                 start: SrcPos {
-                    line: 27,
+                    line: 28,
                     col: 10,
-                    idx: 604,
+                    idx: 621,
                 },
                 end: SrcPos {
-                    line: 27,
+                    line: 28,
                     col: 11,
-                    idx: 605,
+                    idx: 622,
                 },
             },
         },
@@ -2465,14 +2611,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 27,
+                    line: 28,
                     col: 11,
-                    idx: 605,
+                    idx: 622,
                 },
                 end: SrcPos {
-                    line: 27,
+                    line: 28,
                     col: 12,
-                    idx: 606,
+                    idx: 623,
                 },
             },
         },
@@ -2481,14 +2627,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 28,
+                    line: 29,
                     col: 0,
-                    idx: 606,
+                    idx: 623,
                 },
                 end: SrcPos {
-                    line: 28,
+                    line: 29,
                     col: 1,
-                    idx: 607,
+                    idx: 624,
                 },
             },
         },
@@ -2497,30 +2643,14 @@ Ok(
             origin: "end",
             span: Span {
                 start: SrcPos {
-                    line: 28,
+                    line: 29,
                     col: 1,
-                    idx: 607,
+                    idx: 624,
                 },
                 end: SrcPos {
-                    line: 28,
+                    line: 29,
                     col: 4,
-                    idx: 610,
-                },
-            },
-        },
-        Token {
-            kind: NewLine,
-            origin: "\n",
-            span: Span {
-                start: SrcPos {
-                    line: 29,
-                    col: 0,
-                    idx: 610,
-                },
-                end: SrcPos {
-                    line: 29,
-                    col: 1,
-                    idx: 611,
+                    idx: 627,
                 },
             },
         },
@@ -2531,12 +2661,28 @@ Ok(
                 start: SrcPos {
                     line: 30,
                     col: 0,
-                    idx: 611,
+                    idx: 627,
                 },
                 end: SrcPos {
                     line: 30,
                     col: 1,
-                    idx: 612,
+                    idx: 628,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 31,
+                    col: 0,
+                    idx: 628,
+                },
+                end: SrcPos {
+                    line: 31,
+                    col: 1,
+                    idx: 629,
                 },
             },
         },
@@ -2547,14 +2693,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 30,
+                    line: 31,
                     col: 1,
-                    idx: 612,
+                    idx: 629,
                 },
                 end: SrcPos {
-                    line: 30,
+                    line: 31,
                     col: 5,
-                    idx: 616,
+                    idx: 633,
                 },
             },
         },
@@ -2563,14 +2709,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 30,
+                    line: 31,
                     col: 5,
-                    idx: 616,
+                    idx: 633,
                 },
                 end: SrcPos {
-                    line: 30,
+                    line: 31,
                     col: 6,
-                    idx: 617,
+                    idx: 634,
                 },
             },
         },
@@ -2581,14 +2727,14 @@ Ok(
             origin: "\"for stepped range:\"",
             span: Span {
                 start: SrcPos {
-                    line: 30,
+                    line: 31,
                     col: 6,
-                    idx: 617,
+                    idx: 634,
                 },
                 end: SrcPos {
-                    line: 30,
+                    line: 31,
                     col: 26,
-                    idx: 637,
+                    idx: 654,
                 },
             },
         },
@@ -2597,14 +2743,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 30,
+                    line: 31,
                     col: 26,
-                    idx: 637,
+                    idx: 654,
                 },
                 end: SrcPos {
-                    line: 30,
+                    line: 31,
                     col: 27,
-                    idx: 638,
+                    idx: 655,
                 },
             },
         },
@@ -2613,14 +2759,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 0,
-                    idx: 638,
+                    idx: 655,
                 },
                 end: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 1,
-                    idx: 639,
+                    idx: 656,
                 },
             },
         },
@@ -2629,14 +2775,14 @@ Ok(
             origin: "for",
             span: Span {
                 start: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 1,
-                    idx: 639,
+                    idx: 656,
                 },
                 end: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 4,
-                    idx: 642,
+                    idx: 659,
                 },
             },
         },
@@ -2647,14 +2793,14 @@ Ok(
             origin: "x",
             span: Span {
                 start: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 5,
-                    idx: 643,
+                    idx: 660,
                 },
                 end: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 6,
-                    idx: 644,
+                    idx: 661,
                 },
             },
         },
@@ -2663,14 +2809,14 @@ Ok(
             origin: "in",
             span: Span {
                 start: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 7,
-                    idx: 645,
+                    idx: 662,
                 },
                 end: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 9,
-                    idx: 647,
+                    idx: 664,
                 },
             },
         },
@@ -2681,14 +2827,14 @@ Ok(
             origin: "range",
             span: Span {
                 start: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 10,
-                    idx: 648,
+                    idx: 665,
                 },
                 end: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 15,
-                    idx: 653,
+                    idx: 670,
                 },
             },
         },
@@ -2697,14 +2843,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 15,
-                    idx: 653,
+                    idx: 670,
                 },
                 end: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 16,
-                    idx: 654,
+                    idx: 671,
                 },
             },
         },
@@ -2715,14 +2861,14 @@ Ok(
             origin: "1",
             span: Span {
                 start: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 16,
-                    idx: 654,
+                    idx: 671,
                 },
                 end: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 17,
-                    idx: 655,
+                    idx: 672,
                 },
             },
         },
@@ -2731,14 +2877,14 @@ Ok(
             origin: ",",
             span: Span {
                 start: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 17,
-                    idx: 655,
+                    idx: 672,
                 },
                 end: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 18,
-                    idx: 656,
+                    idx: 673,
                 },
             },
         },
@@ -2749,14 +2895,14 @@ Ok(
             origin: "6",
             span: Span {
                 start: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 19,
-                    idx: 657,
+                    idx: 674,
                 },
                 end: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 20,
-                    idx: 658,
+                    idx: 675,
                 },
             },
         },
@@ -2765,14 +2911,14 @@ Ok(
             origin: ",",
             span: Span {
                 start: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 20,
-                    idx: 658,
+                    idx: 675,
                 },
                 end: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 21,
-                    idx: 659,
+                    idx: 676,
                 },
             },
         },
@@ -2783,14 +2929,14 @@ Ok(
             origin: "2",
             span: Span {
                 start: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 22,
-                    idx: 660,
+                    idx: 677,
                 },
                 end: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 23,
-                    idx: 661,
+                    idx: 678,
                 },
             },
         },
@@ -2799,14 +2945,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 23,
-                    idx: 661,
+                    idx: 678,
                 },
                 end: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 24,
-                    idx: 662,
+                    idx: 679,
                 },
             },
         },
@@ -2815,14 +2961,14 @@ Ok(
             origin: "do",
             span: Span {
                 start: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 25,
-                    idx: 663,
+                    idx: 680,
                 },
                 end: SrcPos {
-                    line: 31,
+                    line: 32,
                     col: 27,
-                    idx: 665,
+                    idx: 682,
                 },
             },
         },
@@ -2831,14 +2977,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 32,
+                    line: 33,
                     col: 0,
-                    idx: 665,
+                    idx: 682,
                 },
                 end: SrcPos {
-                    line: 32,
+                    line: 33,
                     col: 1,
-                    idx: 666,
+                    idx: 683,
                 },
             },
         },
@@ -2849,14 +2995,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 32,
+                    line: 33,
                     col: 5,
-                    idx: 670,
+                    idx: 687,
                 },
                 end: SrcPos {
-                    line: 32,
+                    line: 33,
                     col: 9,
-                    idx: 674,
+                    idx: 691,
                 },
             },
         },
@@ -2865,14 +3011,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 32,
+                    line: 33,
                     col: 9,
-                    idx: 674,
+                    idx: 691,
                 },
                 end: SrcPos {
-                    line: 32,
+                    line: 33,
                     col: 10,
-                    idx: 675,
+                    idx: 692,
                 },
             },
         },
@@ -2883,14 +3029,14 @@ Ok(
             origin: "x",
             span: Span {
                 start: SrcPos {
-                    line: 32,
+                    line: 33,
                     col: 10,
-                    idx: 675,
+                    idx: 692,
                 },
                 end: SrcPos {
-                    line: 32,
+                    line: 33,
                     col: 11,
-                    idx: 676,
+                    idx: 693,
                 },
             },
         },
@@ -2899,14 +3045,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 32,
+                    line: 33,
                     col: 11,
-                    idx: 676,
+                    idx: 693,
                 },
                 end: SrcPos {
-                    line: 32,
+                    line: 33,
                     col: 12,
-                    idx: 677,
+                    idx: 694,
                 },
             },
         },
@@ -2915,14 +3061,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 33,
+                    line: 34,
                     col: 0,
-                    idx: 677,
+                    idx: 694,
                 },
                 end: SrcPos {
-                    line: 33,
+                    line: 34,
                     col: 1,
-                    idx: 678,
+                    idx: 695,
                 },
             },
         },
@@ -2931,30 +3077,14 @@ Ok(
             origin: "end",
             span: Span {
                 start: SrcPos {
-                    line: 33,
+                    line: 34,
                     col: 1,
-                    idx: 678,
+                    idx: 695,
                 },
                 end: SrcPos {
-                    line: 33,
+                    line: 34,
                     col: 4,
-                    idx: 681,
-                },
-            },
-        },
-        Token {
-            kind: NewLine,
-            origin: "\n",
-            span: Span {
-                start: SrcPos {
-                    line: 34,
-                    col: 0,
-                    idx: 681,
-                },
-                end: SrcPos {
-                    line: 34,
-                    col: 1,
-                    idx: 682,
+                    idx: 698,
                 },
             },
         },
@@ -2965,12 +3095,28 @@ Ok(
                 start: SrcPos {
                     line: 35,
                     col: 0,
-                    idx: 682,
+                    idx: 698,
                 },
                 end: SrcPos {
                     line: 35,
                     col: 1,
-                    idx: 683,
+                    idx: 699,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 36,
+                    col: 0,
+                    idx: 699,
+                },
+                end: SrcPos {
+                    line: 36,
+                    col: 1,
+                    idx: 700,
                 },
             },
         },
@@ -2981,14 +3127,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 35,
+                    line: 36,
                     col: 1,
-                    idx: 683,
+                    idx: 700,
                 },
                 end: SrcPos {
-                    line: 35,
+                    line: 36,
                     col: 5,
-                    idx: 687,
+                    idx: 704,
                 },
             },
         },
@@ -2997,14 +3143,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 35,
+                    line: 36,
                     col: 5,
-                    idx: 687,
+                    idx: 704,
                 },
                 end: SrcPos {
-                    line: 35,
+                    line: 36,
                     col: 6,
-                    idx: 688,
+                    idx: 705,
                 },
             },
         },
@@ -3015,14 +3161,14 @@ Ok(
             origin: "\"for iterable from yield block:\"",
             span: Span {
                 start: SrcPos {
-                    line: 35,
+                    line: 36,
                     col: 6,
-                    idx: 688,
+                    idx: 705,
                 },
                 end: SrcPos {
-                    line: 35,
+                    line: 36,
                     col: 38,
-                    idx: 720,
+                    idx: 737,
                 },
             },
         },
@@ -3031,14 +3177,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 35,
+                    line: 36,
                     col: 38,
-                    idx: 720,
+                    idx: 737,
                 },
                 end: SrcPos {
-                    line: 35,
+                    line: 36,
                     col: 39,
-                    idx: 721,
+                    idx: 738,
                 },
             },
         },
@@ -3047,14 +3193,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 36,
+                    line: 37,
                     col: 0,
-                    idx: 721,
+                    idx: 738,
                 },
                 end: SrcPos {
-                    line: 36,
+                    line: 37,
                     col: 1,
-                    idx: 722,
+                    idx: 739,
                 },
             },
         },
@@ -3063,14 +3209,14 @@ Ok(
             origin: "for",
             span: Span {
                 start: SrcPos {
-                    line: 36,
+                    line: 37,
                     col: 1,
-                    idx: 722,
+                    idx: 739,
                 },
                 end: SrcPos {
-                    line: 36,
+                    line: 37,
                     col: 4,
-                    idx: 725,
+                    idx: 742,
                 },
             },
         },
@@ -3081,14 +3227,14 @@ Ok(
             origin: "x",
             span: Span {
                 start: SrcPos {
-                    line: 36,
+                    line: 37,
                     col: 5,
-                    idx: 726,
+                    idx: 743,
                 },
                 end: SrcPos {
-                    line: 36,
+                    line: 37,
                     col: 6,
-                    idx: 727,
+                    idx: 744,
                 },
             },
         },
@@ -3097,14 +3243,14 @@ Ok(
             origin: "in",
             span: Span {
                 start: SrcPos {
-                    line: 36,
+                    line: 37,
                     col: 7,
-                    idx: 728,
+                    idx: 745,
                 },
                 end: SrcPos {
-                    line: 36,
+                    line: 37,
                     col: 9,
-                    idx: 730,
+                    idx: 747,
                 },
             },
         },
@@ -3113,14 +3259,14 @@ Ok(
             origin: "do",
             span: Span {
                 start: SrcPos {
-                    line: 36,
+                    line: 37,
                     col: 10,
-                    idx: 731,
+                    idx: 748,
                 },
                 end: SrcPos {
-                    line: 36,
+                    line: 37,
                     col: 12,
-                    idx: 733,
+                    idx: 750,
                 },
             },
         },
@@ -3129,14 +3275,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 37,
+                    line: 38,
                     col: 0,
-                    idx: 733,
+                    idx: 750,
                 },
                 end: SrcPos {
-                    line: 37,
+                    line: 38,
                     col: 1,
-                    idx: 734,
+                    idx: 751,
                 },
             },
         },
@@ -3145,14 +3291,14 @@ Ok(
             origin: "yield",
             span: Span {
                 start: SrcPos {
-                    line: 37,
+                    line: 38,
                     col: 5,
-                    idx: 738,
+                    idx: 755,
                 },
                 end: SrcPos {
-                    line: 37,
+                    line: 38,
                     col: 10,
-                    idx: 743,
+                    idx: 760,
                 },
             },
         },
@@ -3163,14 +3309,14 @@ Ok(
             origin: "0",
             span: Span {
                 start: SrcPos {
-                    line: 37,
+                    line: 38,
                     col: 11,
-                    idx: 744,
+                    idx: 761,
                 },
                 end: SrcPos {
-                    line: 37,
+                    line: 38,
                     col: 12,
-                    idx: 745,
+                    idx: 762,
                 },
             },
         },
@@ -3179,14 +3325,14 @@ Ok(
             origin: "..<",
             span: Span {
                 start: SrcPos {
-                    line: 37,
+                    line: 38,
                     col: 12,
-                    idx: 745,
+                    idx: 762,
                 },
                 end: SrcPos {
-                    line: 37,
+                    line: 38,
                     col: 15,
-                    idx: 748,
+                    idx: 765,
                 },
             },
         },
@@ -3197,14 +3343,14 @@ Ok(
             origin: "3",
             span: Span {
                 start: SrcPos {
-                    line: 37,
+                    line: 38,
                     col: 15,
-                    idx: 748,
+                    idx: 765,
                 },
                 end: SrcPos {
-                    line: 37,
+                    line: 38,
                     col: 16,
-                    idx: 749,
+                    idx: 766,
                 },
             },
         },
@@ -3213,14 +3359,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 38,
+                    line: 39,
                     col: 0,
-                    idx: 749,
+                    idx: 766,
                 },
                 end: SrcPos {
-                    line: 38,
+                    line: 39,
                     col: 1,
-                    idx: 750,
+                    idx: 767,
                 },
             },
         },
@@ -3229,14 +3375,14 @@ Ok(
             origin: "end",
             span: Span {
                 start: SrcPos {
-                    line: 38,
+                    line: 39,
                     col: 1,
-                    idx: 750,
+                    idx: 767,
                 },
                 end: SrcPos {
-                    line: 38,
+                    line: 39,
                     col: 4,
-                    idx: 753,
+                    idx: 770,
                 },
             },
         },
@@ -3245,14 +3391,14 @@ Ok(
             origin: "do",
             span: Span {
                 start: SrcPos {
-                    line: 38,
+                    line: 39,
                     col: 5,
-                    idx: 754,
+                    idx: 771,
                 },
                 end: SrcPos {
-                    line: 38,
+                    line: 39,
                     col: 7,
-                    idx: 756,
+                    idx: 773,
                 },
             },
         },
@@ -3261,14 +3407,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 39,
+                    line: 40,
                     col: 0,
-                    idx: 756,
+                    idx: 773,
                 },
                 end: SrcPos {
-                    line: 39,
+                    line: 40,
                     col: 1,
-                    idx: 757,
+                    idx: 774,
                 },
             },
         },
@@ -3279,14 +3425,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 39,
+                    line: 40,
                     col: 5,
-                    idx: 761,
+                    idx: 778,
                 },
                 end: SrcPos {
-                    line: 39,
+                    line: 40,
                     col: 9,
-                    idx: 765,
+                    idx: 782,
                 },
             },
         },
@@ -3295,14 +3441,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 39,
+                    line: 40,
                     col: 9,
-                    idx: 765,
+                    idx: 782,
                 },
                 end: SrcPos {
-                    line: 39,
+                    line: 40,
                     col: 10,
-                    idx: 766,
+                    idx: 783,
                 },
             },
         },
@@ -3313,14 +3459,14 @@ Ok(
             origin: "x",
             span: Span {
                 start: SrcPos {
-                    line: 39,
+                    line: 40,
                     col: 10,
-                    idx: 766,
+                    idx: 783,
                 },
                 end: SrcPos {
-                    line: 39,
+                    line: 40,
                     col: 11,
-                    idx: 767,
+                    idx: 784,
                 },
             },
         },
@@ -3329,14 +3475,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 39,
+                    line: 40,
                     col: 11,
-                    idx: 767,
+                    idx: 784,
                 },
                 end: SrcPos {
-                    line: 39,
+                    line: 40,
                     col: 12,
-                    idx: 768,
+                    idx: 785,
                 },
             },
         },
@@ -3345,14 +3491,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 40,
+                    line: 41,
                     col: 0,
-                    idx: 768,
+                    idx: 785,
                 },
                 end: SrcPos {
-                    line: 40,
+                    line: 41,
                     col: 1,
-                    idx: 769,
+                    idx: 786,
                 },
             },
         },
@@ -3361,30 +3507,14 @@ Ok(
             origin: "end",
             span: Span {
                 start: SrcPos {
-                    line: 40,
+                    line: 41,
                     col: 1,
-                    idx: 769,
+                    idx: 786,
                 },
                 end: SrcPos {
-                    line: 40,
+                    line: 41,
                     col: 4,
-                    idx: 772,
-                },
-            },
-        },
-        Token {
-            kind: NewLine,
-            origin: "\n",
-            span: Span {
-                start: SrcPos {
-                    line: 41,
-                    col: 0,
-                    idx: 772,
-                },
-                end: SrcPos {
-                    line: 41,
-                    col: 1,
-                    idx: 773,
+                    idx: 789,
                 },
             },
         },
@@ -3395,12 +3525,28 @@ Ok(
                 start: SrcPos {
                     line: 42,
                     col: 0,
-                    idx: 773,
+                    idx: 789,
                 },
                 end: SrcPos {
                     line: 42,
                     col: 1,
-                    idx: 774,
+                    idx: 790,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 43,
+                    col: 0,
+                    idx: 790,
+                },
+                end: SrcPos {
+                    line: 43,
+                    col: 1,
+                    idx: 791,
                 },
             },
         },
@@ -3409,14 +3555,14 @@ Ok(
             origin: "let",
             span: Span {
                 start: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 1,
-                    idx: 774,
+                    idx: 791,
                 },
                 end: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 4,
-                    idx: 777,
+                    idx: 794,
                 },
             },
         },
@@ -3427,14 +3573,14 @@ Ok(
             origin: "first_big",
             span: Span {
                 start: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 5,
-                    idx: 778,
+                    idx: 795,
                 },
                 end: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 14,
-                    idx: 787,
+                    idx: 804,
                 },
             },
         },
@@ -3443,14 +3589,14 @@ Ok(
             origin: ":",
             span: Span {
                 start: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 15,
-                    idx: 788,
+                    idx: 805,
                 },
                 end: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 16,
-                    idx: 789,
+                    idx: 806,
                 },
             },
         },
@@ -3459,14 +3605,14 @@ Ok(
             origin: "=",
             span: Span {
                 start: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 16,
-                    idx: 789,
+                    idx: 806,
                 },
                 end: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 17,
-                    idx: 790,
+                    idx: 807,
                 },
             },
         },
@@ -3475,14 +3621,14 @@ Ok(
             origin: "for",
             span: Span {
                 start: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 18,
-                    idx: 791,
+                    idx: 808,
                 },
                 end: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 21,
-                    idx: 794,
+                    idx: 811,
                 },
             },
         },
@@ -3493,14 +3639,14 @@ Ok(
             origin: "x",
             span: Span {
                 start: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 22,
-                    idx: 795,
+                    idx: 812,
                 },
                 end: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 23,
-                    idx: 796,
+                    idx: 813,
                 },
             },
         },
@@ -3509,14 +3655,14 @@ Ok(
             origin: "in",
             span: Span {
                 start: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 24,
-                    idx: 797,
+                    idx: 814,
                 },
                 end: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 26,
-                    idx: 799,
+                    idx: 816,
                 },
             },
         },
@@ -3527,14 +3673,14 @@ Ok(
             origin: "0",
             span: Span {
                 start: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 27,
-                    idx: 800,
+                    idx: 817,
                 },
                 end: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 28,
-                    idx: 801,
+                    idx: 818,
                 },
             },
         },
@@ -3543,14 +3689,14 @@ Ok(
             origin: "..<",
             span: Span {
                 start: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 28,
-                    idx: 801,
+                    idx: 818,
                 },
                 end: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 31,
-                    idx: 804,
+                    idx: 821,
                 },
             },
         },
@@ -3561,14 +3707,14 @@ Ok(
             origin: "10",
             span: Span {
                 start: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 31,
-                    idx: 804,
+                    idx: 821,
                 },
                 end: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 33,
-                    idx: 806,
+                    idx: 823,
                 },
             },
         },
@@ -3577,14 +3723,14 @@ Ok(
             origin: "do",
             span: Span {
                 start: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 34,
-                    idx: 807,
+                    idx: 824,
                 },
                 end: SrcPos {
-                    line: 42,
+                    line: 43,
                     col: 36,
-                    idx: 809,
+                    idx: 826,
                 },
             },
         },
@@ -3593,14 +3739,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 43,
+                    line: 44,
                     col: 0,
-                    idx: 809,
+                    idx: 826,
                 },
                 end: SrcPos {
-                    line: 43,
+                    line: 44,
                     col: 1,
-                    idx: 810,
+                    idx: 827,
                 },
             },
         },
@@ -3609,14 +3755,14 @@ Ok(
             origin: "if",
             span: Span {
                 start: SrcPos {
-                    line: 43,
+                    line: 44,
                     col: 5,
-                    idx: 814,
+                    idx: 831,
                 },
                 end: SrcPos {
-                    line: 43,
+                    line: 44,
                     col: 7,
-                    idx: 816,
+                    idx: 833,
                 },
             },
         },
@@ -3627,14 +3773,14 @@ Ok(
             origin: "x",
             span: Span {
                 start: SrcPos {
-                    line: 43,
+                    line: 44,
                     col: 8,
-                    idx: 817,
+                    idx: 834,
                 },
                 end: SrcPos {
-                    line: 43,
+                    line: 44,
                     col: 9,
-                    idx: 818,
+                    idx: 835,
                 },
             },
         },
@@ -3643,14 +3789,14 @@ Ok(
             origin: ">",
             span: Span {
                 start: SrcPos {
-                    line: 43,
+                    line: 44,
                     col: 10,
-                    idx: 819,
+                    idx: 836,
                 },
                 end: SrcPos {
-                    line: 43,
+                    line: 44,
                     col: 11,
-                    idx: 820,
+                    idx: 837,
                 },
             },
         },
@@ -3661,14 +3807,14 @@ Ok(
             origin: "3",
             span: Span {
                 start: SrcPos {
-                    line: 43,
+                    line: 44,
                     col: 12,
-                    idx: 821,
+                    idx: 838,
                 },
                 end: SrcPos {
-                    line: 43,
+                    line: 44,
                     col: 13,
-                    idx: 822,
+                    idx: 839,
                 },
             },
         },
@@ -3677,14 +3823,14 @@ Ok(
             origin: "do",
             span: Span {
                 start: SrcPos {
-                    line: 43,
+                    line: 44,
                     col: 14,
-                    idx: 823,
+                    idx: 840,
                 },
                 end: SrcPos {
-                    line: 43,
+                    line: 44,
                     col: 16,
-                    idx: 825,
+                    idx: 842,
                 },
             },
         },
@@ -3693,14 +3839,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 44,
+                    line: 45,
                     col: 0,
-                    idx: 825,
+                    idx: 842,
                 },
                 end: SrcPos {
-                    line: 44,
+                    line: 45,
                     col: 1,
-                    idx: 826,
+                    idx: 843,
                 },
             },
         },
@@ -3709,14 +3855,14 @@ Ok(
             origin: "yield",
             span: Span {
                 start: SrcPos {
-                    line: 44,
+                    line: 45,
                     col: 9,
-                    idx: 834,
+                    idx: 851,
                 },
                 end: SrcPos {
-                    line: 44,
+                    line: 45,
                     col: 14,
-                    idx: 839,
+                    idx: 856,
                 },
             },
         },
@@ -3727,14 +3873,14 @@ Ok(
             origin: "x",
             span: Span {
                 start: SrcPos {
-                    line: 44,
+                    line: 45,
                     col: 15,
-                    idx: 840,
+                    idx: 857,
                 },
                 end: SrcPos {
-                    line: 44,
+                    line: 45,
                     col: 16,
-                    idx: 841,
+                    idx: 858,
                 },
             },
         },
@@ -3743,14 +3889,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 45,
+                    line: 46,
                     col: 0,
-                    idx: 841,
+                    idx: 858,
                 },
                 end: SrcPos {
-                    line: 45,
+                    line: 46,
                     col: 1,
-                    idx: 842,
+                    idx: 859,
                 },
             },
         },
@@ -3759,14 +3905,14 @@ Ok(
             origin: "end",
             span: Span {
                 start: SrcPos {
-                    line: 45,
+                    line: 46,
                     col: 5,
-                    idx: 846,
+                    idx: 863,
                 },
                 end: SrcPos {
-                    line: 45,
+                    line: 46,
                     col: 8,
-                    idx: 849,
+                    idx: 866,
                 },
             },
         },
@@ -3775,14 +3921,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 46,
+                    line: 47,
                     col: 0,
-                    idx: 849,
+                    idx: 866,
                 },
                 end: SrcPos {
-                    line: 46,
+                    line: 47,
                     col: 1,
-                    idx: 850,
+                    idx: 867,
                 },
             },
         },
@@ -3791,30 +3937,14 @@ Ok(
             origin: "end",
             span: Span {
                 start: SrcPos {
-                    line: 46,
+                    line: 47,
                     col: 1,
-                    idx: 850,
+                    idx: 867,
                 },
                 end: SrcPos {
-                    line: 46,
+                    line: 47,
                     col: 4,
-                    idx: 853,
-                },
-            },
-        },
-        Token {
-            kind: NewLine,
-            origin: "\n",
-            span: Span {
-                start: SrcPos {
-                    line: 47,
-                    col: 0,
-                    idx: 853,
-                },
-                end: SrcPos {
-                    line: 47,
-                    col: 1,
-                    idx: 854,
+                    idx: 870,
                 },
             },
         },
@@ -3825,12 +3955,28 @@ Ok(
                 start: SrcPos {
                     line: 48,
                     col: 0,
-                    idx: 854,
+                    idx: 870,
                 },
                 end: SrcPos {
                     line: 48,
                     col: 1,
-                    idx: 855,
+                    idx: 871,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 49,
+                    col: 0,
+                    idx: 871,
+                },
+                end: SrcPos {
+                    line: 49,
+                    col: 1,
+                    idx: 872,
                 },
             },
         },
@@ -3841,14 +3987,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 48,
+                    line: 49,
                     col: 1,
-                    idx: 855,
+                    idx: 872,
                 },
                 end: SrcPos {
-                    line: 48,
+                    line: 49,
                     col: 5,
-                    idx: 859,
+                    idx: 876,
                 },
             },
         },
@@ -3857,14 +4003,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 48,
+                    line: 49,
                     col: 5,
-                    idx: 859,
+                    idx: 876,
                 },
                 end: SrcPos {
-                    line: 48,
+                    line: 49,
                     col: 6,
-                    idx: 860,
+                    idx: 877,
                 },
             },
         },
@@ -3875,14 +4021,14 @@ Ok(
             origin: "\"first_big: \"",
             span: Span {
                 start: SrcPos {
-                    line: 48,
+                    line: 49,
                     col: 6,
-                    idx: 860,
+                    idx: 877,
                 },
                 end: SrcPos {
-                    line: 48,
+                    line: 49,
                     col: 19,
-                    idx: 873,
+                    idx: 890,
                 },
             },
         },
@@ -3891,14 +4037,14 @@ Ok(
             origin: "<>",
             span: Span {
                 start: SrcPos {
-                    line: 48,
+                    line: 49,
                     col: 20,
-                    idx: 874,
+                    idx: 891,
                 },
                 end: SrcPos {
-                    line: 48,
+                    line: 49,
                     col: 22,
-                    idx: 876,
+                    idx: 893,
                 },
             },
         },
@@ -3909,14 +4055,14 @@ Ok(
             origin: "first_big",
             span: Span {
                 start: SrcPos {
-                    line: 48,
+                    line: 49,
                     col: 23,
-                    idx: 877,
+                    idx: 894,
                 },
                 end: SrcPos {
-                    line: 48,
+                    line: 49,
                     col: 32,
-                    idx: 886,
+                    idx: 903,
                 },
             },
         },
@@ -3925,30 +4071,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 48,
+                    line: 49,
                     col: 32,
-                    idx: 886,
+                    idx: 903,
                 },
                 end: SrcPos {
-                    line: 48,
+                    line: 49,
                     col: 33,
-                    idx: 887,
-                },
-            },
-        },
-        Token {
-            kind: NewLine,
-            origin: "\n",
-            span: Span {
-                start: SrcPos {
-                    line: 49,
-                    col: 0,
-                    idx: 887,
-                },
-                end: SrcPos {
-                    line: 49,
-                    col: 1,
-                    idx: 888,
+                    idx: 904,
                 },
             },
         },
@@ -3959,12 +4089,28 @@ Ok(
                 start: SrcPos {
                     line: 50,
                     col: 0,
-                    idx: 888,
+                    idx: 904,
                 },
                 end: SrcPos {
                     line: 50,
                     col: 1,
-                    idx: 889,
+                    idx: 905,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 51,
+                    col: 0,
+                    idx: 905,
+                },
+                end: SrcPos {
+                    line: 51,
+                    col: 1,
+                    idx: 906,
                 },
             },
         },
@@ -3973,14 +4119,14 @@ Ok(
             origin: "let",
             span: Span {
                 start: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 1,
-                    idx: 889,
+                    idx: 906,
                 },
                 end: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 4,
-                    idx: 892,
+                    idx: 909,
                 },
             },
         },
@@ -3991,14 +4137,14 @@ Ok(
             origin: "for_without_yield",
             span: Span {
                 start: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 5,
-                    idx: 893,
+                    idx: 910,
                 },
                 end: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 22,
-                    idx: 910,
+                    idx: 927,
                 },
             },
         },
@@ -4007,14 +4153,14 @@ Ok(
             origin: ":",
             span: Span {
                 start: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 23,
-                    idx: 911,
+                    idx: 928,
                 },
                 end: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 24,
-                    idx: 912,
+                    idx: 929,
                 },
             },
         },
@@ -4023,14 +4169,14 @@ Ok(
             origin: "=",
             span: Span {
                 start: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 24,
-                    idx: 912,
+                    idx: 929,
                 },
                 end: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 25,
-                    idx: 913,
+                    idx: 930,
                 },
             },
         },
@@ -4039,14 +4185,14 @@ Ok(
             origin: "for",
             span: Span {
                 start: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 26,
-                    idx: 914,
+                    idx: 931,
                 },
                 end: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 29,
-                    idx: 917,
+                    idx: 934,
                 },
             },
         },
@@ -4057,14 +4203,14 @@ Ok(
             origin: "x",
             span: Span {
                 start: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 30,
-                    idx: 918,
+                    idx: 935,
                 },
                 end: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 31,
-                    idx: 919,
+                    idx: 936,
                 },
             },
         },
@@ -4073,14 +4219,14 @@ Ok(
             origin: "in",
             span: Span {
                 start: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 32,
-                    idx: 920,
+                    idx: 937,
                 },
                 end: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 34,
-                    idx: 922,
+                    idx: 939,
                 },
             },
         },
@@ -4091,14 +4237,14 @@ Ok(
             origin: "0",
             span: Span {
                 start: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 35,
-                    idx: 923,
+                    idx: 940,
                 },
                 end: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 36,
-                    idx: 924,
+                    idx: 941,
                 },
             },
         },
@@ -4107,14 +4253,14 @@ Ok(
             origin: "..<",
             span: Span {
                 start: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 36,
-                    idx: 924,
+                    idx: 941,
                 },
                 end: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 39,
-                    idx: 927,
+                    idx: 944,
                 },
             },
         },
@@ -4125,14 +4271,14 @@ Ok(
             origin: "3",
             span: Span {
                 start: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 39,
-                    idx: 927,
+                    idx: 944,
                 },
                 end: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 40,
-                    idx: 928,
+                    idx: 945,
                 },
             },
         },
@@ -4141,14 +4287,14 @@ Ok(
             origin: "do",
             span: Span {
                 start: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 41,
-                    idx: 929,
+                    idx: 946,
                 },
                 end: SrcPos {
-                    line: 50,
+                    line: 51,
                     col: 43,
-                    idx: 931,
+                    idx: 948,
                 },
             },
         },
@@ -4157,14 +4303,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 51,
+                    line: 52,
                     col: 0,
-                    idx: 931,
+                    idx: 948,
                 },
                 end: SrcPos {
-                    line: 51,
+                    line: 52,
                     col: 1,
-                    idx: 932,
+                    idx: 949,
                 },
             },
         },
@@ -4175,14 +4321,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 51,
+                    line: 52,
                     col: 5,
-                    idx: 936,
+                    idx: 953,
                 },
                 end: SrcPos {
-                    line: 51,
+                    line: 52,
                     col: 9,
-                    idx: 940,
+                    idx: 957,
                 },
             },
         },
@@ -4191,14 +4337,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 51,
+                    line: 52,
                     col: 9,
-                    idx: 940,
+                    idx: 957,
                 },
                 end: SrcPos {
-                    line: 51,
+                    line: 52,
                     col: 10,
-                    idx: 941,
+                    idx: 958,
                 },
             },
         },
@@ -4209,14 +4355,14 @@ Ok(
             origin: "\"loop: \"",
             span: Span {
                 start: SrcPos {
-                    line: 51,
+                    line: 52,
                     col: 10,
-                    idx: 941,
+                    idx: 958,
                 },
                 end: SrcPos {
-                    line: 51,
+                    line: 52,
                     col: 18,
-                    idx: 949,
+                    idx: 966,
                 },
             },
         },
@@ -4225,14 +4371,14 @@ Ok(
             origin: "<>",
             span: Span {
                 start: SrcPos {
-                    line: 51,
+                    line: 52,
                     col: 19,
-                    idx: 950,
+                    idx: 967,
                 },
                 end: SrcPos {
-                    line: 51,
+                    line: 52,
                     col: 21,
-                    idx: 952,
+                    idx: 969,
                 },
             },
         },
@@ -4243,14 +4389,14 @@ Ok(
             origin: "x",
             span: Span {
                 start: SrcPos {
-                    line: 51,
+                    line: 52,
                     col: 22,
-                    idx: 953,
+                    idx: 970,
                 },
                 end: SrcPos {
-                    line: 51,
+                    line: 52,
                     col: 23,
-                    idx: 954,
+                    idx: 971,
                 },
             },
         },
@@ -4259,14 +4405,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 51,
+                    line: 52,
                     col: 23,
-                    idx: 954,
+                    idx: 971,
                 },
                 end: SrcPos {
-                    line: 51,
+                    line: 52,
                     col: 24,
-                    idx: 955,
+                    idx: 972,
                 },
             },
         },
@@ -4275,14 +4421,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 52,
+                    line: 53,
                     col: 0,
-                    idx: 955,
+                    idx: 972,
                 },
                 end: SrcPos {
-                    line: 52,
+                    line: 53,
                     col: 1,
-                    idx: 956,
+                    idx: 973,
                 },
             },
         },
@@ -4291,30 +4437,14 @@ Ok(
             origin: "end",
             span: Span {
                 start: SrcPos {
-                    line: 52,
+                    line: 53,
                     col: 1,
-                    idx: 956,
+                    idx: 973,
                 },
                 end: SrcPos {
-                    line: 52,
+                    line: 53,
                     col: 4,
-                    idx: 959,
-                },
-            },
-        },
-        Token {
-            kind: NewLine,
-            origin: "\n",
-            span: Span {
-                start: SrcPos {
-                    line: 53,
-                    col: 0,
-                    idx: 959,
-                },
-                end: SrcPos {
-                    line: 53,
-                    col: 1,
-                    idx: 960,
+                    idx: 976,
                 },
             },
         },
@@ -4325,12 +4455,28 @@ Ok(
                 start: SrcPos {
                     line: 54,
                     col: 0,
-                    idx: 960,
+                    idx: 976,
                 },
                 end: SrcPos {
                     line: 54,
                     col: 1,
-                    idx: 961,
+                    idx: 977,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 55,
+                    col: 0,
+                    idx: 977,
+                },
+                end: SrcPos {
+                    line: 55,
+                    col: 1,
+                    idx: 978,
                 },
             },
         },
@@ -4341,14 +4487,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 54,
+                    line: 55,
                     col: 1,
-                    idx: 961,
+                    idx: 978,
                 },
                 end: SrcPos {
-                    line: 54,
+                    line: 55,
                     col: 5,
-                    idx: 965,
+                    idx: 982,
                 },
             },
         },
@@ -4357,14 +4503,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 54,
+                    line: 55,
                     col: 5,
-                    idx: 965,
+                    idx: 982,
                 },
                 end: SrcPos {
-                    line: 54,
+                    line: 55,
                     col: 6,
-                    idx: 966,
+                    idx: 983,
                 },
             },
         },
@@ -4375,14 +4521,14 @@ Ok(
             origin: "\"for_without_yield: \"",
             span: Span {
                 start: SrcPos {
-                    line: 54,
+                    line: 55,
                     col: 6,
-                    idx: 966,
+                    idx: 983,
                 },
                 end: SrcPos {
-                    line: 54,
+                    line: 55,
                     col: 27,
-                    idx: 987,
+                    idx: 1004,
                 },
             },
         },
@@ -4391,14 +4537,14 @@ Ok(
             origin: "<>",
             span: Span {
                 start: SrcPos {
-                    line: 54,
+                    line: 55,
                     col: 28,
-                    idx: 988,
+                    idx: 1005,
                 },
                 end: SrcPos {
-                    line: 54,
+                    line: 55,
                     col: 30,
-                    idx: 990,
+                    idx: 1007,
                 },
             },
         },
@@ -4409,14 +4555,14 @@ Ok(
             origin: "for_without_yield",
             span: Span {
                 start: SrcPos {
-                    line: 54,
+                    line: 55,
                     col: 31,
-                    idx: 991,
+                    idx: 1008,
                 },
                 end: SrcPos {
-                    line: 54,
+                    line: 55,
                     col: 48,
-                    idx: 1008,
+                    idx: 1025,
                 },
             },
         },
@@ -4425,30 +4571,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 54,
+                    line: 55,
                     col: 48,
-                    idx: 1008,
+                    idx: 1025,
                 },
                 end: SrcPos {
-                    line: 54,
+                    line: 55,
                     col: 49,
-                    idx: 1009,
-                },
-            },
-        },
-        Token {
-            kind: NewLine,
-            origin: "\n",
-            span: Span {
-                start: SrcPos {
-                    line: 55,
-                    col: 0,
-                    idx: 1009,
-                },
-                end: SrcPos {
-                    line: 55,
-                    col: 1,
-                    idx: 1010,
+                    idx: 1026,
                 },
             },
         },
@@ -4459,12 +4589,28 @@ Ok(
                 start: SrcPos {
                     line: 56,
                     col: 0,
-                    idx: 1010,
+                    idx: 1026,
                 },
                 end: SrcPos {
                     line: 56,
                     col: 1,
-                    idx: 1011,
+                    idx: 1027,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 57,
+                    col: 0,
+                    idx: 1027,
+                },
+                end: SrcPos {
+                    line: 57,
+                    col: 1,
+                    idx: 1028,
                 },
             },
         },
@@ -4473,14 +4619,14 @@ Ok(
             origin: "fun",
             span: Span {
                 start: SrcPos {
-                    line: 56,
+                    line: 57,
                     col: 1,
-                    idx: 1011,
+                    idx: 1028,
                 },
                 end: SrcPos {
-                    line: 56,
+                    line: 57,
                     col: 4,
-                    idx: 1014,
+                    idx: 1031,
                 },
             },
         },
@@ -4491,14 +4637,14 @@ Ok(
             origin: "find",
             span: Span {
                 start: SrcPos {
-                    line: 56,
+                    line: 57,
                     col: 5,
-                    idx: 1015,
+                    idx: 1032,
                 },
                 end: SrcPos {
-                    line: 56,
+                    line: 57,
                     col: 9,
-                    idx: 1019,
+                    idx: 1036,
                 },
             },
         },
@@ -4507,14 +4653,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 56,
+                    line: 57,
                     col: 9,
-                    idx: 1019,
+                    idx: 1036,
                 },
                 end: SrcPos {
-                    line: 56,
+                    line: 57,
                     col: 10,
-                    idx: 1020,
+                    idx: 1037,
                 },
             },
         },
@@ -4523,14 +4669,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 56,
+                    line: 57,
                     col: 10,
-                    idx: 1020,
+                    idx: 1037,
                 },
                 end: SrcPos {
-                    line: 56,
+                    line: 57,
                     col: 11,
-                    idx: 1021,
+                    idx: 1038,
                 },
             },
         },
@@ -4539,14 +4685,14 @@ Ok(
             origin: ":",
             span: Span {
                 start: SrcPos {
-                    line: 56,
+                    line: 57,
                     col: 11,
-                    idx: 1021,
+                    idx: 1038,
                 },
                 end: SrcPos {
-                    line: 56,
+                    line: 57,
                     col: 12,
-                    idx: 1022,
+                    idx: 1039,
                 },
             },
         },
@@ -4557,14 +4703,14 @@ Ok(
             origin: "Int",
             span: Span {
                 start: SrcPos {
-                    line: 56,
+                    line: 57,
                     col: 13,
-                    idx: 1023,
+                    idx: 1040,
                 },
                 end: SrcPos {
-                    line: 56,
+                    line: 57,
                     col: 16,
-                    idx: 1026,
+                    idx: 1043,
                 },
             },
         },
@@ -4573,14 +4719,14 @@ Ok(
             origin: "=",
             span: Span {
                 start: SrcPos {
-                    line: 56,
+                    line: 57,
                     col: 17,
-                    idx: 1027,
+                    idx: 1044,
                 },
                 end: SrcPos {
-                    line: 56,
+                    line: 57,
                     col: 18,
-                    idx: 1028,
+                    idx: 1045,
                 },
             },
         },
@@ -4589,14 +4735,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 57,
+                    line: 58,
                     col: 0,
-                    idx: 1028,
+                    idx: 1045,
                 },
                 end: SrcPos {
-                    line: 57,
+                    line: 58,
                     col: 1,
-                    idx: 1029,
+                    idx: 1046,
                 },
             },
         },
@@ -4605,14 +4751,14 @@ Ok(
             origin: "for",
             span: Span {
                 start: SrcPos {
-                    line: 57,
+                    line: 58,
                     col: 5,
-                    idx: 1033,
+                    idx: 1050,
                 },
                 end: SrcPos {
-                    line: 57,
+                    line: 58,
                     col: 8,
-                    idx: 1036,
+                    idx: 1053,
                 },
             },
         },
@@ -4623,14 +4769,14 @@ Ok(
             origin: "x",
             span: Span {
                 start: SrcPos {
-                    line: 57,
+                    line: 58,
                     col: 9,
-                    idx: 1037,
+                    idx: 1054,
                 },
                 end: SrcPos {
-                    line: 57,
+                    line: 58,
                     col: 10,
-                    idx: 1038,
+                    idx: 1055,
                 },
             },
         },
@@ -4639,14 +4785,14 @@ Ok(
             origin: "in",
             span: Span {
                 start: SrcPos {
-                    line: 57,
+                    line: 58,
                     col: 11,
-                    idx: 1039,
+                    idx: 1056,
                 },
                 end: SrcPos {
-                    line: 57,
+                    line: 58,
                     col: 13,
-                    idx: 1041,
+                    idx: 1058,
                 },
             },
         },
@@ -4657,14 +4803,14 @@ Ok(
             origin: "0",
             span: Span {
                 start: SrcPos {
-                    line: 57,
+                    line: 58,
                     col: 14,
-                    idx: 1042,
+                    idx: 1059,
                 },
                 end: SrcPos {
-                    line: 57,
+                    line: 58,
                     col: 15,
-                    idx: 1043,
+                    idx: 1060,
                 },
             },
         },
@@ -4673,14 +4819,14 @@ Ok(
             origin: "..<",
             span: Span {
                 start: SrcPos {
-                    line: 57,
+                    line: 58,
                     col: 15,
-                    idx: 1043,
+                    idx: 1060,
                 },
                 end: SrcPos {
-                    line: 57,
+                    line: 58,
                     col: 18,
-                    idx: 1046,
+                    idx: 1063,
                 },
             },
         },
@@ -4691,14 +4837,14 @@ Ok(
             origin: "10",
             span: Span {
                 start: SrcPos {
-                    line: 57,
+                    line: 58,
                     col: 18,
-                    idx: 1046,
+                    idx: 1063,
                 },
                 end: SrcPos {
-                    line: 57,
+                    line: 58,
                     col: 20,
-                    idx: 1048,
+                    idx: 1065,
                 },
             },
         },
@@ -4707,14 +4853,14 @@ Ok(
             origin: "do",
             span: Span {
                 start: SrcPos {
-                    line: 57,
+                    line: 58,
                     col: 21,
-                    idx: 1049,
+                    idx: 1066,
                 },
                 end: SrcPos {
-                    line: 57,
+                    line: 58,
                     col: 23,
-                    idx: 1051,
+                    idx: 1068,
                 },
             },
         },
@@ -4723,14 +4869,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 58,
+                    line: 59,
                     col: 0,
-                    idx: 1051,
+                    idx: 1068,
                 },
                 end: SrcPos {
-                    line: 58,
+                    line: 59,
                     col: 1,
-                    idx: 1052,
+                    idx: 1069,
                 },
             },
         },
@@ -4739,14 +4885,14 @@ Ok(
             origin: "if",
             span: Span {
                 start: SrcPos {
-                    line: 58,
+                    line: 59,
                     col: 9,
-                    idx: 1060,
+                    idx: 1077,
                 },
                 end: SrcPos {
-                    line: 58,
+                    line: 59,
                     col: 11,
-                    idx: 1062,
+                    idx: 1079,
                 },
             },
         },
@@ -4757,14 +4903,14 @@ Ok(
             origin: "x",
             span: Span {
                 start: SrcPos {
-                    line: 58,
+                    line: 59,
                     col: 12,
-                    idx: 1063,
+                    idx: 1080,
                 },
                 end: SrcPos {
-                    line: 58,
+                    line: 59,
                     col: 13,
-                    idx: 1064,
+                    idx: 1081,
                 },
             },
         },
@@ -4773,14 +4919,14 @@ Ok(
             origin: "==",
             span: Span {
                 start: SrcPos {
-                    line: 58,
+                    line: 59,
                     col: 14,
-                    idx: 1065,
+                    idx: 1082,
                 },
                 end: SrcPos {
-                    line: 58,
+                    line: 59,
                     col: 16,
-                    idx: 1067,
+                    idx: 1084,
                 },
             },
         },
@@ -4791,14 +4937,14 @@ Ok(
             origin: "3",
             span: Span {
                 start: SrcPos {
-                    line: 58,
+                    line: 59,
                     col: 17,
-                    idx: 1068,
+                    idx: 1085,
                 },
                 end: SrcPos {
-                    line: 58,
+                    line: 59,
                     col: 18,
-                    idx: 1069,
+                    idx: 1086,
                 },
             },
         },
@@ -4807,14 +4953,14 @@ Ok(
             origin: "do",
             span: Span {
                 start: SrcPos {
-                    line: 58,
+                    line: 59,
                     col: 19,
-                    idx: 1070,
+                    idx: 1087,
                 },
                 end: SrcPos {
-                    line: 58,
+                    line: 59,
                     col: 21,
-                    idx: 1072,
+                    idx: 1089,
                 },
             },
         },
@@ -4823,14 +4969,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 59,
+                    line: 60,
                     col: 0,
-                    idx: 1072,
+                    idx: 1089,
                 },
                 end: SrcPos {
-                    line: 59,
+                    line: 60,
                     col: 1,
-                    idx: 1073,
+                    idx: 1090,
                 },
             },
         },
@@ -4839,14 +4985,14 @@ Ok(
             origin: "return",
             span: Span {
                 start: SrcPos {
-                    line: 59,
+                    line: 60,
                     col: 13,
-                    idx: 1085,
+                    idx: 1102,
                 },
                 end: SrcPos {
-                    line: 59,
+                    line: 60,
                     col: 19,
-                    idx: 1091,
+                    idx: 1108,
                 },
             },
         },
@@ -4857,46 +5003,14 @@ Ok(
             origin: "x",
             span: Span {
                 start: SrcPos {
-                    line: 59,
+                    line: 60,
                     col: 20,
-                    idx: 1092,
+                    idx: 1109,
                 },
                 end: SrcPos {
-                    line: 59,
+                    line: 60,
                     col: 21,
-                    idx: 1093,
-                },
-            },
-        },
-        Token {
-            kind: NewLine,
-            origin: "\n",
-            span: Span {
-                start: SrcPos {
-                    line: 60,
-                    col: 0,
-                    idx: 1093,
-                },
-                end: SrcPos {
-                    line: 60,
-                    col: 1,
-                    idx: 1094,
-                },
-            },
-        },
-        Token {
-            kind: End,
-            origin: "end",
-            span: Span {
-                start: SrcPos {
-                    line: 60,
-                    col: 9,
-                    idx: 1102,
-                },
-                end: SrcPos {
-                    line: 60,
-                    col: 12,
-                    idx: 1105,
+                    idx: 1110,
                 },
             },
         },
@@ -4907,44 +5021,60 @@ Ok(
                 start: SrcPos {
                     line: 61,
                     col: 0,
-                    idx: 1105,
-                },
-                end: SrcPos {
-                    line: 61,
-                    col: 1,
-                    idx: 1106,
-                },
-            },
-        },
-        Token {
-            kind: End,
-            origin: "end",
-            span: Span {
-                start: SrcPos {
-                    line: 61,
-                    col: 5,
                     idx: 1110,
                 },
                 end: SrcPos {
                     line: 61,
+                    col: 1,
+                    idx: 1111,
+                },
+            },
+        },
+        Token {
+            kind: End,
+            origin: "end",
+            span: Span {
+                start: SrcPos {
+                    line: 61,
+                    col: 9,
+                    idx: 1119,
+                },
+                end: SrcPos {
+                    line: 61,
+                    col: 12,
+                    idx: 1122,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 62,
+                    col: 0,
+                    idx: 1122,
+                },
+                end: SrcPos {
+                    line: 62,
+                    col: 1,
+                    idx: 1123,
+                },
+            },
+        },
+        Token {
+            kind: End,
+            origin: "end",
+            span: Span {
+                start: SrcPos {
+                    line: 62,
+                    col: 5,
+                    idx: 1127,
+                },
+                end: SrcPos {
+                    line: 62,
                     col: 8,
-                    idx: 1113,
-                },
-            },
-        },
-        Token {
-            kind: NewLine,
-            origin: "\n",
-            span: Span {
-                start: SrcPos {
-                    line: 62,
-                    col: 0,
-                    idx: 1113,
-                },
-                end: SrcPos {
-                    line: 62,
-                    col: 1,
-                    idx: 1114,
+                    idx: 1130,
                 },
             },
         },
@@ -4955,12 +5085,28 @@ Ok(
                 start: SrcPos {
                     line: 63,
                     col: 0,
-                    idx: 1114,
+                    idx: 1130,
                 },
                 end: SrcPos {
                     line: 63,
                     col: 1,
-                    idx: 1115,
+                    idx: 1131,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 64,
+                    col: 0,
+                    idx: 1131,
+                },
+                end: SrcPos {
+                    line: 64,
+                    col: 1,
+                    idx: 1132,
                 },
             },
         },
@@ -4969,14 +5115,14 @@ Ok(
             origin: "return",
             span: Span {
                 start: SrcPos {
-                    line: 63,
+                    line: 64,
                     col: 5,
-                    idx: 1119,
+                    idx: 1136,
                 },
                 end: SrcPos {
-                    line: 63,
+                    line: 64,
                     col: 11,
-                    idx: 1125,
+                    idx: 1142,
                 },
             },
         },
@@ -4987,14 +5133,14 @@ Ok(
             origin: "99",
             span: Span {
                 start: SrcPos {
-                    line: 63,
+                    line: 64,
                     col: 12,
-                    idx: 1126,
+                    idx: 1143,
                 },
                 end: SrcPos {
-                    line: 63,
+                    line: 64,
                     col: 14,
-                    idx: 1128,
+                    idx: 1145,
                 },
             },
         },
@@ -5003,14 +5149,14 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 64,
+                    line: 65,
                     col: 0,
-                    idx: 1128,
+                    idx: 1145,
                 },
                 end: SrcPos {
-                    line: 64,
+                    line: 65,
                     col: 1,
-                    idx: 1129,
+                    idx: 1146,
                 },
             },
         },
@@ -5019,30 +5165,14 @@ Ok(
             origin: "end",
             span: Span {
                 start: SrcPos {
-                    line: 64,
+                    line: 65,
                     col: 1,
-                    idx: 1129,
+                    idx: 1146,
                 },
                 end: SrcPos {
-                    line: 64,
+                    line: 65,
                     col: 4,
-                    idx: 1132,
-                },
-            },
-        },
-        Token {
-            kind: NewLine,
-            origin: "\n",
-            span: Span {
-                start: SrcPos {
-                    line: 65,
-                    col: 0,
-                    idx: 1132,
-                },
-                end: SrcPos {
-                    line: 65,
-                    col: 1,
-                    idx: 1133,
+                    idx: 1149,
                 },
             },
         },
@@ -5053,12 +5183,28 @@ Ok(
                 start: SrcPos {
                     line: 66,
                     col: 0,
-                    idx: 1133,
+                    idx: 1149,
                 },
                 end: SrcPos {
                     line: 66,
                     col: 1,
-                    idx: 1134,
+                    idx: 1150,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 67,
+                    col: 0,
+                    idx: 1150,
+                },
+                end: SrcPos {
+                    line: 67,
+                    col: 1,
+                    idx: 1151,
                 },
             },
         },
@@ -5069,14 +5215,14 @@ Ok(
             origin: "echo",
             span: Span {
                 start: SrcPos {
-                    line: 66,
+                    line: 67,
                     col: 1,
-                    idx: 1134,
+                    idx: 1151,
                 },
                 end: SrcPos {
-                    line: 66,
+                    line: 67,
                     col: 5,
-                    idx: 1138,
+                    idx: 1155,
                 },
             },
         },
@@ -5085,14 +5231,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 66,
+                    line: 67,
                     col: 5,
-                    idx: 1138,
+                    idx: 1155,
                 },
                 end: SrcPos {
-                    line: 66,
+                    line: 67,
                     col: 6,
-                    idx: 1139,
+                    idx: 1156,
                 },
             },
         },
@@ -5103,14 +5249,14 @@ Ok(
             origin: "\"find: \"",
             span: Span {
                 start: SrcPos {
-                    line: 66,
+                    line: 67,
                     col: 6,
-                    idx: 1139,
+                    idx: 1156,
                 },
                 end: SrcPos {
-                    line: 66,
+                    line: 67,
                     col: 14,
-                    idx: 1147,
+                    idx: 1164,
                 },
             },
         },
@@ -5119,14 +5265,14 @@ Ok(
             origin: "<>",
             span: Span {
                 start: SrcPos {
-                    line: 66,
+                    line: 67,
                     col: 15,
-                    idx: 1148,
+                    idx: 1165,
                 },
                 end: SrcPos {
-                    line: 66,
+                    line: 67,
                     col: 17,
-                    idx: 1150,
+                    idx: 1167,
                 },
             },
         },
@@ -5137,14 +5283,14 @@ Ok(
             origin: "find",
             span: Span {
                 start: SrcPos {
-                    line: 66,
+                    line: 67,
                     col: 18,
-                    idx: 1151,
+                    idx: 1168,
                 },
                 end: SrcPos {
-                    line: 66,
+                    line: 67,
                     col: 22,
-                    idx: 1155,
+                    idx: 1172,
                 },
             },
         },
@@ -5153,14 +5299,14 @@ Ok(
             origin: "(",
             span: Span {
                 start: SrcPos {
-                    line: 66,
+                    line: 67,
                     col: 22,
-                    idx: 1155,
+                    idx: 1172,
                 },
                 end: SrcPos {
-                    line: 66,
+                    line: 67,
                     col: 23,
-                    idx: 1156,
+                    idx: 1173,
                 },
             },
         },
@@ -5169,14 +5315,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 66,
+                    line: 67,
                     col: 23,
-                    idx: 1156,
+                    idx: 1173,
                 },
                 end: SrcPos {
-                    line: 66,
+                    line: 67,
                     col: 24,
-                    idx: 1157,
+                    idx: 1174,
                 },
             },
         },
@@ -5185,14 +5331,14 @@ Ok(
             origin: ")",
             span: Span {
                 start: SrcPos {
-                    line: 66,
+                    line: 67,
                     col: 24,
-                    idx: 1157,
+                    idx: 1174,
                 },
                 end: SrcPos {
-                    line: 66,
+                    line: 67,
                     col: 25,
-                    idx: 1158,
+                    idx: 1175,
                 },
             },
         },
@@ -5201,14 +5347,62 @@ Ok(
             origin: "\n",
             span: Span {
                 start: SrcPos {
-                    line: 67,
+                    line: 68,
                     col: 0,
-                    idx: 1158,
+                    idx: 1175,
                 },
                 end: SrcPos {
-                    line: 67,
+                    line: 68,
                     col: 1,
-                    idx: 1159,
+                    idx: 1176,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 69,
+                    col: 0,
+                    idx: 1176,
+                },
+                end: SrcPos {
+                    line: 69,
+                    col: 1,
+                    idx: 1177,
+                },
+            },
+        },
+        Token {
+            kind: End,
+            origin: "end",
+            span: Span {
+                start: SrcPos {
+                    line: 69,
+                    col: 1,
+                    idx: 1177,
+                },
+                end: SrcPos {
+                    line: 69,
+                    col: 4,
+                    idx: 1180,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 70,
+                    col: 0,
+                    idx: 1180,
+                },
+                end: SrcPos {
+                    line: 70,
+                    col: 1,
+                    idx: 1181,
                 },
             },
         },
@@ -5217,14 +5411,14 @@ Ok(
             origin: "EOF",
             span: Span {
                 start: SrcPos {
-                    line: 67,
+                    line: 70,
                     col: 1,
-                    idx: 1159,
+                    idx: 1181,
                 },
                 end: SrcPos {
-                    line: 67,
+                    line: 70,
                     col: 1,
-                    idx: 1159,
+                    idx: 1181,
                 },
             },
         },

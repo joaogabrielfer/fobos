@@ -1,5 +1,8 @@
+fun main(): () =
 fun subtract(lhs: Int, rhs: Int): Int =
     return lhs - rhs
 end
 
 subtract(left = 10, rhs = 3)
+
+end

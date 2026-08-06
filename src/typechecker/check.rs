@@ -1,8 +1,11 @@
 use crate::{
-    ast::{BinaryOp, Block, CallArgument, Expr, ExprKind, Program, Stmt, TypeAnnotation, UnaryOp},
+    ast::{
+        BinaryOp, Block, CallArgument, ConstDecl, Expr, ExprKind, FunctionDecl, Item, Program,
+        Stmt, TypeAnnotation, UnaryOp,
+    },
     errors::{ArgumentError, ArgumentErrorKind, TypeError, TypeErrorKind},
-    interpreter::values::normalize_arguments,
-    module::{ExportedSymbol, ModuleInterface, ResolvedImport},
+    interpreter::values::{RangeValue, Value, normalize_arguments},
+    module::{ExportedSymbol, ExportedSymbolKind, ModuleInterface, ResolvedImport},
     source::Span,
     typechecker::{
         CheckedModule, CheckedProgram, TypeChecker, TypeResult,
@@ -70,55 +73,62 @@ impl TypeChecker {
         self.module_interfaces = module_interfaces.clone();
         self.install_imports(imports)?;
 
-        for stmt in &program.statements {
-            self.declare_function(stmt)?;
-        }
-
-        for stmt in &program.statements {
-            match stmt {
-                Stmt::FunDecl { .. } => {
-                    self.check_function_body(stmt)?;
-                }
-
-                _ => {
-                    let check = self.check_stmt(stmt)?;
-
-                    if check.returned_type.is_some() {
-                        return Err(
-                            self.error_at(stmt.span(), TypeErrorKind::ReturnOutsideFunction)
-                        );
-                    }
-
-                    if check.yielded_type.is_some() {
-                        return Err(self.error_at(stmt.span(), TypeErrorKind::YieldOutsideHandler));
-                    }
-                }
+        for item in &program.items {
+            match item {
+                Item::Function(decl) => self.declare_function(decl)?,
+                Item::Const(decl) => self.declare_const(decl)?,
+                Item::Import(_) => {}
             }
         }
 
+        for item in &program.items {
+            match item {
+                Item::Const(decl) => self.check_const_decl(decl)?,
+                Item::Function(decl) => self.check_function_body(decl)?,
+                Item::Import(_) => {}
+            }
+        }
+
+        let constants = self.evaluate_constants(&program)?;
+
         let mut exports = std::collections::HashMap::new();
-        for statement in &program.statements {
-            let (public, name, span) = match statement {
-                Stmt::Bind {
-                    public, name, span, ..
+        for item in &program.items {
+            match item {
+                Item::Function(decl) if decl.public => {
+                    let ty = self
+                        .env
+                        .get(&decl.name)
+                        .map_err(|kind| self.error_at(decl.span, kind))?;
+                    exports.insert(
+                        decl.name.clone(),
+                        ExportedSymbol {
+                            ty,
+                            kind: ExportedSymbolKind::Function,
+                        },
+                    );
                 }
-                | Stmt::FunDecl {
-                    public, name, span, ..
-                } => (*public, name, *span),
-                _ => continue,
-            };
-            if public {
-                let ty = self
-                    .env
-                    .get(name)
-                    .map_err(|kind| self.error_at(span, kind))?;
-                exports.insert(name.clone(), ExportedSymbol { ty });
+                Item::Const(decl) if decl.public => {
+                    let ty = decl.type_annotation.resolve_type_expr();
+                    let value = constants
+                        .get(&decl.name)
+                        .expect("every checked constant is evaluated")
+                        .clone();
+                    exports.insert(
+                        decl.name.clone(),
+                        ExportedSymbol {
+                            ty,
+                            kind: ExportedSymbolKind::Const { value },
+                        },
+                    );
+                }
+                _ => {}
             }
         }
 
         Ok(CheckedModule {
             program: CheckedProgram { program },
             interface: ModuleInterface { exports },
+            constants,
         })
     }
 
@@ -160,6 +170,7 @@ impl TypeChecker {
                             module: module.clone(),
                             export_name: export_name.clone(),
                             ty: export.ty.clone(),
+                            kind: export.kind.clone(),
                         },
                     );
                 }
@@ -265,10 +276,463 @@ impl TypeChecker {
                     )),
                 }
             }
-            Stmt::FunDecl { .. } => Ok(StmtCheck::normal(Type::Unit)),
-            Stmt::ImportDecl { .. } => Ok(StmtCheck::normal(Type::Unit)),
+            Stmt::Function(decl) => {
+                self.declare_function(decl)?;
+                self.check_function_body(decl)?;
+                Ok(StmtCheck::normal(Type::Unit))
+            }
         }
     }
+
+    fn declare_const(&mut self, decl: &ConstDecl) -> TypeResult<()> {
+        if self.env.get_current(&decl.name).is_some() {
+            return Err(self.error_at(decl.span, TypeErrorKind::NameCollision(decl.name.clone())));
+        }
+        self.env
+            .define_const(decl.name.clone(), decl.type_annotation.resolve_type_expr());
+        Ok(())
+    }
+
+    fn check_const_decl(&mut self, decl: &ConstDecl) -> TypeResult<()> {
+        self.validate_const_expr(&decl.value)?;
+        let found = self.infer_expr(&decl.value)?;
+        let expected = decl.type_annotation.resolve_type_expr();
+        if TypeChecker::types_compatible(&expected, &found) {
+            Ok(())
+        } else {
+            Err(self.error_at(
+                decl.span,
+                TypeErrorKind::MismatchedType {
+                    expected: expected.to_string(),
+                    found: found.to_string(),
+                },
+            ))
+        }
+    }
+
+    fn validate_const_expr(&self, expr: &Expr) -> TypeResult<()> {
+        match &expr.kind {
+            ExprKind::Int(_)
+            | ExprKind::Float(_)
+            | ExprKind::String(_)
+            | ExprKind::Bool(_)
+            | ExprKind::Unit => Ok(()),
+            ExprKind::Ident(name) => match self
+                .env
+                .get_binding(name)
+                .map_err(|kind| self.error_at(expr.span, kind))?
+            {
+                TypeBinding::Const(_) => Ok(()),
+                TypeBinding::ImportedMember {
+                    kind: ExportedSymbolKind::Const { .. },
+                    ..
+                } => Ok(()),
+                _ => Err(self.error_at(expr.span, TypeErrorKind::NotAConstant(name.clone()))),
+            },
+            ExprKind::Path(segments) => {
+                let Some((module_name, member_path)) = segments.split_first() else {
+                    unreachable!("paths always have at least two segments")
+                };
+                let TypeBinding::Module(module) = self
+                    .env
+                    .get_binding(module_name)
+                    .map_err(|kind| self.error_at(expr.span, kind))?
+                else {
+                    return Err(
+                        self.error_at(expr.span, TypeErrorKind::NotAConstant(segments.join("::")))
+                    );
+                };
+                let [member] = member_path else {
+                    return Err(
+                        self.error_at(expr.span, TypeErrorKind::NotAConstant(segments.join("::")))
+                    );
+                };
+                let interface = self
+                    .module_interfaces
+                    .get(&module)
+                    .expect("module bindings have an interface");
+                match interface.exports.get(member) {
+                    Some(ExportedSymbol {
+                        kind: ExportedSymbolKind::Const { .. },
+                        ..
+                    }) => Ok(()),
+                    Some(_) => {
+                        Err(self
+                            .error_at(expr.span, TypeErrorKind::NotAConstant(segments.join("::"))))
+                    }
+                    None => Err(self.error_at(
+                        expr.span,
+                        TypeErrorKind::UnknownModuleExport {
+                            module: module.to_string(),
+                            member: member.clone(),
+                        },
+                    )),
+                }
+            }
+            ExprKind::Tuple(items) | ExprKind::Array(items) => {
+                for item in items {
+                    self.validate_const_expr(item)?;
+                }
+                Ok(())
+            }
+            ExprKind::Unary { operand, .. } => self.validate_const_expr(operand),
+            ExprKind::Binary { lhs, rhs, .. } => {
+                self.validate_const_expr(lhs)?;
+                self.validate_const_expr(rhs)
+            }
+            ExprKind::If {
+                condition,
+                then_branch,
+                else_branch,
+            } => {
+                self.validate_const_expr(condition)?;
+                self.validate_const_expr(then_branch)?;
+                if let Some(else_branch) = else_branch {
+                    self.validate_const_expr(else_branch)?;
+                }
+                Ok(())
+            }
+            ExprKind::Index { target, index } => {
+                self.validate_const_expr(target)?;
+                self.validate_const_expr(index)
+            }
+            ExprKind::Block(_)
+            | ExprKind::Call { .. }
+            | ExprKind::While { .. }
+            | ExprKind::For { .. }
+            | ExprKind::Lambda { .. } => Err(self.error_at(
+                expr.span,
+                TypeErrorKind::ConstExpressionNotAllowed(expr.kind.to_string()),
+            )),
+        }
+    }
+
+    fn evaluate_constants(
+        &self,
+        program: &Program,
+    ) -> TypeResult<std::collections::HashMap<String, Value>> {
+        let names = program
+            .items
+            .iter()
+            .filter_map(|item| match item {
+                Item::Const(decl) => Some(decl.name.as_str()),
+                _ => None,
+            })
+            .collect::<Vec<_>>();
+        let declarations = program
+            .items
+            .iter()
+            .filter_map(|item| match item {
+                Item::Const(decl) => Some((decl.name.clone(), decl)),
+                _ => None,
+            })
+            .collect::<std::collections::HashMap<_, _>>();
+        let mut values = std::collections::HashMap::new();
+        let mut visiting = Vec::new();
+        for name in names {
+            self.evaluate_const_by_name(name, &declarations, &mut values, &mut visiting)?;
+        }
+        Ok(values)
+    }
+
+    fn evaluate_const_by_name(
+        &self,
+        name: &str,
+        declarations: &std::collections::HashMap<String, &ConstDecl>,
+        values: &mut std::collections::HashMap<String, Value>,
+        visiting: &mut Vec<String>,
+    ) -> TypeResult<Value> {
+        if let Some(value) = values.get(name) {
+            return Ok(value.clone());
+        }
+        if let Some(index) = visiting.iter().position(|item| item == name) {
+            let mut cycle = visiting[index..].to_vec();
+            cycle.push(name.to_string());
+            let span = declarations
+                .get(name)
+                .expect("the cycle consists of local constants")
+                .span;
+            return Err(self.error_at(span, TypeErrorKind::ConstantCycle(cycle.join(" -> "))));
+        }
+        let decl = declarations
+            .get(name)
+            .expect("only declared constants are evaluated");
+        visiting.push(name.to_string());
+        let value = self.evaluate_const_expr(&decl.value, declarations, values, visiting);
+        visiting.pop();
+        let value = value?;
+        values.insert(name.to_string(), value.clone());
+        Ok(value)
+    }
+
+    fn evaluate_const_expr(
+        &self,
+        expr: &Expr,
+        declarations: &std::collections::HashMap<String, &ConstDecl>,
+        values: &mut std::collections::HashMap<String, Value>,
+        visiting: &mut Vec<String>,
+    ) -> TypeResult<Value> {
+        let invalid =
+            |message: String| self.error_at(expr.span, TypeErrorKind::ConstantEvaluation(message));
+        match &expr.kind {
+            ExprKind::Int(value) => Ok(Value::Int(*value)),
+            ExprKind::Float(value) => Ok(Value::Float(*value)),
+            ExprKind::String(value) => Ok(Value::String(value.clone())),
+            ExprKind::Bool(value) => Ok(Value::Bool(*value)),
+            ExprKind::Unit => Ok(Value::Unit),
+            ExprKind::Ident(name) => {
+                if declarations.contains_key(name) {
+                    self.evaluate_const_by_name(name, declarations, values, visiting)
+                } else {
+                    match self
+                        .env
+                        .get_binding(name)
+                        .map_err(|kind| self.error_at(expr.span, kind))?
+                    {
+                        TypeBinding::ImportedMember {
+                            kind: ExportedSymbolKind::Const { value },
+                            ..
+                        } => Ok(value),
+                        _ => {
+                            Err(self.error_at(expr.span, TypeErrorKind::NotAConstant(name.clone())))
+                        }
+                    }
+                }
+            }
+            ExprKind::Path(segments) => {
+                let (module_name, member_path) =
+                    segments.split_first().expect("paths are non-empty");
+                let TypeBinding::Module(module) = self
+                    .env
+                    .get_binding(module_name)
+                    .map_err(|kind| self.error_at(expr.span, kind))?
+                else {
+                    return Err(
+                        self.error_at(expr.span, TypeErrorKind::NotAConstant(segments.join("::")))
+                    );
+                };
+                let [member] = member_path else {
+                    return Err(
+                        self.error_at(expr.span, TypeErrorKind::NotAConstant(segments.join("::")))
+                    );
+                };
+                let interface = self
+                    .module_interfaces
+                    .get(&module)
+                    .expect("module bindings have an interface");
+                match interface.exports.get(member) {
+                    Some(ExportedSymbol {
+                        kind: ExportedSymbolKind::Const { value },
+                        ..
+                    }) => Ok(value.clone()),
+                    _ => {
+                        Err(self
+                            .error_at(expr.span, TypeErrorKind::NotAConstant(segments.join("::"))))
+                    }
+                }
+            }
+            ExprKind::Tuple(items) => items
+                .iter()
+                .map(|item| self.evaluate_const_expr(item, declarations, values, visiting))
+                .collect::<TypeResult<Vec<_>>>()
+                .map(Value::Tuple),
+            ExprKind::Array(items) => items
+                .iter()
+                .map(|item| self.evaluate_const_expr(item, declarations, values, visiting))
+                .collect::<TypeResult<Vec<_>>>()
+                .map(Value::Array),
+            ExprKind::Unary { op, operand } => {
+                let value = self.evaluate_const_expr(operand, declarations, values, visiting)?;
+                match (op, value) {
+                    (UnaryOp::Negate, Value::Int(value)) => Ok(Value::Int(-value)),
+                    (UnaryOp::Negate, Value::Float(value)) => Ok(Value::Float(-value)),
+                    (UnaryOp::Not, Value::Bool(value)) => Ok(Value::Bool(!value)),
+                    (_, value) => Err(invalid(format!(
+                        "invalid unary operation on {}",
+                        value.type_name()
+                    ))),
+                }
+            }
+            ExprKind::Binary { lhs, op, rhs } => {
+                let lhs = self.evaluate_const_expr(lhs, declarations, values, visiting)?;
+                let rhs = self.evaluate_const_expr(rhs, declarations, values, visiting)?;
+                self.evaluate_const_binary(*op, lhs, rhs, expr.span)
+            }
+            ExprKind::If {
+                condition,
+                then_branch,
+                else_branch,
+            } => {
+                let condition =
+                    self.evaluate_const_expr(condition, declarations, values, visiting)?;
+                match condition {
+                    Value::Bool(true) => {
+                        self.evaluate_const_expr(then_branch, declarations, values, visiting)
+                    }
+                    Value::Bool(false) => match else_branch {
+                        Some(branch) => {
+                            self.evaluate_const_expr(branch, declarations, values, visiting)
+                        }
+                        None => Ok(Value::Unit),
+                    },
+                    value => Err(invalid(format!(
+                        "if condition must be Bool, found {}",
+                        value.type_name()
+                    ))),
+                }
+            }
+            ExprKind::Index { target, index } => {
+                let target = self.evaluate_const_expr(target, declarations, values, visiting)?;
+                let index = self.evaluate_const_expr(index, declarations, values, visiting)?;
+                match (target, index) {
+                    (Value::Array(items), Value::Int(index)) if index >= 0 => items
+                        .get(index as usize)
+                        .cloned()
+                        .ok_or_else(|| invalid(format!("index {index} is out of bounds"))),
+                    (Value::Array(_), Value::Int(index)) => {
+                        Err(invalid(format!("index {index} is out of bounds")))
+                    }
+                    (Value::Array(_), value) => Err(invalid(format!(
+                        "array index must be Int, found {}",
+                        value.type_name()
+                    ))),
+                    (value, _) => Err(invalid(format!("{} is not indexable", value.type_name()))),
+                }
+            }
+            _ => Err(self.error_at(
+                expr.span,
+                TypeErrorKind::ConstExpressionNotAllowed(expr.kind.to_string()),
+            )),
+        }
+    }
+
+    fn evaluate_const_binary(
+        &self,
+        op: BinaryOp,
+        lhs: Value,
+        rhs: Value,
+        span: Span,
+    ) -> TypeResult<Value> {
+        let invalid =
+            |message: String| self.error_at(span, TypeErrorKind::ConstantEvaluation(message));
+        match op {
+            BinaryOp::Add => match (lhs, rhs) {
+                (Value::Int(a), Value::Int(b)) => a
+                    .checked_add(b)
+                    .map(Value::Int)
+                    .ok_or_else(|| invalid("integer overflow".to_string())),
+                (Value::Float(a), Value::Float(b)) => Ok(Value::Float(a + b)),
+                (a, b) => Err(invalid(format!(
+                    "cannot add {} and {}",
+                    a.type_name(),
+                    b.type_name()
+                ))),
+            },
+            BinaryOp::Sub => match (lhs, rhs) {
+                (Value::Int(a), Value::Int(b)) => a
+                    .checked_sub(b)
+                    .map(Value::Int)
+                    .ok_or_else(|| invalid("integer overflow".to_string())),
+                (Value::Float(a), Value::Float(b)) => Ok(Value::Float(a - b)),
+                (a, b) => Err(invalid(format!(
+                    "cannot subtract {} and {}",
+                    a.type_name(),
+                    b.type_name()
+                ))),
+            },
+            BinaryOp::Mul => match (lhs, rhs) {
+                (Value::Int(a), Value::Int(b)) => a
+                    .checked_mul(b)
+                    .map(Value::Int)
+                    .ok_or_else(|| invalid("integer overflow".to_string())),
+                (Value::Float(a), Value::Float(b)) => Ok(Value::Float(a * b)),
+                (a, b) => Err(invalid(format!(
+                    "cannot multiply {} and {}",
+                    a.type_name(),
+                    b.type_name()
+                ))),
+            },
+            BinaryOp::Div => match (lhs, rhs) {
+                (Value::Int(_), Value::Int(0)) => Err(invalid("division by zero".to_string())),
+                (Value::Int(a), Value::Int(b)) => a
+                    .checked_div(b)
+                    .map(Value::Int)
+                    .ok_or_else(|| invalid("integer overflow".to_string())),
+                (Value::Float(a), Value::Float(b)) => Ok(Value::Float(a / b)),
+                (a, b) => Err(invalid(format!(
+                    "cannot divide {} and {}",
+                    a.type_name(),
+                    b.type_name()
+                ))),
+            },
+            BinaryOp::Eq => Ok(Value::Bool(lhs == rhs)),
+            BinaryOp::NotEq => Ok(Value::Bool(lhs != rhs)),
+            BinaryOp::Greater => match (lhs, rhs) {
+                (Value::Int(a), Value::Int(b)) => Ok(Value::Bool(a > b)),
+                (Value::Float(a), Value::Float(b)) => Ok(Value::Bool(a > b)),
+                (a, b) => Err(invalid(format!(
+                    "cannot compare {} and {}",
+                    a.type_name(),
+                    b.type_name()
+                ))),
+            },
+            BinaryOp::GreaterEq => match (lhs, rhs) {
+                (Value::Int(a), Value::Int(b)) => Ok(Value::Bool(a >= b)),
+                (Value::Float(a), Value::Float(b)) => Ok(Value::Bool(a >= b)),
+                (a, b) => Err(invalid(format!(
+                    "cannot compare {} and {}",
+                    a.type_name(),
+                    b.type_name()
+                ))),
+            },
+            BinaryOp::Less => match (lhs, rhs) {
+                (Value::Int(a), Value::Int(b)) => Ok(Value::Bool(a < b)),
+                (Value::Float(a), Value::Float(b)) => Ok(Value::Bool(a < b)),
+                (a, b) => Err(invalid(format!(
+                    "cannot compare {} and {}",
+                    a.type_name(),
+                    b.type_name()
+                ))),
+            },
+            BinaryOp::LessEq => match (lhs, rhs) {
+                (Value::Int(a), Value::Int(b)) => Ok(Value::Bool(a <= b)),
+                (Value::Float(a), Value::Float(b)) => Ok(Value::Bool(a <= b)),
+                (a, b) => Err(invalid(format!(
+                    "cannot compare {} and {}",
+                    a.type_name(),
+                    b.type_name()
+                ))),
+            },
+            BinaryOp::Combine => Ok(Value::String(format!("{lhs}{rhs}"))),
+            BinaryOp::InclusiveRange => match (lhs, rhs) {
+                (Value::Int(start), Value::Int(end)) => Ok(Value::Range(RangeValue {
+                    start,
+                    end,
+                    inclusive: true,
+                    step: 1,
+                })),
+                (a, b) => Err(invalid(format!(
+                    "cannot build a range from {} and {}",
+                    a.type_name(),
+                    b.type_name()
+                ))),
+            },
+            BinaryOp::ExclusiveRange => match (lhs, rhs) {
+                (Value::Int(start), Value::Int(end)) => Ok(Value::Range(RangeValue {
+                    start,
+                    end,
+                    inclusive: false,
+                    step: 1,
+                })),
+                (a, b) => Err(invalid(format!(
+                    "cannot build a range from {} and {}",
+                    a.type_name(),
+                    b.type_name()
+                ))),
+            },
+        }
+    }
+
     fn infer_expr(&mut self, expr: &Expr) -> TypeResult<Type> {
         let span = expr.span;
         match &expr.kind {
@@ -684,16 +1148,13 @@ impl TypeChecker {
         }
     }
 
-    fn declare_function(&mut self, stmt: &Stmt) -> TypeResult<()> {
-        let Stmt::FunDecl {
+    fn declare_function(&mut self, decl: &FunctionDecl) -> TypeResult<()> {
+        let FunctionDecl {
             name,
             parameters,
             return_type,
             ..
-        } = stmt
-        else {
-            return Ok(());
-        };
+        } = decl;
 
         let mut parameters_types = Vec::new();
 
@@ -713,7 +1174,7 @@ impl TypeChecker {
             })) => {
                 if defined_return_type != return_type {
                     return Err(self.error_at(
-                        stmt.span(),
+                        decl.span,
                         TypeErrorKind::MismatchedReturnTypes {
                             expected: defined_return_type.to_string(),
                             found: return_type.to_string(),
@@ -727,7 +1188,7 @@ impl TypeChecker {
                 }
             }
             Some(_) => {
-                return Err(self.error_at(stmt.span(), TypeErrorKind::NameCollision(name.clone())));
+                return Err(self.error_at(decl.span, TypeErrorKind::NameCollision(name.clone())));
             }
             None => Type::Function {
                 parameter_overloads: vec![parameters_types],
@@ -779,16 +1240,13 @@ impl TypeChecker {
             })
     }
 
-    fn check_function_body(&mut self, stmt: &Stmt) -> TypeResult<()> {
-        let Stmt::FunDecl {
+    fn check_function_body(&mut self, decl: &FunctionDecl) -> TypeResult<()> {
+        let FunctionDecl {
             parameters,
             return_type,
             body,
             ..
-        } = stmt
-        else {
-            return Ok(());
-        };
+        } = decl;
 
         let expected_return = return_type.resolve_type_annotation();
         let previous_return = self.current_function_return.clone();
@@ -808,10 +1266,7 @@ impl TypeChecker {
         self.current_function_return = previous_return;
 
         if let Some(returned) = body_check.returned_type
-            && !TypeChecker::types_compatible(
-                &expected_return,
-                &return_type.resolve_type_annotation(),
-            )
+            && !TypeChecker::types_compatible(&expected_return, &returned)
         {
             return Err(self.error_at(
                 body.span(),

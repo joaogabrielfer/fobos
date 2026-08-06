@@ -1,3 +1,4 @@
+fun main(): () =
 var nums := [1, 2]
 push(nums, 3)
 push(nums, 4)
@@ -40,3 +41,5 @@ var matrix := [[1, 2], [3, 4]]
 push(matrix, [5, 6])
 
 echo("matrix: " <> matrix)
+
+end

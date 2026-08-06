@@ -1,16 +1,18 @@
-RuntimeError {
-    kind: YieldOutsideHandler,
-    span: Span {
+ParserError {
+    kind: ExpectedTopLevelItem {
+        found: "yield",
+    },
+    file_path: "$FIXTURE_PATH",
+    pos: Span {
         start: SrcPos {
             line: 1,
-            col: 7,
-            idx: 6,
+            col: 1,
+            idx: 0,
         },
         end: SrcPos {
-            line: 2,
-            col: 1,
-            idx: 12,
+            line: 1,
+            col: 6,
+            idx: 5,
         },
     },
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/global_yield.fob",
 }

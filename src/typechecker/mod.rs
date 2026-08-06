@@ -18,6 +18,7 @@ pub struct CheckedProgram {
 pub struct CheckedModule {
     pub program: CheckedProgram,
     pub interface: ModuleInterface,
+    pub constants: std::collections::HashMap<String, crate::interpreter::values::Value>,
 }
 
 pub struct TypeChecker {

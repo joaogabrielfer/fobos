@@ -1,5 +1,5 @@
 import "counter.fob" as counter
 
-pub fun next(): Int =
-    return counter::next()
+pub fun next(value: Int): Int =
+    return counter::next(value)
 end

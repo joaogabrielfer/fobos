@@ -1,18 +1,18 @@
 TypeError {
     kind: ModuleMemberAssignment(
-        "counter::count",
+        "counter::STEP",
     ),
     span: Span {
         start: SrcPos {
-            line: 3,
-            col: 1,
-            idx: 41,
+            line: 4,
+            col: 5,
+            idx: 62,
         },
         end: SrcPos {
-            line: 3,
-            col: 17,
-            idx: 57,
+            line: 4,
+            col: 20,
+            idx: 77,
         },
     },
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/module_external_assignment_error.fob",
+    file_path: "$FIXTURE_PATH",
 }

@@ -1,86 +1,151 @@
 Program {
-    statements: [
-        ImportDecl {
-            source: Module {
-                tree: Group {
-                    module_path: [
-                        "std",
-                        "foo",
-                    ],
-                    items: [
-                        ImportItem {
-                            name: "bar",
-                            alias: Some(
-                                "br",
-                            ),
-                            span: Span {
-                                start: SrcPos {
-                                    line: 1,
-                                    col: 19,
-                                    idx: 18,
-                                },
-                                end: SrcPos {
-                                    line: 1,
-                                    col: 22,
-                                    idx: 21,
-                                },
-                            },
-                        },
-                        ImportItem {
-                            name: "baz",
-                            alias: Some(
-                                "bz",
-                            ),
-                            span: Span {
-                                start: SrcPos {
-                                    line: 1,
-                                    col: 30,
-                                    idx: 29,
-                                },
-                                end: SrcPos {
-                                    line: 1,
-                                    col: 33,
-                                    idx: 32,
+    items: [
+        Import(
+            ImportDecl {
+                source: Module {
+                    tree: Group {
+                        module_path: [
+                            "std",
+                            "foo",
+                        ],
+                        items: [
+                            ImportItem {
+                                name: "bar",
+                                alias: Some(
+                                    "br",
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 1,
+                                        col: 19,
+                                        idx: 18,
+                                    },
+                                    end: SrcPos {
+                                        line: 1,
+                                        col: 22,
+                                        idx: 21,
+                                    },
                                 },
                             },
-                        },
-                    ],
-                },
-            },
-            span: Span {
-                start: SrcPos {
-                    line: 1,
-                    col: 8,
-                    idx: 7,
-                },
-                end: SrcPos {
-                    line: 2,
-                    col: 1,
-                    idx: 40,
-                },
-            },
-        },
-        Expr(
-            Expr {
-                kind: Call {
-                    callee: Expr {
-                        kind: Ident(
-                            "br",
-                        ),
-                        span: Span {
-                            start: SrcPos {
-                                line: 3,
-                                col: 1,
-                                idx: 41,
+                            ImportItem {
+                                name: "baz",
+                                alias: Some(
+                                    "bz",
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 1,
+                                        col: 30,
+                                        idx: 29,
+                                    },
+                                    end: SrcPos {
+                                        line: 1,
+                                        col: 33,
+                                        idx: 32,
+                                    },
+                                },
                             },
-                            end: SrcPos {
-                                line: 3,
-                                col: 4,
-                                idx: 44,
-                            },
-                        },
+                        ],
                     },
-                    args: [],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 1,
+                        col: 1,
+                        idx: 0,
+                    },
+                    end: SrcPos {
+                        line: 2,
+                        col: 1,
+                        idx: 40,
+                    },
+                },
+            },
+        ),
+        Function(
+            FunctionDecl {
+                public: false,
+                name: "main",
+                generics: [],
+                parameters: [],
+                return_type: Explicit(
+                    Unit,
+                ),
+                body: Block {
+                    statements: [
+                        Expr(
+                            Expr {
+                                kind: Call {
+                                    callee: Expr {
+                                        kind: Ident(
+                                            "br",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 4,
+                                                col: 5,
+                                                idx: 62,
+                                            },
+                                            end: SrcPos {
+                                                line: 4,
+                                                col: 8,
+                                                idx: 65,
+                                            },
+                                        },
+                                    },
+                                    args: [],
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 4,
+                                        col: 5,
+                                        idx: 62,
+                                    },
+                                    end: SrcPos {
+                                        line: 5,
+                                        col: 1,
+                                        idx: 67,
+                                    },
+                                },
+                            },
+                        ),
+                        Expr(
+                            Expr {
+                                kind: Call {
+                                    callee: Expr {
+                                        kind: Ident(
+                                            "bz",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 5,
+                                                col: 5,
+                                                idx: 71,
+                                            },
+                                            end: SrcPos {
+                                                line: 5,
+                                                col: 8,
+                                                idx: 74,
+                                            },
+                                        },
+                                    },
+                                    args: [],
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 5,
+                                        col: 5,
+                                        idx: 71,
+                                    },
+                                    end: SrcPos {
+                                        line: 6,
+                                        col: 1,
+                                        idx: 76,
+                                    },
+                                },
+                            },
+                        ),
+                    ],
                 },
                 span: Span {
                     start: SrcPos {
@@ -89,45 +154,9 @@ Program {
                         idx: 41,
                     },
                     end: SrcPos {
-                        line: 4,
-                        col: 1,
-                        idx: 46,
-                    },
-                },
-            },
-        ),
-        Expr(
-            Expr {
-                kind: Call {
-                    callee: Expr {
-                        kind: Ident(
-                            "bz",
-                        ),
-                        span: Span {
-                            start: SrcPos {
-                                line: 4,
-                                col: 1,
-                                idx: 46,
-                            },
-                            end: SrcPos {
-                                line: 4,
-                                col: 4,
-                                idx: 49,
-                            },
-                        },
-                    },
-                    args: [],
-                },
-                span: Span {
-                    start: SrcPos {
-                        line: 4,
-                        col: 1,
-                        idx: 46,
-                    },
-                    end: SrcPos {
-                        line: 5,
-                        col: 1,
-                        idx: 51,
+                        line: 3,
+                        col: 17,
+                        idx: 57,
                     },
                 },
             },

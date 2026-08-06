@@ -1,0 +1,11 @@
+const BASE: Int = 10
+const DOUBLE: Int = BASE * 2
+const LABEL: String = if DOUBLE > 10 "large" else "small"
+
+fun add(value: Int): Int =
+    return value + DOUBLE
+end
+
+fun main(): () =
+    echo(LABEL <> ": " <> add(BASE))
+end

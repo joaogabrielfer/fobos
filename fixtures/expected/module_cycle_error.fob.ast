@@ -1,22 +1,24 @@
 Program {
-    statements: [
-        ImportDecl {
-            source: Relative {
-                path: "modules/cycle_a.fob",
-                mode: Glob,
-            },
-            span: Span {
-                start: SrcPos {
-                    line: 1,
-                    col: 1,
-                    idx: 0,
+    items: [
+        Import(
+            ImportDecl {
+                source: Relative {
+                    path: "modules/cycle_a.fob",
+                    mode: Glob,
                 },
-                end: SrcPos {
-                    line: 2,
-                    col: 1,
-                    idx: 29,
+                span: Span {
+                    start: SrcPos {
+                        line: 1,
+                        col: 1,
+                        idx: 0,
+                    },
+                    end: SrcPos {
+                        line: 2,
+                        col: 1,
+                        idx: 29,
+                    },
                 },
             },
-        },
+        ),
     ],
 }

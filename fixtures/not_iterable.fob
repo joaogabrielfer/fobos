@@ -1,3 +1,6 @@
+fun main(): () =
 for x in 123 do
     echo(x)
+end
+
 end

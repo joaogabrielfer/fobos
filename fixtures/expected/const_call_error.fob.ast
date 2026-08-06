@@ -1,0 +1,133 @@
+Program {
+    items: [
+        Function(
+            FunctionDecl {
+                public: false,
+                name: "value",
+                generics: [],
+                parameters: [],
+                return_type: Explicit(
+                    Named(
+                        "Int",
+                    ),
+                ),
+                body: Block {
+                    statements: [
+                        Return(
+                            Expr {
+                                kind: Int(
+                                    1,
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 2,
+                                        col: 12,
+                                        idx: 30,
+                                    },
+                                    end: SrcPos {
+                                        line: 3,
+                                        col: 1,
+                                        idx: 32,
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 1,
+                        col: 1,
+                        idx: 0,
+                    },
+                    end: SrcPos {
+                        line: 1,
+                        col: 19,
+                        idx: 18,
+                    },
+                },
+            },
+        ),
+        Const(
+            ConstDecl {
+                public: false,
+                name: "VALUE",
+                type_annotation: Named(
+                    "Int",
+                ),
+                value: Expr {
+                    kind: Call {
+                        callee: Expr {
+                            kind: Ident(
+                                "value",
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 5,
+                                    col: 20,
+                                    idx: 56,
+                                },
+                                end: SrcPos {
+                                    line: 5,
+                                    col: 26,
+                                    idx: 62,
+                                },
+                            },
+                        },
+                        args: [],
+                    },
+                    span: Span {
+                        start: SrcPos {
+                            line: 5,
+                            col: 20,
+                            idx: 56,
+                        },
+                        end: SrcPos {
+                            line: 6,
+                            col: 1,
+                            idx: 64,
+                        },
+                    },
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 5,
+                        col: 1,
+                        idx: 37,
+                    },
+                    end: SrcPos {
+                        line: 6,
+                        col: 1,
+                        idx: 64,
+                    },
+                },
+            },
+        ),
+        Function(
+            FunctionDecl {
+                public: false,
+                name: "main",
+                generics: [],
+                parameters: [],
+                return_type: Explicit(
+                    Unit,
+                ),
+                body: Block {
+                    statements: [],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 7,
+                        col: 1,
+                        idx: 65,
+                    },
+                    end: SrcPos {
+                        line: 7,
+                        col: 17,
+                        idx: 81,
+                    },
+                },
+            },
+        ),
+    ],
+}

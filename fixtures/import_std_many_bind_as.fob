@@ -1,4 +1,6 @@
 import std::foo::{bar as br, baz as bz}
 
-br()
-bz()
+fun main(): () =
+    br()
+    bz()
+end

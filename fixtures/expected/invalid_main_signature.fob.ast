@@ -1,0 +1,61 @@
+Program {
+    items: [
+        Function(
+            FunctionDecl {
+                public: false,
+                name: "main",
+                generics: [],
+                parameters: [
+                    Parameter {
+                        name: "value",
+                        t: Explicit(
+                            Named(
+                                "Int",
+                            ),
+                        ),
+                    },
+                ],
+                return_type: Explicit(
+                    Named(
+                        "Int",
+                    ),
+                ),
+                body: Block {
+                    statements: [
+                        Return(
+                            Expr {
+                                kind: Ident(
+                                    "value",
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 2,
+                                        col: 12,
+                                        idx: 39,
+                                    },
+                                    end: SrcPos {
+                                        line: 3,
+                                        col: 1,
+                                        idx: 45,
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 1,
+                        col: 1,
+                        idx: 0,
+                    },
+                    end: SrcPos {
+                        line: 1,
+                        col: 28,
+                        idx: 27,
+                    },
+                },
+            },
+        ),
+    ],
+}

@@ -1,146 +1,171 @@
 Program {
-    statements: [
-        Bind {
-            public: false,
-            mutable: true,
-            name: "foo",
-            type_annotation: Inferred,
-            value: Expr {
-                kind: Int(
-                    10,
+    items: [
+        Function(
+            FunctionDecl {
+                public: false,
+                name: "main",
+                generics: [],
+                parameters: [],
+                return_type: Explicit(
+                    Unit,
                 ),
+                body: Block {
+                    statements: [
+                        Bind {
+                            mutable: true,
+                            name: "foo",
+                            type_annotation: Inferred,
+                            value: Expr {
+                                kind: Int(
+                                    10,
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 2,
+                                        col: 12,
+                                        idx: 28,
+                                    },
+                                    end: SrcPos {
+                                        line: 3,
+                                        col: 1,
+                                        idx: 31,
+                                    },
+                                },
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 2,
+                                    col: 1,
+                                    idx: 17,
+                                },
+                                end: SrcPos {
+                                    line: 3,
+                                    col: 1,
+                                    idx: 31,
+                                },
+                            },
+                        },
+                        Assignment {
+                            target: Expr {
+                                kind: Ident(
+                                    "foo",
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 3,
+                                        col: 1,
+                                        idx: 31,
+                                    },
+                                    end: SrcPos {
+                                        line: 3,
+                                        col: 6,
+                                        idx: 36,
+                                    },
+                                },
+                            },
+                            value: Expr {
+                                kind: Int(
+                                    20,
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 3,
+                                        col: 7,
+                                        idx: 37,
+                                    },
+                                    end: SrcPos {
+                                        line: 4,
+                                        col: 1,
+                                        idx: 40,
+                                    },
+                                },
+                            },
+                        },
+                        Bind {
+                            mutable: true,
+                            name: "bar",
+                            type_annotation: Inferred,
+                            value: Expr {
+                                kind: String(
+                                    "foo",
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 5,
+                                        col: 12,
+                                        idx: 52,
+                                    },
+                                    end: SrcPos {
+                                        line: 6,
+                                        col: 1,
+                                        idx: 58,
+                                    },
+                                },
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 5,
+                                    col: 1,
+                                    idx: 41,
+                                },
+                                end: SrcPos {
+                                    line: 6,
+                                    col: 1,
+                                    idx: 58,
+                                },
+                            },
+                        },
+                        Assignment {
+                            target: Expr {
+                                kind: Ident(
+                                    "bar",
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 6,
+                                        col: 1,
+                                        idx: 58,
+                                    },
+                                    end: SrcPos {
+                                        line: 6,
+                                        col: 6,
+                                        idx: 63,
+                                    },
+                                },
+                            },
+                            value: Expr {
+                                kind: String(
+                                    "baz",
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 6,
+                                        col: 7,
+                                        idx: 64,
+                                    },
+                                    end: SrcPos {
+                                        line: 7,
+                                        col: 1,
+                                        idx: 70,
+                                    },
+                                },
+                            },
+                        },
+                    ],
+                },
                 span: Span {
                     start: SrcPos {
                         line: 1,
-                        col: 12,
-                        idx: 11,
+                        col: 1,
+                        idx: 0,
                     },
                     end: SrcPos {
-                        line: 2,
-                        col: 1,
-                        idx: 14,
+                        line: 1,
+                        col: 17,
+                        idx: 16,
                     },
                 },
             },
-            span: Span {
-                start: SrcPos {
-                    line: 1,
-                    col: 1,
-                    idx: 0,
-                },
-                end: SrcPos {
-                    line: 2,
-                    col: 1,
-                    idx: 14,
-                },
-            },
-        },
-        Assignment {
-            target: Expr {
-                kind: Ident(
-                    "foo",
-                ),
-                span: Span {
-                    start: SrcPos {
-                        line: 2,
-                        col: 1,
-                        idx: 14,
-                    },
-                    end: SrcPos {
-                        line: 2,
-                        col: 6,
-                        idx: 19,
-                    },
-                },
-            },
-            value: Expr {
-                kind: Int(
-                    20,
-                ),
-                span: Span {
-                    start: SrcPos {
-                        line: 2,
-                        col: 7,
-                        idx: 20,
-                    },
-                    end: SrcPos {
-                        line: 3,
-                        col: 1,
-                        idx: 23,
-                    },
-                },
-            },
-        },
-        Bind {
-            public: false,
-            mutable: true,
-            name: "bar",
-            type_annotation: Inferred,
-            value: Expr {
-                kind: String(
-                    "foo",
-                ),
-                span: Span {
-                    start: SrcPos {
-                        line: 4,
-                        col: 12,
-                        idx: 35,
-                    },
-                    end: SrcPos {
-                        line: 5,
-                        col: 1,
-                        idx: 41,
-                    },
-                },
-            },
-            span: Span {
-                start: SrcPos {
-                    line: 4,
-                    col: 1,
-                    idx: 24,
-                },
-                end: SrcPos {
-                    line: 5,
-                    col: 1,
-                    idx: 41,
-                },
-            },
-        },
-        Assignment {
-            target: Expr {
-                kind: Ident(
-                    "bar",
-                ),
-                span: Span {
-                    start: SrcPos {
-                        line: 5,
-                        col: 1,
-                        idx: 41,
-                    },
-                    end: SrcPos {
-                        line: 5,
-                        col: 6,
-                        idx: 46,
-                    },
-                },
-            },
-            value: Expr {
-                kind: String(
-                    "baz",
-                ),
-                span: Span {
-                    start: SrcPos {
-                        line: 5,
-                        col: 7,
-                        idx: 47,
-                    },
-                    end: SrcPos {
-                        line: 6,
-                        col: 1,
-                        idx: 53,
-                    },
-                },
-            },
-        },
+        ),
     ],
 }

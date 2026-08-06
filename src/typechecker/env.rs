@@ -1,14 +1,20 @@
 use std::collections::HashMap;
 
-use crate::{errors::TypeErrorKind, module::ModuleId, typechecker::ty::Type};
+use crate::{
+    errors::TypeErrorKind,
+    module::{ExportedSymbolKind, ModuleId},
+    typechecker::ty::Type,
+};
 
 #[derive(Debug, Clone)]
 pub enum TypeBinding {
     Local(Type),
+    Const(Type),
     ImportedMember {
         module: ModuleId,
         export_name: String,
         ty: Type,
+        kind: ExportedSymbolKind,
     },
     Module(ModuleId),
 }
@@ -16,7 +22,7 @@ pub enum TypeBinding {
 impl TypeBinding {
     pub fn value_type(&self) -> Option<Type> {
         match self {
-            Self::Local(ty) | Self::ImportedMember { ty, .. } => Some(ty.clone()),
+            Self::Local(ty) | Self::Const(ty) | Self::ImportedMember { ty, .. } => Some(ty.clone()),
             Self::Module(_) => None,
         }
     }
@@ -42,6 +48,10 @@ impl TypeEnv {
 
     pub fn define(&mut self, name: String, ty: Type) {
         self.define_binding(name, TypeBinding::Local(ty));
+    }
+
+    pub fn define_const(&mut self, name: String, ty: Type) {
+        self.define_binding(name, TypeBinding::Const(ty));
     }
 
     pub fn define_binding(&mut self, name: String, binding: TypeBinding) {

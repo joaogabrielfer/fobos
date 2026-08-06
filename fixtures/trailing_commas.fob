@@ -1,3 +1,4 @@
+fun main(): () =
 fun add(
 	x: Int,
 	y: Int,
@@ -11,3 +12,5 @@ let added := add(
 )
 
 added.echo()
+
+end

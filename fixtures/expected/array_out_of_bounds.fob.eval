@@ -4,15 +4,15 @@ RuntimeError {
     ),
     span: Span {
         start: SrcPos {
-            line: 2,
+            line: 3,
             col: 6,
-            idx: 30,
+            idx: 47,
         },
         end: SrcPos {
-            line: 2,
+            line: 3,
             col: 7,
-            idx: 31,
+            idx: 48,
         },
     },
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/array_out_of_bounds.fob",
+    file_path: "$FIXTURE_PATH",
 }

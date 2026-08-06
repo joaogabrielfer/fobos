@@ -101,10 +101,8 @@ Ok(
             },
         },
         Token {
-            kind: Ident(
-                "foo",
-            ),
-            origin: "foo",
+            kind: Fun,
+            origin: "fun",
             span: Span {
                 start: SrcPos {
                     line: 3,
@@ -119,31 +117,15 @@ Ok(
             },
         },
         Token {
-            kind: ColonColon,
-            origin: "::",
-            span: Span {
-                start: SrcPos {
-                    line: 3,
-                    col: 4,
-                    idx: 20,
-                },
-                end: SrcPos {
-                    line: 3,
-                    col: 6,
-                    idx: 22,
-                },
-            },
-        },
-        Token {
             kind: Ident(
-                "bar",
+                "main",
             ),
-            origin: "bar",
+            origin: "main",
             span: Span {
                 start: SrcPos {
                     line: 3,
-                    col: 6,
-                    idx: 22,
+                    col: 5,
+                    idx: 21,
                 },
                 end: SrcPos {
                     line: 3,
@@ -185,18 +167,214 @@ Ok(
             },
         },
         Token {
+            kind: Colon,
+            origin: ":",
+            span: Span {
+                start: SrcPos {
+                    line: 3,
+                    col: 11,
+                    idx: 27,
+                },
+                end: SrcPos {
+                    line: 3,
+                    col: 12,
+                    idx: 28,
+                },
+            },
+        },
+        Token {
+            kind: LParen,
+            origin: "(",
+            span: Span {
+                start: SrcPos {
+                    line: 3,
+                    col: 13,
+                    idx: 29,
+                },
+                end: SrcPos {
+                    line: 3,
+                    col: 14,
+                    idx: 30,
+                },
+            },
+        },
+        Token {
+            kind: RParen,
+            origin: ")",
+            span: Span {
+                start: SrcPos {
+                    line: 3,
+                    col: 14,
+                    idx: 30,
+                },
+                end: SrcPos {
+                    line: 3,
+                    col: 15,
+                    idx: 31,
+                },
+            },
+        },
+        Token {
+            kind: Equals,
+            origin: "=",
+            span: Span {
+                start: SrcPos {
+                    line: 3,
+                    col: 16,
+                    idx: 32,
+                },
+                end: SrcPos {
+                    line: 3,
+                    col: 17,
+                    idx: 33,
+                },
+            },
+        },
+        Token {
             kind: NewLine,
             origin: "\n",
             span: Span {
                 start: SrcPos {
                     line: 4,
                     col: 0,
-                    idx: 27,
+                    idx: 33,
                 },
                 end: SrcPos {
                     line: 4,
                     col: 1,
-                    idx: 28,
+                    idx: 34,
+                },
+            },
+        },
+        Token {
+            kind: Ident(
+                "foo",
+            ),
+            origin: "foo",
+            span: Span {
+                start: SrcPos {
+                    line: 4,
+                    col: 5,
+                    idx: 38,
+                },
+                end: SrcPos {
+                    line: 4,
+                    col: 8,
+                    idx: 41,
+                },
+            },
+        },
+        Token {
+            kind: ColonColon,
+            origin: "::",
+            span: Span {
+                start: SrcPos {
+                    line: 4,
+                    col: 8,
+                    idx: 41,
+                },
+                end: SrcPos {
+                    line: 4,
+                    col: 10,
+                    idx: 43,
+                },
+            },
+        },
+        Token {
+            kind: Ident(
+                "bar",
+            ),
+            origin: "bar",
+            span: Span {
+                start: SrcPos {
+                    line: 4,
+                    col: 10,
+                    idx: 43,
+                },
+                end: SrcPos {
+                    line: 4,
+                    col: 13,
+                    idx: 46,
+                },
+            },
+        },
+        Token {
+            kind: LParen,
+            origin: "(",
+            span: Span {
+                start: SrcPos {
+                    line: 4,
+                    col: 13,
+                    idx: 46,
+                },
+                end: SrcPos {
+                    line: 4,
+                    col: 14,
+                    idx: 47,
+                },
+            },
+        },
+        Token {
+            kind: RParen,
+            origin: ")",
+            span: Span {
+                start: SrcPos {
+                    line: 4,
+                    col: 14,
+                    idx: 47,
+                },
+                end: SrcPos {
+                    line: 4,
+                    col: 15,
+                    idx: 48,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 5,
+                    col: 0,
+                    idx: 48,
+                },
+                end: SrcPos {
+                    line: 5,
+                    col: 1,
+                    idx: 49,
+                },
+            },
+        },
+        Token {
+            kind: End,
+            origin: "end",
+            span: Span {
+                start: SrcPos {
+                    line: 5,
+                    col: 1,
+                    idx: 49,
+                },
+                end: SrcPos {
+                    line: 5,
+                    col: 4,
+                    idx: 52,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 6,
+                    col: 0,
+                    idx: 52,
+                },
+                end: SrcPos {
+                    line: 6,
+                    col: 1,
+                    idx: 53,
                 },
             },
         },
@@ -205,14 +383,14 @@ Ok(
             origin: "EOF",
             span: Span {
                 start: SrcPos {
-                    line: 4,
+                    line: 6,
                     col: 1,
-                    idx: 28,
+                    idx: 53,
                 },
                 end: SrcPos {
-                    line: 4,
+                    line: 6,
                     col: 1,
-                    idx: 28,
+                    idx: 53,
                 },
             },
         },

@@ -1,18 +1,20 @@
-RuntimeError {
-    kind: InvalidFunctionParameter(
-        "a",
-    ),
+TypeError {
+    kind: MismatchedBinaryOpType {
+        op: ExclusiveRange,
+        lhs: "String",
+        rhs: "Int",
+    },
     span: Span {
         start: SrcPos {
-            line: 1,
+            line: 2,
             col: 10,
-            idx: 9,
+            idx: 26,
         },
         end: SrcPos {
-            line: 2,
+            line: 3,
             col: 1,
-            idx: 18,
+            idx: 35,
         },
     },
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/range_invalid_bound.fob",
+    file_path: "$FIXTURE_PATH",
 }
