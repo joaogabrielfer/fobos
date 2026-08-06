@@ -1,0 +1,8 @@
+pub fun map(arr: Arr<Any>, fn: (Any) -> Any): Arr<Any> =
+	var new_array: Arr<Any> = []
+		for item in arr do
+		new_array.push(fn(item))
+	end
+	return new_array
+end
+

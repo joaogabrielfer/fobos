@@ -1,29 +1,4 @@
-fun main(): () =
-// signatures with generics
-// fun [A, B] map(arr: Arr<A>, fn: (A) -> B): Arr<B> =
-
-fun map(arr: Arr<Any>, fn: (Any) -> Any): Arr<Any> =
-	var new_array: Arr<Any> = []
-		for item in arr do
-		new_array.push(fn(item))
-	end
-	return new_array
-end
-
-var my_array := [0]
-echo("my array = " <> my_array)
-
-my_array.push(1)
-echo("push(1) = " <> my_array)
-
-my_array.push(2)
-echo("push(2) = " <> my_array)
-
-let double := x -> x * 2
-
-// my_array = my_array.map(double)
-map(my_array, double)
-echo("map(double) = " <> my_array)
+import std::core::*
 
 fun foo(x: Int, y: Int): Int =
 	 return x + y
@@ -33,7 +8,23 @@ fun foo(x: Int): Int =
 	return x + 1
 end
 
-echo("foo(5) = " <> foo(5))
-echo("foo(6, 7) = " <> foo(6, 7))
+fun main(): () =
+	var my_array := [0]
+	echo("my array = " <> my_array)
+
+	my_array.push(1)
+	echo("push(1) = " <> my_array)
+
+	my_array.push(2)
+	echo("push(2) = " <> my_array)
+
+	let double := x -> x * 2
+
+	// my_array = my_array.map(double)
+	map(my_array, double)
+	echo("map(double) = " <> my_array)
+
+	echo("foo(5) = " <> foo(5))
+	echo("foo(6, 7) = " <> foo(6, 7))
 
 end
