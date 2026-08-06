@@ -10,6 +10,14 @@ pub fn render_source_span(file_path: &Path, span: Span) -> anyhow::Result<(usize
     let content = std::fs::read_to_string(file_path)
         .with_context(|| format!("failed to read source file '{}'", file_path.display()))?;
 
+    render_source_span_from_source(&content, span)
+}
+
+/// Render a diagnostic span from source that has not been written to disk.
+pub fn render_source_span_from_source(
+    content: &str,
+    span: Span,
+) -> anyhow::Result<(usize, usize, String)> {
     // Unlike `lines()`, this preserves a final empty line.
     let lines: Vec<&str> = content.split('\n').collect();
 

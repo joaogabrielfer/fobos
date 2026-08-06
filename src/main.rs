@@ -1,19 +1,25 @@
-use clap::{Parser, Subcommand};
-use colored::Colorize;
-use rustyline::DefaultEditor;
 use std::{fs::read_to_string, path::PathBuf, process::exit};
-use thiserror::Error;
+
+use anyhow::Result;
+use clap::{Parser, Subcommand};
 
 use fobos::{
+    ast::Item,
     dump::dump_expected,
-    interpreter::{self, Interpreter},
-    lexer::{self, Lexer},
+    interpreter::Interpreter,
+    lexer::Lexer,
     module::{CompilerSession, RuntimeModules},
-    parser::{self},
+    parser::Parser as FobosParser,
+    repl,
 };
 
 #[derive(Parser)]
-#[command(name = "fobos")]
+#[command(
+    name = "fobos",
+    version,
+    about = "The Fobos language interpreter",
+    long_about = "Run Fobos source files or start an interactive Fobos session."
+)]
 struct Cli {
     #[command(subcommand)]
     command: Option<Commands>,
@@ -21,138 +27,145 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    Run {
-        path: PathBuf,
-        #[arg(short = 'd', long = "disable-checker", default_value_t = false)]
-        disable_type_checker: bool,
+    /// Start an interactive Fobos session.
+    Repl {
+        /// Evaluate without static type checking.
+        #[arg(long = "no-check", visible_alias = "disable-checker")]
+        no_check: bool,
     },
-    Tokens {
+    /// Run a Fobos source file.
+    Run {
+        /// The .fob source file to execute.
+        #[arg(value_name = "FILE")]
         path: PathBuf,
-        #[arg(short = 'k', long = "kinds", default_value_t = false)]
+        /// Evaluate one parsed file directly, without the type or module pipeline.
+        #[arg(long = "no-check", visible_alias = "disable-checker")]
+        no_check: bool,
+    },
+    /// Development-only inspection and fixture commands.
+    Debug {
+        #[command(subcommand)]
+        command: DebugCommands,
+    },
+}
+
+#[derive(Subcommand)]
+enum DebugCommands {
+    /// Print the tokens produced for a source file.
+    Tokens {
+        /// The .fob source file to inspect.
+        #[arg(value_name = "FILE")]
+        path: PathBuf,
+        /// Print only token kinds.
+        #[arg(short = 'k', long = "kinds")]
         only_kinds: bool,
     },
+    /// Print the parsed abstract syntax tree for a source file.
     Ast {
+        /// The .fob source file to inspect.
+        #[arg(value_name = "FILE")]
         path: PathBuf,
     },
+    /// Regenerate expected fixture output. Intended for maintainers only.
     GenerateExpected,
 }
 
-#[derive(Error, Debug)]
-pub enum CliError {
-    #[error(
-        "Path {0:?} is not a directory. Please provide a directory for generating the expected results"
-    )]
-    GenerateTestPathNotDir(PathBuf),
-}
-
 fn main() {
-    match run() {
-        Ok(_) => {}
-        Err(e) => {
-            eprintln!("{e:#}");
-            exit(1);
-        }
+    if let Err(error) = run() {
+        eprintln!("{error:#}");
+        exit(1);
     }
 }
 
-fn run() -> anyhow::Result<()> {
-    let cli = Cli::parse();
-    match &cli.command {
-        None => {
-            let mut editor = DefaultEditor::new()?;
-            let path = &PathBuf::from("repl");
-            let stdout = std::io::stdout();
-            let mut interpreter = Interpreter::new(path, stdout.lock());
-            // let ast_arena = Arena::new();
-            let mut c_c_pressed = false;
-            loop {
-                let prompt = ">> ".green().to_string();
-                let mut line = match editor.readline(&prompt) {
-                    Ok(line) => {
-                        c_c_pressed = false;
-                        line
-                    }
-                    Err(rustyline::error::ReadlineError::Interrupted) => {
-                        if c_c_pressed {
-                            return Ok(());
-                        } else {
-                            println!("(press 'C-c' again to exit the repl)");
-                            c_c_pressed = true;
-                            continue;
-                        }
-                    }
-                    Err(rustyline::error::ReadlineError::Eof) => {
-                        return Ok(());
-                    }
-                    Err(err) => return Err(err.into()),
-                };
+fn run() -> Result<()> {
+    match Cli::parse().command {
+        None => repl::run(true),
+        Some(Commands::Repl { no_check }) => repl::run(!no_check),
+        Some(Commands::Run { path, no_check }) => run_file(&path, no_check),
+        Some(Commands::Debug {
+            command: DebugCommands::Tokens { path, only_kinds },
+        }) => print_tokens(&path, only_kinds),
+        Some(Commands::Debug {
+            command: DebugCommands::Ast { path },
+        }) => print_ast(&path),
+        Some(Commands::Debug {
+            command: DebugCommands::GenerateExpected,
+        }) => dump_expected(),
+    }
+}
 
-                let mut source = std::mem::take(&mut line);
-                source.push('\n');
-                let mut tokens = match Lexer::new(path, &source).tokenize() {
-                    Ok(t) => t,
-                    Err(e) => {
-                        eprintln!("{e}");
-                        continue;
-                    }
-                };
-                tokens.insert(0, lexer::Token::new(lexer::TokenKind::Return));
-                let ast = match parser::Parser::new(tokens, path).parse_program() {
-                    Ok(a) => a,
-                    Err(e) => {
-                        eprintln!("{e}");
-                        continue;
-                    }
-                };
-                // let ast: Program = ast_arena.alloc(ast);
-                let value = match interpreter.eval_program(ast) {
-                    Ok(v) => v,
-                    Err(e) => {
-                        eprintln!("{e}");
-                        continue;
-                    }
-                };
-                if interpreter::values::Value::Unit != value {
-                    println!("{value}");
-                }
-            }
+fn run_file(path: &PathBuf, no_check: bool) -> Result<()> {
+    let stdout = std::io::stdout();
+    if no_check {
+        let content = read_to_string(path)?;
+        let tokens = Lexer::new(path, &content).tokenize()?;
+        let program = FobosParser::new(tokens, path).parse_program()?;
+        if program
+            .items
+            .iter()
+            .any(|item| matches!(item, Item::Import(_) | Item::Const(_)))
+        {
+            anyhow::bail!(
+                "--no-check only supports a function-only entry file; imports and compile-time constants require the module compiler"
+            );
         }
-        Some(Commands::Run {
-            path,
-            disable_type_checker,
-        }) => {
-            let content = read_to_string(path)?;
-            let tokens = Lexer::new(path, &content).tokenize()?;
-            let ast = parser::Parser::new(tokens, path).parse_program()?;
-            let stdout = std::io::stdout();
-            if !*disable_type_checker {
-                let compilation = CompilerSession::default().compile_file(path)?;
-                let mut interpreter = Interpreter::new(path, stdout.lock());
-                RuntimeModules::new(compilation).execute_root(&mut interpreter)?;
-            } else {
-                Interpreter::new(path, stdout.lock()).eval_program(ast)?;
-            }
-            Ok(())
+        Interpreter::new(path, stdout.lock()).eval_program(program)?;
+    } else {
+        let compilation = CompilerSession::default().compile_file(path)?;
+        RuntimeModules::new(compilation)
+            .execute_root(&mut Interpreter::new(path, stdout.lock()))?;
+    }
+    Ok(())
+}
+
+fn print_tokens(path: &PathBuf, only_kinds: bool) -> Result<()> {
+    let content = read_to_string(path)?;
+    let tokens = Lexer::new(path, &content).tokenize()?;
+    if only_kinds {
+        for token in tokens {
+            println!("{:?}", token.kind);
         }
-        Some(Commands::Tokens { path, only_kinds }) => {
-            let content = read_to_string(path)?;
-            let tokens = Lexer::new(path, &content).tokenize()?;
-            if *only_kinds {
-                for tk in tokens {
-                    println!("{:?}", tk.kind)
-                }
-            } else {
-                println!("{tokens:#?}");
-            }
-            Ok(())
-        }
-        Some(Commands::Ast { path }) => {
-            let content = read_to_string(path)?;
-            let tokens = Lexer::new(path, &content).tokenize()?;
-            let ast = parser::Parser::new(tokens, path).parse_program()?;
-            println!("{ast:#?}");
-            Ok(())
-        }
-        Some(Commands::GenerateExpected) => dump_expected(),
+    } else {
+        println!("{tokens:#?}");
+    }
+    Ok(())
+}
+
+fn print_ast(path: &PathBuf) -> Result<()> {
+    let content = read_to_string(path)?;
+    let tokens = Lexer::new(path, &content).tokenize()?;
+    let ast = FobosParser::new(tokens, path).parse_program()?;
+    println!("{ast:#?}");
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use clap::Parser;
+
+    use super::{Cli, Commands, DebugCommands};
+
+    #[test]
+    fn cli_accepts_the_new_public_contract_and_legacy_checker_flag() {
+        assert!(matches!(
+            Cli::try_parse_from(["fobos", "repl", "--no-check"])
+                .unwrap()
+                .command,
+            Some(Commands::Repl { no_check: true })
+        ));
+        assert!(matches!(
+            Cli::try_parse_from(["fobos", "run", "--disable-checker", "example.fob"])
+                .unwrap()
+                .command,
+            Some(Commands::Run { no_check: true, .. })
+        ));
+        assert!(matches!(
+            Cli::try_parse_from(["fobos", "debug", "tokens", "example.fob"])
+                .unwrap()
+                .command,
+            Some(Commands::Debug {
+                command: DebugCommands::Tokens { .. }
+            })
+        ));
     }
 }

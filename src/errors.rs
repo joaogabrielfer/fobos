@@ -247,6 +247,8 @@ pub enum RuntimeErrorKind {
         lhs: String,
         rhs: String,
     },
+    #[error("division by zero")]
+    DivisionByZero,
     #[error("invalid unary operation '{op}{operand}'")]
     InvalidUnaryOp { op: UnaryOp, operand: String },
     #[error("invalid function parameter '{0}'")]

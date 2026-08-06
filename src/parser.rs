@@ -41,6 +41,20 @@ impl<'a> Parser<'a> {
         Ok(ast::Program { items })
     }
 
+    /// Parse a REPL submission. This deliberately stays separate from module
+    /// parsing: source files never admit top-level statements.
+    pub fn parse_repl_submission(&mut self) -> Result<Vec<ast::Stmt>, Box<ParserError>> {
+        let mut statements = vec![];
+        self.consume_newlines();
+
+        while !self.is_at_end() {
+            statements.push(self.parse_statement()?);
+            self.expect(TokenTag::NewLine)?;
+            self.consume_newlines();
+        }
+        Ok(statements)
+    }
+
     fn parse_item(&mut self) -> Result<ast::Item, Box<ParserError>> {
         let public = self.check_and_advance(TokenTag::Pub);
         match self.current().kind {
@@ -952,11 +966,20 @@ mod tests {
                     .zip(expected_ast.trim_end().lines())
                 {
                     assert_eq!(
-                        a, e,
+                        snapshot_line(a),
+                        snapshot_line(e),
                         "failed to match ast output in file {ast_expected_path:?}"
                     );
                 }
             }
+        }
+    }
+
+    fn snapshot_line(line: &str) -> &str {
+        if line.trim_start().starts_with("file_path:") {
+            "file_path: <fixture path>"
+        } else {
+            line
         }
     }
 }

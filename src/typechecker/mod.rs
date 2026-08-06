@@ -21,6 +21,7 @@ pub struct CheckedModule {
     pub constants: std::collections::HashMap<String, crate::interpreter::values::Value>,
 }
 
+#[derive(Clone)]
 pub struct TypeChecker {
     file_path: PathBuf,
     env: TypeEnv,

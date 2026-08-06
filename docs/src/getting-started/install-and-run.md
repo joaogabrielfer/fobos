@@ -38,10 +38,10 @@ when an example does not run.
 
 ## Inspect a program
 
-Use `tokens` to inspect the lexer output and `ast` to inspect the parser output:
+Use `debug tokens` to inspect the lexer output and `debug ast` to inspect the parser output:
 
 ```console
-cargo run -- tokens examples/fib.fob
-cargo run -- tokens examples/fib.fob --kinds
-cargo run -- ast examples/fib.fob
+cargo run -- debug tokens examples/fib.fob
+cargo run -- debug tokens examples/fib.fob --kinds
+cargo run -- debug ast examples/fib.fob
 ```

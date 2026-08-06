@@ -19,7 +19,7 @@
   - [Diagnostics](reference/diagnostics.md)
   - [Language status](reference/language-status.md)
 
-- [Design notes](design/roadmap.md)
+- [Roadmap and future plans](design/roadmap.md)
   - [Module architecture and limits](design/modules.md)
   - [Types and compile-time features](design/types-and-compile-time.md)
   - [Effects and resource management](design/effects-and-resources.md)

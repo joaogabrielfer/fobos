@@ -63,6 +63,22 @@ impl TypeChecker {
             .program)
     }
 
+    /// Type-check an interactive submission without turning it into a module.
+    /// The REPL owns its persistent local environment between submissions.
+    pub fn check_repl_statements(&mut self, statements: &[Stmt]) -> TypeResult<()> {
+        self.env.load_builtins();
+        for statement in statements {
+            let check = self.check_stmt(statement)?;
+            if check.returned_type.is_some() {
+                return Err(self.error_at(statement.span(), TypeErrorKind::ReturnOutsideFunction));
+            }
+            if check.yielded_type.is_some() {
+                return Err(self.error_at(statement.span(), TypeErrorKind::YieldOutsideHandler));
+            }
+        }
+        Ok(())
+    }
+
     pub fn check_module(
         &mut self,
         program: Program,

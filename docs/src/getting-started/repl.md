@@ -1,14 +1,23 @@
 # REPL
 
-Run the binary without a subcommand:
+Start the REPL explicitly, or omit the subcommand:
 
 ```console
-cargo run
+cargo run -- repl
 ```
 
-The prompt is `>>`. Expressions are parsed and evaluated one line at a time.
-Press `Ctrl-C` twice to exit, or send EOF.
+The REPL retains declarations and functions between entries, prints a
+non-`()` expression result, and accepts multiline blocks with a continuation
+prompt. It type-checks entries by default; use `repl --no-check` to bypass that
+step.
 
-The REPL currently uses a synthetic `repl` path and has fewer guarantees than
-file execution. For reproducible programs and diagnostics, prefer a `.fob`
-file with `cargo run -- run <path>`.
+Use `:help` to list `:clear`, `:reset`, and `:quit` (or `:q`). `Ctrl-C` clears
+an unfinished entry; pressing it twice at an empty prompt exits. Command
+history is stored in the platform state directory.
+
+Diagnostics render against the in-memory REPL source as `<repl>`. File imports
+are intentionally unavailable in the REPL because imports require a canonical
+module file and the dependency pipeline. Use `cargo run -- run <path>` for a
+program that imports modules. The REPL is an interactive exception to the
+file-level item rules: its submissions may be expressions and local
+declarations, but they are not module top-level code and cannot use `const`.

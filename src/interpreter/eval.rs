@@ -49,6 +49,28 @@ impl<W: std::io::Write> Interpreter<W> {
         self.run_main()
     }
 
+    /// Evaluate an interactive submission without treating it as a module.
+    ///
+    /// The REPL is intentionally the one context that accepts expressions and
+    /// local declarations outside a function body.
+    pub fn eval_repl_statements(
+        &mut self,
+        statements: Vec<Stmt>,
+    ) -> Result<Value, Box<RuntimeError>> {
+        let mut last_value = Value::Unit;
+
+        for statement in statements {
+            match self.eval_statement(statement)? {
+                EvalFlow::Continue(value) => last_value = value,
+                EvalFlow::Yield { span, .. } => {
+                    return Err(self.error_at(span, RuntimeErrorKind::YieldOutsideHandler));
+                }
+                EvalFlow::Return { value, .. } => return Ok(value),
+            }
+        }
+        Ok(last_value)
+    }
+
     pub fn load_module(
         &mut self,
         program: &Program,
@@ -743,6 +765,9 @@ impl<W: std::io::Write> Interpreter<W> {
                     )),
                 },
                 BinaryOp::Div => match (lhs, rhs) {
+                    (Value::Int(_), Value::Int(0)) | (Value::Float(_), Value::Float(0.0)) => {
+                        Err(self.error_at(span, RuntimeErrorKind::DivisionByZero))
+                    }
                     (Value::Int(i1), Value::Int(i2)) => Ok(EvalFlow::Continue(Value::Int(i1 / i2))),
                     (Value::Float(f1), Value::Float(f2)) => {
                         Ok(EvalFlow::Continue(Value::Float(f1 / f2)))
@@ -1112,11 +1137,20 @@ mod tests {
                     .zip(expected_eval.trim_end().lines())
                 {
                     assert_eq!(
-                        ev, ex,
+                        snapshot_line(ev),
+                        snapshot_line(ex),
                         "failed to match ast output in file {eval_expected_path:?}"
                     );
                 }
             }
+        }
+    }
+
+    fn snapshot_line(line: &str) -> &str {
+        if line.trim_start().starts_with("file_path:") {
+            "file_path: <fixture path>"
+        } else {
+            line
         }
     }
 }

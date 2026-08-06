@@ -67,4 +67,9 @@ impl Interpreter<Vec<u8>> {
     pub fn into_output_string(self) -> String {
         String::from_utf8(self.output).expect("interpreter output should be valid UTF-8")
     }
+
+    pub fn take_output_string(&mut self) -> String {
+        String::from_utf8(std::mem::take(&mut self.output))
+            .expect("interpreter output should be valid UTF-8")
+    }
 }

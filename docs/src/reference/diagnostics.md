@@ -12,13 +12,12 @@ type error: mismatched types, expected Int but got String
    |     ^
 ```
 
-Use `tokens` and `ast` to isolate whether a failure occurs during lexing or
-parsing. Use `--disable-checker` only to distinguish type-checker failures from
+Use `debug tokens` and `debug ast` to isolate whether a failure occurs during lexing or
+parsing. Use `--no-check` (or its `--disable-checker` alias) only to distinguish type-checker failures from
 interpreter behavior; it does not make unsupported runtime features work.
 
-Some fixture snapshots currently embed absolute checkout paths. This makes
-the snapshot tests non-portable across clones and is tracked as a testing
-follow-up.
+Fixture comparisons normalize embedded source paths, so snapshots remain
+portable across checkouts.
 
 Module diagnostics include the dependency's original file and span. For a
 cycle or a failure several imports deep, the loader adds each importing module

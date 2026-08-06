@@ -11,7 +11,7 @@ cargo test
 Regenerate expectations after an intentional language-output change:
 
 ```console
-cargo run -- generate-expected
+cargo run -- debug generate-expected
 ```
 
 Expectation files are grouped by phase:
