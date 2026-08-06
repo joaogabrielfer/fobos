@@ -11,9 +11,10 @@ keywords are reserved for features that are not implemented yet.
 The principal operators are:
 
 ```text
-+  -  *  /  ==  !=  <  <=  >  >=  <>  ..=  ..<  !  .
++  -  *  /  ==  !=  <  <=  >  >=  <>  ..=  ..<  !  .  ::
 ```
 
 `<>` combines values for output/string-like composition. `.` is the call
-piping operator when used after an expression. See the [operator reference](../reference/operators.md)
-for precedence and examples.
+piping operator when used after an expression. `::` qualifies a member through
+an imported module namespace; it is not a binary operator. See the
+[operator reference](../reference/operators.md) for precedence and examples.

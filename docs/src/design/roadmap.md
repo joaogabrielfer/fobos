@@ -6,11 +6,11 @@ design material, separate from the working-language reference.
 Near-term work should make the current implementation coherent before adding
 large surface areas:
 
-1. finish module loading and import checking;
-2. make fixture snapshots portable across checkout paths;
-3. stabilize the REPL and standardize the runnable examples;
-4. define the type representation needed for generics and user-defined types;
-5. add a standard library boundary before adding macros or effects.
+1. make fixture snapshots portable across checkout paths;
+2. stabilize the REPL and standardize the runnable examples;
+3. define the type representation needed for generics and user-defined types;
+4. grow the standard-module tree and define package/search-root boundaries;
+5. add explicit re-exports after visibility and package semantics are ready.
 
 Later proposals include required named parameters, boolean identifier suffixes,
 word-form boolean operators, operator sections, spread/rest syntax, pattern

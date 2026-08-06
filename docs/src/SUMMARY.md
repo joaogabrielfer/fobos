@@ -10,6 +10,7 @@
   - [Bindings and types](language/bindings-and-types.md)
   - [Blocks, yield, and return](language/blocks-yield-and-return.md)
   - [Functions and calls](language/functions.md)
+  - [Modules and imports](language/modules.md)
   - [Control flow and collections](language/control-flow.md)
   - [Lexical structure](language/lexical-structure.md)
 
@@ -19,7 +20,7 @@
   - [Language status](reference/language-status.md)
 
 - [Design notes](design/roadmap.md)
-  - [Modules](design/modules.md)
+  - [Module architecture and limits](design/modules.md)
   - [Types and compile-time features](design/types-and-compile-time.md)
   - [Effects and resource management](design/effects-and-resources.md)
 

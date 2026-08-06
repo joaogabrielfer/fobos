@@ -19,9 +19,11 @@ The implemented core currently includes:
 - immutable and mutable bindings;
 - integers, floats, booleans, strings, unit, tuples, arrays, and ranges;
 - functions, lambdas, closures, piping with `.`, and overloads;
+- relative and standard module imports with public exports;
 - `if`, `while`, and `for` expressions;
 - explicit `yield` and `return` flow;
 - a small type checker and the `echo`, `range`, and `push` built-ins.
 
-See the focused pages in this section for syntax and examples. Future syntax
+See the focused pages, including [modules and imports](modules.md), for syntax
+and examples. Future syntax
 belongs under [Design notes](../design/roadmap.md), not this reference.

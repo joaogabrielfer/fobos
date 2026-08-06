@@ -12,5 +12,6 @@ Built-ins are loaded into every interpreter and type-checker environment.
 the target must be a mutable binding or assignable indexed location. Calling it
 on an immutable binding is a runtime error.
 
-The standard library, `Result`, `Option`, I/O, and additional modules are not
-available yet.
+Standard modules are distinct from built-ins and are loaded from the bundled
+`std/` tree through the normal module interface. That tree is currently
+minimal; `Result`, `Option`, and I/O modules are not available yet.

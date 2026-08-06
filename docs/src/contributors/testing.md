@@ -25,6 +25,12 @@ semantics, then update the expected output in the same change. Keep source
 fixtures as `.fob` files and avoid hand-editing generated output unless the
 change is a deliberate snapshot update.
 
+Module fixtures keep dependency files under `fixtures/modules/` so the
+top-level fixture scanner does not execute dependencies as entry programs.
+Focused Rust tests additionally verify all supported import forms, shared
+state across importers, private-export errors, collisions, invalid import
+placement, external assignment rejection, and cycle diagnostics.
+
 There is a current portability issue: diagnostic snapshots include absolute
 paths from the checkout that generated them. Tests can fail after cloning to a
 different directory even when behavior is unchanged. Normalize paths before

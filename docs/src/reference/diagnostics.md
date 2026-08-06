@@ -19,3 +19,7 @@ interpreter behavior; it does not make unsupported runtime features work.
 Some fixture snapshots currently embed absolute checkout paths. This makes
 the snapshot tests non-portable across clones and is tracked as a testing
 follow-up.
+
+Module diagnostics include the dependency's original file and span. For a
+cycle or a failure several imports deep, the loader adds each importing module
+as context and reports the complete import chain.
