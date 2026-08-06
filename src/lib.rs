@@ -4,6 +4,7 @@ pub mod dump;
 pub mod errors;
 pub mod interpreter;
 pub mod lexer;
+pub mod module;
 pub mod parser;
 pub mod source;
 pub mod typechecker;

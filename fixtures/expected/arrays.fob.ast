@@ -1,6 +1,7 @@
 Program {
     statements: [
         Bind {
+            public: false,
             mutable: false,
             name: "empty",
             type_annotation: Inferred,
@@ -35,6 +36,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "nums",
             type_annotation: Inferred,
@@ -121,6 +123,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "nested",
             type_annotation: Inferred,
@@ -621,6 +624,7 @@ Program {
             },
         ),
         Bind {
+            public: false,
             mutable: false,
             name: "first",
             type_annotation: Inferred,
@@ -688,6 +692,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "middle",
             type_annotation: Inferred,
@@ -755,6 +760,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "last",
             type_annotation: Inferred,
@@ -1131,6 +1137,7 @@ Program {
             },
         ),
         Bind {
+            public: false,
             mutable: false,
             name: "nested_first",
             type_annotation: Inferred,
@@ -1198,6 +1205,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "nested_value",
             type_annotation: Inferred,
@@ -1504,6 +1512,7 @@ Program {
             },
         ),
         Bind {
+            public: false,
             mutable: false,
             name: "expr_array",
             type_annotation: Inferred,
@@ -2203,6 +2212,7 @@ Program {
             },
         ),
         Bind {
+            public: false,
             mutable: false,
             name: "array_from_block",
             type_annotation: Inferred,
@@ -2550,6 +2560,7 @@ Program {
             },
         ),
         Bind {
+            public: false,
             mutable: false,
             name: "array_with_yield_value",
             type_annotation: Inferred,
@@ -3217,6 +3228,7 @@ Program {
             },
         ),
         Bind {
+            public: false,
             mutable: false,
             name: "first_over_15",
             type_annotation: Inferred,
@@ -3500,6 +3512,7 @@ Program {
             },
         ),
         Bind {
+            public: false,
             mutable: false,
             name: "array_for_without_yield",
             type_annotation: Inferred,

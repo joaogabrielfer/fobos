@@ -1,6 +1,7 @@
 Program {
     statements: [
         FunDecl {
+            public: false,
             name: "add",
             generics: [],
             parameters: [
@@ -93,6 +94,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "added",
             type_annotation: Inferred,

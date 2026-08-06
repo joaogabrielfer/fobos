@@ -1,0 +1,18 @@
+TypeError {
+    kind: NameCollision(
+        "first",
+    ),
+    span: Span {
+        start: SrcPos {
+            line: 2,
+            col: 1,
+            idx: 36,
+        },
+        end: SrcPos {
+            line: 3,
+            col: 1,
+            idx: 73,
+        },
+    },
+    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/module_collision_error.fob",
+}

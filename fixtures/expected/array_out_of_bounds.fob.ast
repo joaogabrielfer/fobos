@@ -1,6 +1,7 @@
 Program {
     statements: [
         Bind {
+            public: false,
             mutable: false,
             name: "nums",
             type_annotation: Inferred,

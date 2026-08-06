@@ -1,0 +1,6 @@
+import "modules/first.fob" as first
+import "modules/second.fob" as second
+
+echo(first::next())
+echo(second::next())
+echo(first::next())

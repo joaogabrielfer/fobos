@@ -1,6 +1,7 @@
 Program {
     statements: [
         FunDecl {
+            public: false,
             name: "add",
             generics: [],
             parameters: [
@@ -97,6 +98,7 @@ Program {
             },
         },
         FunDecl {
+            public: false,
             name: "double",
             generics: [],
             parameters: [
@@ -185,6 +187,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "first",
             type_annotation: Inferred,
@@ -301,6 +304,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "second",
             type_annotation: Inferred,
@@ -485,6 +489,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "nested",
             type_annotation: Inferred,
@@ -651,6 +656,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "arithmetic",
             type_annotation: Inferred,

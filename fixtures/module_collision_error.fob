@@ -1,0 +1,4 @@
+import "modules/first.fob" as first
+import "modules/second.fob" as first
+
+first::next()

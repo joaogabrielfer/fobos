@@ -1,6 +1,7 @@
 Program {
     statements: [
         Bind {
+            public: false,
             mutable: false,
             name: "a",
             type_annotation: Inferred,
@@ -35,6 +36,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: true,
             name: "b",
             type_annotation: Inferred,
@@ -129,6 +131,7 @@ Program {
                             Block {
                                 statements: [
                                     Bind {
+                                        public: false,
                                         mutable: false,
                                         name: "result",
                                         type_annotation: Inferred,

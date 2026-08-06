@@ -1,0 +1,83 @@
+Program {
+    statements: [
+        ImportDecl {
+            source: Relative {
+                path: "modules/first.fob",
+                mode: Namespace {
+                    alias: "first",
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 1,
+                    idx: 0,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 36,
+                },
+            },
+        },
+        ImportDecl {
+            source: Relative {
+                path: "modules/second.fob",
+                mode: Namespace {
+                    alias: "first",
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 36,
+                },
+                end: SrcPos {
+                    line: 3,
+                    col: 1,
+                    idx: 73,
+                },
+            },
+        },
+        Expr(
+            Expr {
+                kind: Call {
+                    callee: Expr {
+                        kind: Path(
+                            [
+                                "first",
+                                "next",
+                            ],
+                        ),
+                        span: Span {
+                            start: SrcPos {
+                                line: 4,
+                                col: 1,
+                                idx: 74,
+                            },
+                            end: SrcPos {
+                                line: 4,
+                                col: 13,
+                                idx: 86,
+                            },
+                        },
+                    },
+                    args: [],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 4,
+                        col: 1,
+                        idx: 74,
+                    },
+                    end: SrcPos {
+                        line: 5,
+                        col: 1,
+                        idx: 88,
+                    },
+                },
+            },
+        ),
+    ],
+}

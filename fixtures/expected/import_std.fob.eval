@@ -1,19 +1,2 @@
-ParserError {
-    kind: ExpectedToken {
-        expected: "newline",
-        found: "::",
-    },
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/import_std.fob",
-    pos: Span {
-        start: SrcPos {
-            line: 3,
-            col: 4,
-            idx: 20,
-        },
-        end: SrcPos {
-            line: 3,
-            col: 6,
-            idx: 22,
-        },
-    },
-}
+result:
+Unit

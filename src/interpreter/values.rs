@@ -1,3 +1,5 @@
+use std::{collections::HashSet, rc::Rc};
+
 use itertools::Itertools;
 
 use crate::ast::{CallArgument, CallParameter, ValueArgument};
@@ -9,6 +11,7 @@ use crate::{
     ast::{Block, Expr, Parameter, TypeAnnotation},
     errors::RuntimeErrorKind,
     interpreter::env::EnvRef,
+    module::ModuleId,
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -23,6 +26,7 @@ pub enum Value {
 
     BuiltinFunction(BuiltinFunction),
     Function(FunctionValue),
+    Module(Rc<ModuleValue>),
 
     Range(RangeValue),
 }
@@ -59,6 +63,7 @@ impl Value {
                     .collect(),
                 return_type: Box::new(function_value.return_type.resolve_type_annotation()),
             },
+            Value::Module(_) => Type::Any,
             Value::Range(_) => Type::Range,
         }
     }
@@ -77,6 +82,19 @@ pub struct FunctionValue {
     pub name: Option<String>,
     pub overload_variants: Vec<OverloadFunctionVariant>,
     pub return_type: TypeAnnotation,
+}
+
+#[derive(Debug, Clone)]
+pub struct ModuleValue {
+    pub id: ModuleId,
+    pub env: EnvRef,
+    pub exports: HashSet<String>,
+}
+
+impl PartialEq for ModuleValue {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id && Rc::ptr_eq(&self.env, &other.env)
+    }
 }
 
 pub struct MatchedCall<T> {
@@ -287,6 +305,7 @@ impl std::fmt::Display for Value {
             }
             Value::BuiltinFunction(_) => write!(f, "<builtin function>"),
             Value::Function(_) => write!(f, "<function>"),
+            Value::Module(module) => write!(f, "<module {}>", module.id),
             Value::Range(r) => write!(
                 f,
                 "{}..{}{}",
@@ -328,6 +347,7 @@ impl Value {
             }
             Value::BuiltinFunction(_) => "<builtin function>".to_string(),
             Value::Function(_) => "<function>".to_string(),
+            Value::Module(module) => format!("<module {}>", module.id),
             Value::Range(r) => format!(
                 "Range '{}..{}{}'",
                 r.start,

@@ -1,0 +1,96 @@
+Program {
+    statements: [
+        ImportDecl {
+            source: Relative {
+                path: "modules/counter.fob",
+                mode: Namespace {
+                    alias: "counter",
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 1,
+                    idx: 0,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 40,
+                },
+            },
+        },
+        Expr(
+            Expr {
+                kind: Call {
+                    callee: Expr {
+                        kind: Ident(
+                            "echo",
+                        ),
+                        span: Span {
+                            start: SrcPos {
+                                line: 3,
+                                col: 1,
+                                idx: 41,
+                            },
+                            end: SrcPos {
+                                line: 3,
+                                col: 6,
+                                idx: 46,
+                            },
+                        },
+                    },
+                    args: [
+                        CallArgument {
+                            name: None,
+                            value: Expr {
+                                kind: Path(
+                                    [
+                                        "counter",
+                                        "count",
+                                    ],
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 3,
+                                        col: 6,
+                                        idx: 46,
+                                    },
+                                    end: SrcPos {
+                                        line: 3,
+                                        col: 21,
+                                        idx: 61,
+                                    },
+                                },
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 3,
+                                    col: 6,
+                                    idx: 46,
+                                },
+                                end: SrcPos {
+                                    line: 3,
+                                    col: 21,
+                                    idx: 61,
+                                },
+                            },
+                        },
+                    ],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 3,
+                        col: 1,
+                        idx: 41,
+                    },
+                    end: SrcPos {
+                        line: 4,
+                        col: 1,
+                        idx: 62,
+                    },
+                },
+            },
+        ),
+    ],
+}

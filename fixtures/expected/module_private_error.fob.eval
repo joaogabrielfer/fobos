@@ -1,0 +1,19 @@
+TypeError {
+    kind: UnknownModuleExport {
+        module: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/modules/counter.fob",
+        member: "count",
+    },
+    span: Span {
+        start: SrcPos {
+            line: 3,
+            col: 6,
+            idx: 46,
+        },
+        end: SrcPos {
+            line: 3,
+            col: 21,
+            idx: 61,
+        },
+    },
+    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/module_private_error.fob",
+}

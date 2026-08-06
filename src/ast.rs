@@ -14,6 +14,7 @@ pub enum Stmt {
     Yield(Expr),
 
     Bind {
+        public: bool,
         mutable: bool,
         name: String,
         type_annotation: TypeAnnotation,
@@ -27,6 +28,7 @@ pub enum Stmt {
     },
 
     FunDecl {
+        public: bool,
         name: String,
         generics: Vec<String>,
         parameters: Vec<Parameter>,
@@ -244,6 +246,7 @@ pub enum ExprKind {
     String(String),
     Bool(bool),
     Ident(String),
+    Path(Vec<String>),
     Unit,
 
     Block(Block),
@@ -303,6 +306,7 @@ impl Display for ExprKind {
             ExprKind::String(s) => write!(f, "string '{s}'"),
             ExprKind::Bool(b) => write!(f, "bool '{b}'"),
             ExprKind::Ident(i) => write!(f, "identifier '{i}'"),
+            ExprKind::Path(segments) => write!(f, "path '{}'", segments.join("::")),
             ExprKind::Unit => write!(f, "unit"),
             ExprKind::Block(_) => write!(f, "block"),
             ExprKind::Tuple(_) => write!(f, "tuple"),

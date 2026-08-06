@@ -1,6 +1,7 @@
 Program {
     statements: [
         Bind {
+            public: false,
             mutable: false,
             name: "add",
             type_annotation: Inferred,
@@ -117,6 +118,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "add_result",
             type_annotation: Inferred,
@@ -233,6 +235,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "inc",
             type_annotation: Inferred,
@@ -323,6 +326,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "make_adder",
             type_annotation: Inferred,
@@ -435,6 +439,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "label",
             type_annotation: Inferred,
@@ -577,6 +582,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "calc",
             type_annotation: Inferred,
@@ -597,6 +603,7 @@ Program {
                             Block {
                                 statements: [
                                     Bind {
+                                        public: false,
                                         mutable: false,
                                         name: "doubled",
                                         type_annotation: Inferred,

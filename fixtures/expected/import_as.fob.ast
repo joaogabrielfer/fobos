@@ -1,19 +1,63 @@
-ParserError {
-    kind: ExpectedToken {
-        expected: "newline",
-        found: "::",
-    },
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/import_as.fob",
-    pos: Span {
-        start: SrcPos {
-            line: 3,
-            col: 2,
-            idx: 24,
+Program {
+    statements: [
+        ImportDecl {
+            source: Relative {
+                path: "foo.fob",
+                mode: Namespace {
+                    alias: "f",
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 1,
+                    idx: 0,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 22,
+                },
+            },
         },
-        end: SrcPos {
-            line: 3,
-            col: 4,
-            idx: 26,
-        },
-    },
+        Expr(
+            Expr {
+                kind: Call {
+                    callee: Expr {
+                        kind: Path(
+                            [
+                                "f",
+                                "bar",
+                            ],
+                        ),
+                        span: Span {
+                            start: SrcPos {
+                                line: 3,
+                                col: 1,
+                                idx: 23,
+                            },
+                            end: SrcPos {
+                                line: 3,
+                                col: 8,
+                                idx: 30,
+                            },
+                        },
+                    },
+                    args: [],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 3,
+                        col: 1,
+                        idx: 23,
+                    },
+                    end: SrcPos {
+                        line: 4,
+                        col: 1,
+                        idx: 32,
+                    },
+                },
+            },
+        ),
+    ],
 }

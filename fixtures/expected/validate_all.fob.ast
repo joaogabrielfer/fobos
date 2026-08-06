@@ -1,6 +1,7 @@
 Program {
     statements: [
         Bind {
+            public: false,
             mutable: false,
             name: "unit_value",
             type_annotation: Explicit(
@@ -35,6 +36,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "int_value",
             type_annotation: Explicit(
@@ -73,6 +75,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "float_value",
             type_annotation: Inferred,
@@ -107,6 +110,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "bool_value",
             type_annotation: Inferred,
@@ -141,6 +145,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "string_value",
             type_annotation: Inferred,
@@ -175,6 +180,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "grouped",
             type_annotation: Inferred,
@@ -209,6 +215,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "tuple_pair",
             type_annotation: Inferred,
@@ -278,6 +285,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "tuple_nested",
             type_annotation: Inferred,
@@ -382,6 +390,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "tuple_mixed",
             type_annotation: Inferred,
@@ -520,6 +529,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "arithmetic",
             type_annotation: Inferred,
@@ -622,6 +632,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "arithmetic_grouped",
             type_annotation: Inferred,
@@ -724,6 +735,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "comparison_1",
             type_annotation: Inferred,
@@ -792,6 +804,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "comparison_2",
             type_annotation: Inferred,
@@ -860,6 +873,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "comparison_3",
             type_annotation: Inferred,
@@ -928,6 +942,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "comparison_4",
             type_annotation: Inferred,
@@ -996,6 +1011,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "comparison_5",
             type_annotation: Inferred,
@@ -1064,6 +1080,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "comparison_6",
             type_annotation: Inferred,
@@ -1132,6 +1149,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "if_expr_1",
             type_annotation: Inferred,
@@ -1218,6 +1236,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "if_expr_2",
             type_annotation: Inferred,
@@ -1304,6 +1323,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "if_block",
             type_annotation: Inferred,
@@ -1468,6 +1488,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "block_value",
             type_annotation: Inferred,
@@ -1476,6 +1497,7 @@ Program {
                     Block {
                         statements: [
                             Bind {
+                                public: false,
                                 mutable: false,
                                 name: "a",
                                 type_annotation: Inferred,
@@ -1510,6 +1532,7 @@ Program {
                                 },
                             },
                             Bind {
+                                public: false,
                                 mutable: false,
                                 name: "b",
                                 type_annotation: Inferred,
@@ -1626,6 +1649,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: true,
             name: "counter",
             type_annotation: Inferred,
@@ -1803,6 +1827,7 @@ Program {
             },
         ),
         FunDecl {
+            public: false,
             name: "add",
             generics: [],
             parameters: [
@@ -1899,6 +1924,7 @@ Program {
             },
         },
         FunDecl {
+            public: false,
             name: "unit_func",
             generics: [],
             parameters: [],
@@ -1940,6 +1966,7 @@ Program {
             },
         },
         FunDecl {
+            public: false,
             name: "inferred_return",
             generics: [],
             parameters: [
@@ -2032,6 +2059,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "add_result",
             type_annotation: Inferred,
@@ -2148,6 +2176,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "inferred_result",
             type_annotation: Inferred,
@@ -2264,6 +2293,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "inc",
             type_annotation: Inferred,
@@ -2354,6 +2384,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "inc_result",
             type_annotation: Inferred,
@@ -2438,6 +2469,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "lambda_add",
             type_annotation: Inferred,
@@ -2532,6 +2564,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "lambda_add_result",
             type_annotation: Inferred,
@@ -2648,6 +2681,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "lambda_block",
             type_annotation: Inferred,
@@ -2668,6 +2702,7 @@ Program {
                             Block {
                                 statements: [
                                     Bind {
+                                        public: false,
                                         mutable: false,
                                         name: "doubled",
                                         type_annotation: Inferred,
@@ -2832,6 +2867,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "lambda_block_result",
             type_annotation: Inferred,
@@ -2948,6 +2984,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "make_adder",
             type_annotation: Inferred,
@@ -3060,6 +3097,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "add_ten",
             type_annotation: Inferred,
@@ -3144,6 +3182,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "fifteen",
             type_annotation: Inferred,
@@ -3228,6 +3267,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "label",
             type_annotation: Inferred,
@@ -3370,6 +3410,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "label_result_1",
             type_annotation: Inferred,
@@ -3454,6 +3495,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "label_result_2",
             type_annotation: Inferred,

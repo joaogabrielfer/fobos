@@ -1,6 +1,7 @@
 Program {
     statements: [
         Bind {
+            public: false,
             mutable: true,
             name: "nums",
             type_annotation: Inferred,
@@ -375,6 +376,7 @@ Program {
             },
         ),
         Bind {
+            public: false,
             mutable: true,
             name: "nested",
             type_annotation: Inferred,
@@ -717,6 +719,7 @@ Program {
             },
         ),
         Bind {
+            public: false,
             mutable: true,
             name: "values",
             type_annotation: Inferred,
@@ -1157,6 +1160,7 @@ Program {
             },
         ),
         Bind {
+            public: false,
             mutable: true,
             name: "scoped",
             type_annotation: Inferred,
@@ -1435,6 +1439,7 @@ Program {
             },
         ),
         Bind {
+            public: false,
             mutable: true,
             name: "matrix",
             type_annotation: Inferred,

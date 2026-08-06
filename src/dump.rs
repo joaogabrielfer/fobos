@@ -4,7 +4,13 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use crate::{interpreter::Interpreter, lexer::Lexer, parser};
+use crate::{
+    ast::Stmt,
+    interpreter::Interpreter,
+    lexer::Lexer,
+    module::{CompilerSession, RuntimeModules},
+    parser,
+};
 
 use anyhow::Context;
 
@@ -52,9 +58,20 @@ pub fn dump_expected() -> anyhow::Result<()> {
                     Ok(program) => {
                         let ast_str = format!("{program:#?}");
 
+                        let has_imports = program
+                            .statements
+                            .iter()
+                            .any(|statement| matches!(statement, Stmt::ImportDecl { .. }));
                         let mut interpreter = Interpreter::new_buffered(&current_file_path);
-
-                        let eval_result = interpreter.eval_program(program);
+                        let eval_result = if has_imports {
+                            CompilerSession::default()
+                                .compile_file(&current_file_path)
+                                .and_then(|compilation| {
+                                    RuntimeModules::new(compilation).execute_root(&mut interpreter)
+                                })
+                        } else {
+                            interpreter.eval_program(program).map_err(Into::into)
+                        };
                         let output = interpreter.into_output_string();
 
                         let eval_str = match eval_result {

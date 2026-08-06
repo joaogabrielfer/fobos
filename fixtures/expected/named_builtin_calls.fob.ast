@@ -635,6 +635,7 @@ Program {
             },
         ),
         Bind {
+            public: false,
             mutable: true,
             name: "values",
             type_annotation: Inferred,
@@ -1140,6 +1141,7 @@ Program {
             },
         ),
         Bind {
+            public: false,
             mutable: true,
             name: "matrix",
             type_annotation: Inferred,

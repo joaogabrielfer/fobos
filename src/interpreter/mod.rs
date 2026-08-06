@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use anyhow::Result;
 
@@ -13,26 +13,26 @@ pub mod env;
 pub mod eval;
 pub mod values;
 
-pub struct Interpreter<'a, W: std::io::Write> {
+pub struct Interpreter<W: std::io::Write> {
     env: Env,
-    file_path: &'a PathBuf,
+    file_path: PathBuf,
     output: W,
 }
 
-impl<'a, W: std::io::Write> Interpreter<'a, W> {
-    pub fn new(file_path: &'a PathBuf, output: W) -> Self {
+impl<W: std::io::Write> Interpreter<W> {
+    pub fn new(file_path: &Path, output: W) -> Self {
         let mut env = Env::default();
         env.load_builtins();
         Self {
             env,
-            file_path,
+            file_path: file_path.to_path_buf(),
             output,
         }
     }
-    pub fn new_with_env(file_path: &'a PathBuf, env: Env, output: W) -> Self {
+    pub fn new_with_env(file_path: &Path, env: Env, output: W) -> Self {
         Self {
             env,
-            file_path,
+            file_path: file_path.to_path_buf(),
             output,
         }
     }
@@ -46,10 +46,21 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
     fn runtime_io_error(&self, err: std::io::Error) -> Box<RuntimeError> {
         self.error_at(Span::dummy(), RuntimeErrorKind::IoError(err.to_string()))
     }
+
+    pub(crate) fn replace_context(&mut self, env: Env, file_path: PathBuf) -> (Env, PathBuf) {
+        let previous_env = std::mem::replace(&mut self.env, env);
+        let previous_path = std::mem::replace(&mut self.file_path, file_path);
+        (previous_env, previous_path)
+    }
+
+    pub(crate) fn restore_context(&mut self, env: Env, file_path: PathBuf) {
+        self.env = env;
+        self.file_path = file_path;
+    }
 }
 
-impl<'a> Interpreter<'a, Vec<u8>> {
-    pub fn new_buffered(file_path: &'a PathBuf) -> Self {
+impl Interpreter<Vec<u8>> {
+    pub fn new_buffered(file_path: &Path) -> Self {
         Self::new(file_path, Vec::new())
     }
 

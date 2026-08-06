@@ -1,0 +1,6 @@
+var count: Int = 0
+
+pub fun next(): Int =
+    count = count + 1
+    return count
+end

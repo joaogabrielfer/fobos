@@ -8,8 +8,8 @@ use fobos::{
     dump::dump_expected,
     interpreter::{self, Interpreter},
     lexer::{self, Lexer},
+    module::{CompilerSession, RuntimeModules},
     parser::{self},
-    typechecker::TypeChecker,
 };
 
 #[derive(Parser)]
@@ -49,7 +49,7 @@ fn main() {
     match run() {
         Ok(_) => {}
         Err(e) => {
-            eprintln!("{e}");
+            eprintln!("{e:#}");
             exit(1);
         }
     }
@@ -126,8 +126,9 @@ fn run() -> anyhow::Result<()> {
             let ast = parser::Parser::new(tokens, path).parse_program()?;
             let stdout = std::io::stdout();
             if !*disable_type_checker {
-                let checked_program = TypeChecker::new(path.clone()).check_program(ast)?;
-                Interpreter::new(path, stdout.lock()).eval_program(checked_program.program)?;
+                let compilation = CompilerSession::default().compile_file(path)?;
+                let mut interpreter = Interpreter::new(path, stdout.lock());
+                RuntimeModules::new(compilation).execute_root(&mut interpreter)?;
             } else {
                 Interpreter::new(path, stdout.lock()).eval_program(ast)?;
             }

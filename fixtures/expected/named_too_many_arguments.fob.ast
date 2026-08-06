@@ -1,6 +1,7 @@
 Program {
     statements: [
         FunDecl {
+            public: false,
             name: "subtract",
             generics: [],
             parameters: [

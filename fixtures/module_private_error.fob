@@ -1,0 +1,3 @@
+import "modules/counter.fob" as counter
+
+echo(counter::count)

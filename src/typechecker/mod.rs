@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use crate::{
     ast::Program,
     errors::TypeError,
+    module::ModuleInterface,
     typechecker::{env::TypeEnv, ty::Type},
 };
 
@@ -14,10 +15,16 @@ pub struct CheckedProgram {
     pub program: Program,
 }
 
+pub struct CheckedModule {
+    pub program: CheckedProgram,
+    pub interface: ModuleInterface,
+}
+
 pub struct TypeChecker {
     file_path: PathBuf,
     env: TypeEnv,
     current_function_return: Option<Type>,
+    module_interfaces: std::collections::HashMap<crate::module::ModuleId, ModuleInterface>,
 }
 
 impl TypeChecker {
@@ -26,6 +33,7 @@ impl TypeChecker {
             file_path,
             env: TypeEnv::new(),
             current_function_return: None,
+            module_interfaces: std::collections::HashMap::new(),
         }
     }
 }

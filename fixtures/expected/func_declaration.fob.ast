@@ -1,6 +1,7 @@
 Program {
     statements: [
         FunDecl {
+            public: false,
             name: "add",
             generics: [],
             parameters: [
@@ -97,6 +98,7 @@ Program {
             },
         },
         FunDecl {
+            public: false,
             name: "answer",
             generics: [],
             parameters: [],
@@ -142,6 +144,7 @@ Program {
             },
         },
         FunDecl {
+            public: false,
             name: "identity",
             generics: [],
             parameters: [
@@ -196,6 +199,7 @@ Program {
             },
         },
         FunDecl {
+            public: false,
             name: "greet",
             generics: [],
             parameters: [],
@@ -241,6 +245,7 @@ Program {
             },
         },
         FunDecl {
+            public: false,
             name: "unit_value",
             generics: [],
             parameters: [],
@@ -282,6 +287,7 @@ Program {
             },
         },
         FunDecl {
+            public: false,
             name: "inferred_return",
             generics: [],
             parameters: [

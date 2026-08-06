@@ -1,0 +1,311 @@
+Program {
+    statements: [
+        ImportDecl {
+            source: Relative {
+                path: "modules/first.fob",
+                mode: Namespace {
+                    alias: "first",
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 1,
+                    idx: 0,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 36,
+                },
+            },
+        },
+        ImportDecl {
+            source: Relative {
+                path: "modules/second.fob",
+                mode: Namespace {
+                    alias: "second",
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 36,
+                },
+                end: SrcPos {
+                    line: 3,
+                    col: 1,
+                    idx: 74,
+                },
+            },
+        },
+        Expr(
+            Expr {
+                kind: Call {
+                    callee: Expr {
+                        kind: Ident(
+                            "echo",
+                        ),
+                        span: Span {
+                            start: SrcPos {
+                                line: 4,
+                                col: 1,
+                                idx: 75,
+                            },
+                            end: SrcPos {
+                                line: 4,
+                                col: 6,
+                                idx: 80,
+                            },
+                        },
+                    },
+                    args: [
+                        CallArgument {
+                            name: None,
+                            value: Expr {
+                                kind: Call {
+                                    callee: Expr {
+                                        kind: Path(
+                                            [
+                                                "first",
+                                                "next",
+                                            ],
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 4,
+                                                col: 6,
+                                                idx: 80,
+                                            },
+                                            end: SrcPos {
+                                                line: 4,
+                                                col: 18,
+                                                idx: 92,
+                                            },
+                                        },
+                                    },
+                                    args: [],
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 4,
+                                        col: 6,
+                                        idx: 80,
+                                    },
+                                    end: SrcPos {
+                                        line: 4,
+                                        col: 20,
+                                        idx: 94,
+                                    },
+                                },
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 4,
+                                    col: 6,
+                                    idx: 80,
+                                },
+                                end: SrcPos {
+                                    line: 4,
+                                    col: 20,
+                                    idx: 94,
+                                },
+                            },
+                        },
+                    ],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 4,
+                        col: 1,
+                        idx: 75,
+                    },
+                    end: SrcPos {
+                        line: 5,
+                        col: 1,
+                        idx: 95,
+                    },
+                },
+            },
+        ),
+        Expr(
+            Expr {
+                kind: Call {
+                    callee: Expr {
+                        kind: Ident(
+                            "echo",
+                        ),
+                        span: Span {
+                            start: SrcPos {
+                                line: 5,
+                                col: 1,
+                                idx: 95,
+                            },
+                            end: SrcPos {
+                                line: 5,
+                                col: 6,
+                                idx: 100,
+                            },
+                        },
+                    },
+                    args: [
+                        CallArgument {
+                            name: None,
+                            value: Expr {
+                                kind: Call {
+                                    callee: Expr {
+                                        kind: Path(
+                                            [
+                                                "second",
+                                                "next",
+                                            ],
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 5,
+                                                col: 6,
+                                                idx: 100,
+                                            },
+                                            end: SrcPos {
+                                                line: 5,
+                                                col: 19,
+                                                idx: 113,
+                                            },
+                                        },
+                                    },
+                                    args: [],
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 5,
+                                        col: 6,
+                                        idx: 100,
+                                    },
+                                    end: SrcPos {
+                                        line: 5,
+                                        col: 21,
+                                        idx: 115,
+                                    },
+                                },
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 5,
+                                    col: 6,
+                                    idx: 100,
+                                },
+                                end: SrcPos {
+                                    line: 5,
+                                    col: 21,
+                                    idx: 115,
+                                },
+                            },
+                        },
+                    ],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 5,
+                        col: 1,
+                        idx: 95,
+                    },
+                    end: SrcPos {
+                        line: 6,
+                        col: 1,
+                        idx: 116,
+                    },
+                },
+            },
+        ),
+        Expr(
+            Expr {
+                kind: Call {
+                    callee: Expr {
+                        kind: Ident(
+                            "echo",
+                        ),
+                        span: Span {
+                            start: SrcPos {
+                                line: 6,
+                                col: 1,
+                                idx: 116,
+                            },
+                            end: SrcPos {
+                                line: 6,
+                                col: 6,
+                                idx: 121,
+                            },
+                        },
+                    },
+                    args: [
+                        CallArgument {
+                            name: None,
+                            value: Expr {
+                                kind: Call {
+                                    callee: Expr {
+                                        kind: Path(
+                                            [
+                                                "first",
+                                                "next",
+                                            ],
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 6,
+                                                col: 6,
+                                                idx: 121,
+                                            },
+                                            end: SrcPos {
+                                                line: 6,
+                                                col: 18,
+                                                idx: 133,
+                                            },
+                                        },
+                                    },
+                                    args: [],
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 6,
+                                        col: 6,
+                                        idx: 121,
+                                    },
+                                    end: SrcPos {
+                                        line: 6,
+                                        col: 20,
+                                        idx: 135,
+                                    },
+                                },
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 6,
+                                    col: 6,
+                                    idx: 121,
+                                },
+                                end: SrcPos {
+                                    line: 6,
+                                    col: 20,
+                                    idx: 135,
+                                },
+                            },
+                        },
+                    ],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 6,
+                        col: 1,
+                        idx: 116,
+                    },
+                    end: SrcPos {
+                        line: 7,
+                        col: 1,
+                        idx: 136,
+                    },
+                },
+            },
+        ),
+    ],
+}

@@ -1,0 +1,59 @@
+Program {
+    statements: [
+        Bind {
+            public: false,
+            mutable: false,
+            name: "value",
+            type_annotation: Inferred,
+            value: Expr {
+                kind: Int(
+                    1,
+                ),
+                span: Span {
+                    start: SrcPos {
+                        line: 1,
+                        col: 14,
+                        idx: 13,
+                    },
+                    end: SrcPos {
+                        line: 2,
+                        col: 1,
+                        idx: 15,
+                    },
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 1,
+                    idx: 0,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 15,
+                },
+            },
+        },
+        ImportDecl {
+            source: Relative {
+                path: "modules/counter.fob",
+                mode: Namespace {
+                    alias: "counter",
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 15,
+                },
+                end: SrcPos {
+                    line: 3,
+                    col: 1,
+                    idx: 55,
+                },
+            },
+        },
+    ],
+}

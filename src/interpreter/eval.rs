@@ -11,7 +11,7 @@ use crate::{
     errors::{ArgumentError, RuntimeError, RuntimeErrorKind},
     interpreter::{
         Interpreter,
-        env::{Env, EnvFrame},
+        env::{BindingKind, Env, EnvFrame},
         values::{
             FunctionBody, FunctionValue, OverloadFunctionVariant, RangeValue, RuntimeIterator,
             Value,
@@ -43,7 +43,7 @@ macro_rules! value_or_flow {
     };
 }
 
-impl<'a, W: std::io::Write> Interpreter<'a, W> {
+impl<W: std::io::Write> Interpreter<W> {
     pub fn eval_program(&mut self, program: Program) -> Result<Value, Box<RuntimeError>> {
         for stmt in program.statements {
             match self.eval_statement(stmt)? {
@@ -124,7 +124,9 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                                         name.clone(),
                                     ));
                                 }
-                                let Value::Array(mut array) = binding.value.clone() else {
+                                let BindingKind::Value(Value::Array(mut array)) =
+                                    binding.kind.clone()
+                                else {
                                     return Err(RuntimeErrorKind::InvalidIndexingTarget(
                                         target.kind.to_string(),
                                     ));
@@ -158,13 +160,17 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                                     }
 
                                     array[last_idx as usize] = value_or_flow!(value);
-                                    binding.value = Value::Array(array);
+                                    binding.kind = BindingKind::Value(Value::Array(array));
                                 }
 
                                 Ok(EvalFlow::Continue(Value::Unit))
                             })
                             .map_err(|kind| self.error_at(index_span, kind))
                     }
+                    ExprKind::Path(segments) => Err(self.error_at(
+                        target.span,
+                        RuntimeErrorKind::ModuleMemberAssignment(segments.join("::")),
+                    )),
                     _ => Err(self.error_at(
                         target.span,
                         RuntimeErrorKind::InvalidAssignmentTarget(target.kind.to_string()),
@@ -172,6 +178,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 }
             }
             Stmt::FunDecl {
+                public: _,
                 name,
                 generics: _,
                 parameters,
@@ -226,9 +233,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                 self.env.define(name, false, fun);
                 Ok(EvalFlow::Continue(Value::Unit))
             }
-            Stmt::ImportDecl { source, span } => {
-                Err(self.error_at(span, RuntimeErrorKind::NotImplemented))
-            }
+            Stmt::ImportDecl { .. } => Ok(EvalFlow::Continue(Value::Unit)),
         }
     }
 
@@ -243,6 +248,7 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
             ExprKind::String(val) => Ok(EvalFlow::Continue(Value::String(val))),
             ExprKind::Bool(val) => Ok(EvalFlow::Continue(Value::Bool(val))),
             ExprKind::Ident(i) => self.eval_ident(i, expr.span),
+            ExprKind::Path(segments) => self.eval_module_path(segments, expr.span),
             ExprKind::Unit => Ok(EvalFlow::Continue(Value::Unit)),
             ExprKind::Block(block) => self.eval_block(block, yield_mode),
             ExprKind::Tuple(exprs) => self.eval_tuple(exprs),
@@ -548,6 +554,48 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
             })
         })?;
         // eprintln!("has value of {value}");
+        Ok(EvalFlow::Continue(value))
+    }
+
+    fn eval_module_path(
+        &mut self,
+        segments: Vec<String>,
+        span: Span,
+    ) -> Result<EvalFlow, Box<RuntimeError>> {
+        let (module_name, member_path) = segments
+            .split_first()
+            .expect("qualified paths always contain a module name");
+        let [member] = member_path else {
+            return Err(self.error_at(
+                span,
+                RuntimeErrorKind::UnknownModuleExport {
+                    module: module_name.clone(),
+                    member: member_path.join("::"),
+                },
+            ));
+        };
+        let value = self
+            .env
+            .get(module_name)
+            .map_err(|kind| self.error_at(span, kind))?;
+        let Value::Module(module) = value else {
+            return Err(self.error_at(
+                span,
+                RuntimeErrorKind::InvalidAssignmentTarget(module_name.clone()),
+            ));
+        };
+        if !module.exports.contains(member) {
+            return Err(self.error_at(
+                span,
+                RuntimeErrorKind::UnknownModuleExport {
+                    module: module.id.to_string(),
+                    member: member.clone(),
+                },
+            ));
+        }
+        let value = Env::from_ref(module.env.clone())
+            .get(member)
+            .map_err(|kind| self.error_at(span, kind))?;
         Ok(EvalFlow::Continue(value))
     }
 
@@ -960,7 +1008,13 @@ mod tests {
         fs::{read_dir, read_to_string},
     };
 
-    use crate::{dump::create_expected_by_ext, interpreter::Interpreter, parser};
+    use crate::{
+        ast::Stmt,
+        dump::create_expected_by_ext,
+        interpreter::Interpreter,
+        module::{CompilerSession, RuntimeModules},
+        parser,
+    };
 
     #[test]
     fn validate_expected_eval() {
@@ -996,8 +1050,20 @@ mod tests {
                         match ast {
                             Ok(program) => {
                                 let mut interpreter = Interpreter::new_buffered(&current_file_path);
-
-                                let eval_result = interpreter.eval_program(program);
+                                let has_imports = program
+                                    .statements
+                                    .iter()
+                                    .any(|statement| matches!(statement, Stmt::ImportDecl { .. }));
+                                let eval_result = if has_imports {
+                                    CompilerSession::default()
+                                        .compile_file(&current_file_path)
+                                        .and_then(|compilation| {
+                                            RuntimeModules::new(compilation)
+                                                .execute_root(&mut interpreter)
+                                        })
+                                } else {
+                                    interpreter.eval_program(program).map_err(Into::into)
+                                };
                                 let output = interpreter.into_output_string();
 
                                 match eval_result {

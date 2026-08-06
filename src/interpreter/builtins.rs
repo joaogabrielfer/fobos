@@ -3,7 +3,7 @@ use crate::{
     errors::{RuntimeError, RuntimeErrorKind},
     interpreter::{
         Interpreter,
-        env::Env,
+        env::{BindingKind, Env},
         eval::{EvalFlow, YieldMode},
         values::{self, MatchedCall, RangeValue, Value, normalize_arguments},
     },
@@ -175,7 +175,7 @@ impl TypeEnv {
     }
 }
 
-impl<'a, W: std::io::Write> Interpreter<'a, W> {
+impl<W: std::io::Write> Interpreter<W> {
     fn match_builtin_values(
         &self,
         builtin: &BuiltinFunction,
@@ -304,14 +304,19 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                                         name.clone(),
                                     ));
                                 }
-                                match &mut binding.value {
-                                    Value::Array(items) => {
+                                match &mut binding.kind {
+                                    BindingKind::Value(Value::Array(items)) => {
                                         items.push(value);
                                         Ok(())
                                     }
-                                    other => Err(RuntimeErrorKind::ExpectedArray {
-                                        found: other.type_name().to_string(),
-                                    }),
+                                    BindingKind::Value(other) => {
+                                        Err(RuntimeErrorKind::ExpectedArray {
+                                            found: other.type_name().to_string(),
+                                        })
+                                    }
+                                    _ => Err(RuntimeErrorKind::CannotAssignImportedMember(
+                                        name.clone(),
+                                    )),
                                 }
                             })
                             .map_err(|kind| self.error_at(target.span, kind))?;
@@ -334,8 +339,8 @@ impl<'a, W: std::io::Write> Interpreter<'a, W> {
                                         name.clone(),
                                     ));
                                 }
-                                let mut array = match binding.value {
-                                    Value::Array(ref mut array) => array,
+                                let mut array = match binding.kind {
+                                    BindingKind::Value(Value::Array(ref mut array)) => array,
                                     _ => {
                                         return Err(RuntimeErrorKind::InvalidIndexingTarget(
                                             indexed_target.kind.to_string(),

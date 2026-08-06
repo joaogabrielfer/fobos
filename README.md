@@ -781,24 +781,30 @@ The `?` is considered part of the identifier and is not an operator
 
 ### Modules
 
-Modules are accessed using the `::` operator
+Modules are imported at the start of a file and namespaces are accessed using
+the `::` operator.
 
 ```fob
-let result := std::math::abs(-10)
-let file := std::fs::open("foo.txt")
+import std::math
+import std::fs
+
+let result := math::abs(-10)
+let file := fs::open("foo.txt")
 ```
 
 
 This also applies to functions accessed from modules
 
 ```fob
-let empty := std::string::empty?(path)
+import std::string
+
+let empty := string::empty?(path)
 ```
 
-They can be imported into the current scope and then used with the piped syntax
+Members can be imported into the current scope and then used with the piped syntax.
 
 ```fob
-use std::string::{empty?}
+import std::string::{empty?}
 
 let empty := path.empty?()
 ```

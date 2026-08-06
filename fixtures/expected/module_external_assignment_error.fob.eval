@@ -1,0 +1,18 @@
+TypeError {
+    kind: ModuleMemberAssignment(
+        "counter::count",
+    ),
+    span: Span {
+        start: SrcPos {
+            line: 3,
+            col: 1,
+            idx: 41,
+        },
+        end: SrcPos {
+            line: 3,
+            col: 17,
+            idx: 57,
+        },
+    },
+    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/module_external_assignment_error.fob",
+}

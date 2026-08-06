@@ -1,6 +1,7 @@
 Program {
     statements: [
         Bind {
+            public: false,
             mutable: false,
             name: "sum",
             type_annotation: Inferred,
@@ -9,6 +10,7 @@ Program {
                     Block {
                         statements: [
                             Bind {
+                                public: false,
                                 mutable: false,
                                 name: "left",
                                 type_annotation: Inferred,
@@ -43,6 +45,7 @@ Program {
                                 },
                             },
                             Bind {
+                                public: false,
                                 mutable: false,
                                 name: "right",
                                 type_annotation: Inferred,
@@ -159,6 +162,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "selected",
             type_annotation: Inferred,
@@ -289,6 +293,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: true,
             name: "i",
             type_annotation: Inferred,
@@ -323,6 +328,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "first_even",
             type_annotation: Inferred,

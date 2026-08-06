@@ -1,16 +1,2 @@
-RuntimeError {
-    kind: NotImplemented,
-    span: Span {
-        start: SrcPos {
-            line: 1,
-            col: 8,
-            idx: 7,
-        },
-        end: SrcPos {
-            line: 3,
-            col: 1,
-            idx: 20,
-        },
-    },
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/import_std_all.fob",
-}
+result:
+Unit

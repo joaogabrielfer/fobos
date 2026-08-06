@@ -1,0 +1,63 @@
+Program {
+    statements: [
+        ImportDecl {
+            source: Relative {
+                path: "modules/counter.fob",
+                mode: Namespace {
+                    alias: "counter",
+                },
+            },
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 1,
+                    idx: 0,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 40,
+                },
+            },
+        },
+        Assignment {
+            target: Expr {
+                kind: Path(
+                    [
+                        "counter",
+                        "count",
+                    ],
+                ),
+                span: Span {
+                    start: SrcPos {
+                        line: 3,
+                        col: 1,
+                        idx: 41,
+                    },
+                    end: SrcPos {
+                        line: 3,
+                        col: 17,
+                        idx: 57,
+                    },
+                },
+            },
+            value: Expr {
+                kind: Int(
+                    10,
+                ),
+                span: Span {
+                    start: SrcPos {
+                        line: 3,
+                        col: 18,
+                        idx: 58,
+                    },
+                    end: SrcPos {
+                        line: 4,
+                        col: 1,
+                        idx: 61,
+                    },
+                },
+            },
+        },
+    ],
+}

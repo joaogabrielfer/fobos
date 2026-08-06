@@ -1,0 +1,70 @@
+Ok(
+    [
+        Token {
+            kind: Import,
+            origin: "import",
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 1,
+                    idx: 0,
+                },
+                end: SrcPos {
+                    line: 1,
+                    col: 7,
+                    idx: 6,
+                },
+            },
+        },
+        Token {
+            kind: String(
+                "modules/cycle_a.fob",
+            ),
+            origin: "\"modules/cycle_a.fob\"",
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 8,
+                    idx: 7,
+                },
+                end: SrcPos {
+                    line: 1,
+                    col: 29,
+                    idx: 28,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 2,
+                    col: 0,
+                    idx: 28,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 29,
+                },
+            },
+        },
+        Token {
+            kind: Eof,
+            origin: "EOF",
+            span: Span {
+                start: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 29,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 29,
+                },
+            },
+        },
+    ],
+)

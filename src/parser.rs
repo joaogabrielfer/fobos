@@ -43,10 +43,11 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_statement(&mut self) -> Result<ast::Stmt, Box<ParserError>> {
+        let public = self.check_and_advance(TokenTag::Pub);
         match self.current().kind {
-            TokenKind::Let => self.parse_binding(false),
-            TokenKind::Var => self.parse_binding(true),
-            TokenKind::Fun => self.parse_fun_decl(),
+            TokenKind::Let => self.parse_binding(false, public),
+            TokenKind::Var => self.parse_binding(true, public),
+            TokenKind::Fun => self.parse_fun_decl(public),
             TokenKind::Return => {
                 self.advance();
                 Ok(ast::Stmt::Return(self.parse_expr()?))
@@ -56,6 +57,11 @@ impl<'a> Parser<'a> {
                 Ok(ast::Stmt::Yield(self.parse_expr()?))
             }
             TokenKind::Import => {
+                if public {
+                    return Err(self.error(ParserErrorKind::InvalidImport {
+                        found: "pub import".to_string(),
+                    }));
+                }
                 let start_span = self.current().span;
                 self.advance();
                 match self.current_tag() {
@@ -72,7 +78,6 @@ impl<'a> Parser<'a> {
                         if self.check_and_advance(TokenTag::As) {
                             alias = Some(self.expect_ident()?);
                         }
-                        self.expect(TokenTag::NewLine)?;
                         let mode = match alias {
                             Some(alias) => RelativeImportMode::Namespace { alias },
                             None => RelativeImportMode::Glob,
@@ -99,24 +104,20 @@ impl<'a> Parser<'a> {
                         }
 
                         match self.current_tag() {
-                            TokenTag::NewLine => {
-                                self.expect(TokenTag::NewLine)?;
-                                Ok(ast::Stmt::ImportDecl {
-                                    source: ImportSource::Module {
-                                        tree: ImportTree::Path {
-                                            segments: module_path,
-                                            alias: None,
-                                        },
+                            TokenTag::NewLine => Ok(ast::Stmt::ImportDecl {
+                                source: ImportSource::Module {
+                                    tree: ImportTree::Path {
+                                        segments: module_path,
+                                        alias: None,
                                     },
-                                    span: Span {
-                                        start: start_span.start,
-                                        end: self.current().span.end,
-                                    },
-                                })
-                            }
+                                },
+                                span: Span {
+                                    start: start_span.start,
+                                    end: self.current().span.end,
+                                },
+                            }),
                             TokenTag::Star => {
                                 self.expect(TokenTag::Star)?;
-                                self.expect(TokenTag::NewLine)?;
                                 Ok(ast::Stmt::ImportDecl {
                                     source: ImportSource::Module {
                                         tree: ImportTree::Glob { module_path },
@@ -130,6 +131,7 @@ impl<'a> Parser<'a> {
                             TokenTag::LCurly => {
                                 self.expect(TokenTag::LCurly)?;
                                 let mut items = vec![];
+                                self.consume_newlines();
                                 while !self.check_and_advance(TokenTag::RCurly) {
                                     let item_span = self.current().span;
                                     let name = self.expect_ident()?;
@@ -145,9 +147,9 @@ impl<'a> Parser<'a> {
                                     });
                                     if self.current_tag() != TokenTag::RCurly {
                                         self.expect(TokenTag::Comma)?;
+                                        self.consume_newlines();
                                     }
                                 }
-                                self.expect(TokenTag::NewLine)?;
                                 Ok(ast::Stmt::ImportDecl {
                                     source: ImportSource::Module {
                                         tree: ImportTree::Group { module_path, items },
@@ -185,12 +187,18 @@ impl<'a> Parser<'a> {
                 }
             }
             _ => {
+                if public {
+                    return Err(self.error(ParserErrorKind::UnexpectedToken {
+                        found: "pub".to_string(),
+                    }));
+                }
                 let starting_span = self.current().span;
                 let expr = self.parse_expr()?;
                 if self.check(TokenTag::Equals) {
                     if !matches!(
                         expr.kind,
                         ast::ExprKind::Ident(_)
+                            | ast::ExprKind::Path(_)
                             | ast::ExprKind::Tuple(_)
                             | ast::ExprKind::Index { .. }
                     ) {
@@ -215,7 +223,11 @@ impl<'a> Parser<'a> {
         }
     }
 
-    fn parse_binding(&mut self, mutable: bool) -> Result<ast::Stmt, Box<ParserError>> {
+    fn parse_binding(
+        &mut self,
+        mutable: bool,
+        public: bool,
+    ) -> Result<ast::Stmt, Box<ParserError>> {
         let start_span = self.current().span;
         if mutable {
             self.expect(TokenTag::Var)?;
@@ -235,6 +247,7 @@ impl<'a> Parser<'a> {
 
         let value_span = value.span;
         Ok(ast::Stmt::Bind {
+            public,
             mutable,
             name,
             type_annotation,
@@ -271,7 +284,7 @@ impl<'a> Parser<'a> {
         ))
     }
 
-    fn parse_fun_decl(&mut self) -> Result<ast::Stmt, Box<ParserError>> {
+    fn parse_fun_decl(&mut self, public: bool) -> Result<ast::Stmt, Box<ParserError>> {
         let start_span = self.current().span;
         self.expect(TokenTag::Fun)?;
         let mut generics = vec![];
@@ -327,6 +340,7 @@ impl<'a> Parser<'a> {
         self.expect(TokenTag::Equals)?;
         let body = self.parse_block()?;
         Ok(ast::Stmt::FunDecl {
+            public,
             name,
             generics,
             parameters,
@@ -641,7 +655,16 @@ impl<'a> Parser<'a> {
             }
             TokenKind::Ident(i) => {
                 self.advance();
-                Ok(self.new_expr(start_span, ExprKind::Ident(i.to_string())))
+                let mut segments = vec![i.to_string()];
+                while self.check_and_advance(TokenTag::ColonColon) {
+                    segments.push(self.expect_ident()?);
+                }
+                let kind = if segments.len() == 1 {
+                    ExprKind::Ident(segments.pop().expect("identifier path has one segment"))
+                } else {
+                    ExprKind::Path(segments)
+                };
+                Ok(self.new_expr(start_span, kind))
             }
             TokenKind::If => self.parse_if_expr(),
             TokenKind::While => self.parse_while(),

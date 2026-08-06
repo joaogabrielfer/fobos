@@ -225,6 +225,12 @@ pub enum RuntimeErrorKind {
     UndefinedVariable(String),
     #[error("cannot assign to immutable variable '{0}'")]
     CannotAssignImmutable(String),
+    #[error("cannot assign through imported member '{0}'")]
+    CannotAssignImportedMember(String),
+    #[error("unknown export '{member}' from module '{module}'")]
+    UnknownModuleExport { module: String, member: String },
+    #[error("cannot assign through module member path '{0}'")]
+    ModuleMemberAssignment(String),
     #[error("{0} is not a valid assignment target")]
     InvalidAssignmentTarget(String),
     #[error("{0} is not a valid indexing target")]
@@ -320,6 +326,14 @@ pub enum TypeErrorKind {
     },
     #[error("undefined variable '{0}'")]
     UndefinedVariable(String),
+    #[error("'{0}' is a module namespace, not a value")]
+    NotAValue(String),
+    #[error("name '{0}' is already defined in this module scope")]
+    NameCollision(String),
+    #[error("unknown export '{member}' from module '{module}'")]
+    UnknownModuleExport { module: String, member: String },
+    #[error("cannot assign through module member path '{0}'")]
+    ModuleMemberAssignment(String),
     #[error("{found} is not an iterable type")]
     NotIterable { found: String },
     #[error("{0} is not a valid assignment target")]

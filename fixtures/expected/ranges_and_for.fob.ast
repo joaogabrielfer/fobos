@@ -1,6 +1,7 @@
 Program {
     statements: [
         Bind {
+            public: false,
             mutable: false,
             name: "range_exclusive",
             type_annotation: Inferred,
@@ -69,6 +70,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "range_inclusive",
             type_annotation: Inferred,
@@ -343,6 +345,7 @@ Program {
             },
         ),
         Bind {
+            public: false,
             mutable: false,
             name: "builtin_range_end",
             type_annotation: Inferred,
@@ -427,6 +430,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "builtin_range_start_end",
             type_annotation: Inferred,
@@ -543,6 +547,7 @@ Program {
             },
         },
         Bind {
+            public: false,
             mutable: false,
             name: "builtin_range_step",
             type_annotation: Inferred,
@@ -2258,6 +2263,7 @@ Program {
             },
         ),
         Bind {
+            public: false,
             mutable: false,
             name: "first_big",
             type_annotation: Inferred,
@@ -2575,6 +2581,7 @@ Program {
             },
         ),
         Bind {
+            public: false,
             mutable: false,
             name: "for_without_yield",
             type_annotation: Inferred,
@@ -2886,6 +2893,7 @@ Program {
             },
         ),
         FunDecl {
+            public: false,
             name: "find",
             generics: [],
             parameters: [],

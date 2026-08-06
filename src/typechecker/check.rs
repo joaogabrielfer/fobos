@@ -2,9 +2,11 @@ use crate::{
     ast::{BinaryOp, Block, CallArgument, Expr, ExprKind, Program, Stmt, TypeAnnotation, UnaryOp},
     errors::{ArgumentError, ArgumentErrorKind, TypeError, TypeErrorKind},
     interpreter::values::normalize_arguments,
+    module::{ExportedSymbol, ModuleInterface, ResolvedImport},
     source::Span,
     typechecker::{
-        CheckedProgram, TypeChecker, TypeResult,
+        CheckedModule, CheckedProgram, TypeChecker, TypeResult,
+        env::TypeBinding,
         ty::{
             ParameterType,
             Type::{self},
@@ -53,7 +55,20 @@ pub struct BlockCheck {
 
 impl TypeChecker {
     pub fn check_program(&mut self, program: Program) -> TypeResult<CheckedProgram> {
+        Ok(self
+            .check_module(program, &[], &std::collections::HashMap::new())?
+            .program)
+    }
+
+    pub fn check_module(
+        &mut self,
+        program: Program,
+        imports: &[ResolvedImport],
+        module_interfaces: &std::collections::HashMap<crate::module::ModuleId, ModuleInterface>,
+    ) -> TypeResult<CheckedModule> {
         self.env.load_builtins();
+        self.module_interfaces = module_interfaces.clone();
+        self.install_imports(imports)?;
 
         for stmt in &program.statements {
             self.declare_function(stmt)?;
@@ -81,7 +96,76 @@ impl TypeChecker {
             }
         }
 
-        Ok(CheckedProgram { program })
+        let mut exports = std::collections::HashMap::new();
+        for statement in &program.statements {
+            let (public, name, span) = match statement {
+                Stmt::Bind {
+                    public, name, span, ..
+                }
+                | Stmt::FunDecl {
+                    public, name, span, ..
+                } => (*public, name, *span),
+                _ => continue,
+            };
+            if public {
+                let ty = self
+                    .env
+                    .get(name)
+                    .map_err(|kind| self.error_at(span, kind))?;
+                exports.insert(name.clone(), ExportedSymbol { ty });
+            }
+        }
+
+        Ok(CheckedModule {
+            program: CheckedProgram { program },
+            interface: ModuleInterface { exports },
+        })
+    }
+
+    fn install_imports(&mut self, imports: &[ResolvedImport]) -> TypeResult<()> {
+        for import in imports {
+            let name = import.local_name();
+            if self.env.get_current(name).is_some() {
+                return Err(self.error_at(
+                    import.span(),
+                    TypeErrorKind::NameCollision(name.to_string()),
+                ));
+            }
+            match import {
+                ResolvedImport::Module { module, .. } => {
+                    self.env
+                        .define_binding(name.to_string(), TypeBinding::Module(module.clone()));
+                }
+                ResolvedImport::Member {
+                    module,
+                    export_name,
+                    ..
+                } => {
+                    let interface = self
+                        .module_interfaces
+                        .get(module)
+                        .expect("resolved imports must have a dependency interface");
+                    let export = interface.exports.get(export_name).ok_or_else(|| {
+                        self.error_at(
+                            import.span(),
+                            TypeErrorKind::UnknownModuleExport {
+                                module: module.to_string(),
+                                member: export_name.clone(),
+                            },
+                        )
+                    })?;
+                    self.env.define_binding(
+                        name.to_string(),
+                        TypeBinding::ImportedMember {
+                            module: module.clone(),
+                            export_name: export_name.clone(),
+                            ty: export.ty.clone(),
+                        },
+                    );
+                }
+            }
+        }
+        Ok(())
     }
 
     fn check_stmt(&mut self, stmt: &Stmt) -> TypeResult<StmtCheck> {
@@ -112,6 +196,11 @@ impl TypeChecker {
                 value,
                 ..
             } => {
+                if self.env.at_module_scope() && self.env.get_current(name).is_some() {
+                    return Err(
+                        self.error_at(stmt.span(), TypeErrorKind::NameCollision(name.clone()))
+                    );
+                }
                 let value_type = self.infer_expr(value)?;
 
                 match type_annotation {
@@ -165,6 +254,11 @@ impl TypeChecker {
                         Ok(StmtCheck::normal(Type::Unit))
                     }
 
+                    ExprKind::Path(segments) => Err(self.error_at(
+                        target.span,
+                        TypeErrorKind::ModuleMemberAssignment(segments.join("::")),
+                    )),
+
                     _ => Err(self.error_at(
                         target.span,
                         TypeErrorKind::InvalidAssignmentTarget(target.kind.to_string()),
@@ -172,7 +266,7 @@ impl TypeChecker {
                 }
             }
             Stmt::FunDecl { .. } => Ok(StmtCheck::normal(Type::Unit)),
-            Stmt::ImportDecl { source, span } => todo!(),
+            Stmt::ImportDecl { .. } => Ok(StmtCheck::normal(Type::Unit)),
         }
     }
     fn infer_expr(&mut self, expr: &Expr) -> TypeResult<Type> {
@@ -189,6 +283,7 @@ impl TypeChecker {
                     .map_err(|kind| self.error_at(span, kind))?;
                 Ok(value)
             }
+            ExprKind::Path(segments) => self.infer_module_path(segments, span),
             ExprKind::Unit => Ok(Type::Unit),
             ExprKind::Block(block) => self.check_block(block).map(|b| b.ty),
             ExprKind::Tuple(exprs) => {
@@ -611,36 +706,77 @@ impl TypeChecker {
 
         let return_type = Box::new(return_type.resolve_type_annotation());
 
-        let fun = if let Ok(Type::Function {
-            mut parameter_overloads,
-            return_type: defined_return_type,
-        }) = self.env.get(name)
-        {
-            if defined_return_type != return_type {
-                return Err(self.error_at(
-                    stmt.span(),
-                    TypeErrorKind::MismatchedReturnTypes {
-                        expected: defined_return_type.to_string(),
-                        found: return_type.to_string(),
-                    },
-                ));
+        let fun = match self.env.get_current(name) {
+            Some(TypeBinding::Local(Type::Function {
+                mut parameter_overloads,
+                return_type: defined_return_type,
+            })) => {
+                if defined_return_type != return_type {
+                    return Err(self.error_at(
+                        stmt.span(),
+                        TypeErrorKind::MismatchedReturnTypes {
+                            expected: defined_return_type.to_string(),
+                            found: return_type.to_string(),
+                        },
+                    ));
+                }
+                parameter_overloads.push(parameters_types);
+                Type::Function {
+                    parameter_overloads,
+                    return_type,
+                }
             }
-
-            parameter_overloads.push(parameters_types);
-            Type::Function {
-                parameter_overloads,
-                return_type,
+            Some(_) => {
+                return Err(self.error_at(stmt.span(), TypeErrorKind::NameCollision(name.clone())));
             }
-        } else {
-            Type::Function {
+            None => Type::Function {
                 parameter_overloads: vec![parameters_types],
                 return_type,
-            }
+            },
         };
 
         self.env.define(name.clone(), fun);
 
         Ok(())
+    }
+
+    fn infer_module_path(&self, segments: &[String], span: Span) -> TypeResult<Type> {
+        let Some((module_name, member_path)) = segments.split_first() else {
+            unreachable!("paths have at least two segments");
+        };
+        let TypeBinding::Module(module) = self
+            .env
+            .get_binding(module_name)
+            .map_err(|kind| self.error_at(span, kind))?
+        else {
+            return Err(self.error_at(span, TypeErrorKind::NotAValue(module_name.clone())));
+        };
+        let [member] = member_path else {
+            return Err(self.error_at(
+                span,
+                TypeErrorKind::UnknownModuleExport {
+                    module: module.to_string(),
+                    member: member_path.join("::"),
+                },
+            ));
+        };
+        let interface = self
+            .module_interfaces
+            .get(&module)
+            .expect("module namespace bindings must refer to a dependency interface");
+        interface
+            .exports
+            .get(member)
+            .map(|symbol| symbol.ty.clone())
+            .ok_or_else(|| {
+                self.error_at(
+                    span,
+                    TypeErrorKind::UnknownModuleExport {
+                        module: module.to_string(),
+                        member: member.clone(),
+                    },
+                )
+            })
     }
 
     fn check_function_body(&mut self, stmt: &Stmt) -> TypeResult<()> {
