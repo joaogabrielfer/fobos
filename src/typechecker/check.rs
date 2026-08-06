@@ -1299,6 +1299,28 @@ impl TypeChecker {
     pub fn types_compatible(expected: &Type, found: &Type) -> bool {
         match (expected, found) {
             (Type::Any, _) | (_, Type::Any) => true,
+            (
+                Type::Function {
+                    parameter_overloads: expected_overloads,
+                    return_type: expected_return,
+                },
+                Type::Function {
+                    parameter_overloads: found_overloads,
+                    return_type: found_return,
+                },
+            ) => {
+                TypeChecker::types_compatible(expected_return, found_return)
+                    && expected_overloads.iter().all(|expected_parameters| {
+                        found_overloads.iter().any(|found_parameters| {
+                            expected_parameters.len() == found_parameters.len()
+                                && expected_parameters.iter().zip(found_parameters).all(
+                                    |(expected, found)| {
+                                        TypeChecker::types_compatible(&expected.ty, &found.ty)
+                                    },
+                                )
+                        })
+                    })
+            }
             (Type::Array(i1), other) => {
                 if let Type::Any = **i1 {
                     true
@@ -1322,5 +1344,37 @@ impl TypeChecker {
             span,
             file_path: self.file_path.clone(),
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::TypeChecker;
+    use crate::typechecker::ty::{ParameterType, Type};
+
+    fn unary_function(parameter_name: &str, parameter_type: Type, return_type: Type) -> Type {
+        Type::Function {
+            parameter_overloads: vec![vec![ParameterType {
+                name: parameter_name.to_string(),
+                ty: parameter_type,
+            }]],
+            return_type: Box::new(return_type),
+        }
+    }
+
+    #[test]
+    fn function_type_compatibility_ignores_internal_parameter_names() {
+        let annotated = unary_function("_0", Type::Any, Type::Any);
+        let lambda = unary_function("x", Type::Any, Type::Any);
+
+        assert!(TypeChecker::types_compatible(&annotated, &lambda));
+    }
+
+    #[test]
+    fn function_type_compatibility_still_checks_parameter_types() {
+        let expected = unary_function("_0", Type::Int, Type::Int);
+        let found = unary_function("x", Type::String, Type::Int);
+
+        assert!(!TypeChecker::types_compatible(&expected, &found));
     }
 }
