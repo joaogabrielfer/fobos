@@ -1,3 +1,5 @@
 import std::foo
 
-foo::bar()
+fun main(): () =
+    foo::bar()
+end

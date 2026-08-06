@@ -8,7 +8,7 @@ use std::{
 use anyhow::{Context, Result, anyhow, bail};
 
 use crate::{
-    ast::{Block, Expr, ExprKind, ImportSource, ImportTree, Program, RelativeImportMode, Stmt},
+    ast::{ImportSource, ImportTree, Item, Program, RelativeImportMode},
     errors::RuntimeError,
     interpreter::{
         Interpreter,
@@ -41,9 +41,16 @@ impl std::fmt::Display for ModuleId {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
+pub enum ExportedSymbolKind {
+    Function,
+    Const { value: Value },
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct ExportedSymbol {
     pub ty: Type,
+    pub kind: ExportedSymbolKind,
 }
 
 #[derive(Debug, Clone, Default)]
@@ -87,6 +94,7 @@ pub struct CompiledModule {
     pub program: Program,
     pub imports: Vec<ResolvedImport>,
     pub interface: ModuleInterface,
+    pub constants: HashMap<String, Value>,
 }
 
 #[derive(Debug, Clone)]
@@ -126,10 +134,46 @@ impl CompilerSession {
             origin: ModuleOrigin::File(path.clone()),
         };
         self.load_module(root.clone(), path)?;
+        self.validate_root_entry(&root)?;
         Ok(Compilation {
             root,
             modules: self.modules,
         })
+    }
+
+    fn validate_root_entry(&self, root: &ModuleId) -> Result<()> {
+        let module = self
+            .modules
+            .get(root)
+            .expect("the root module was loaded before entry validation");
+        let mains = module
+            .program
+            .items
+            .iter()
+            .filter_map(|item| match item {
+                Item::Function(decl) if decl.name == "main" => Some(decl),
+                _ => None,
+            })
+            .collect::<Vec<_>>();
+        let [main] = mains.as_slice() else {
+            bail!(
+                "root module '{}' must declare exactly one `fun main(): ()` entry point",
+                module.path.display()
+            );
+        };
+        if !main.generics.is_empty()
+            || !main.parameters.is_empty()
+            || !matches!(
+                main.return_type,
+                crate::ast::TypeAnnotation::Explicit(crate::ast::TypeExpr::Unit)
+            )
+        {
+            bail!(
+                "entry point `main` in '{}' must have the signature `fun main(): ()`",
+                module.path.display()
+            );
+        }
+        Ok(())
     }
 
     fn load_module(&mut self, id: ModuleId, path: PathBuf) -> Result<()> {
@@ -171,12 +215,12 @@ impl CompilerSession {
         self.validate_import_placement(&program, &path)?;
 
         let mut imports = Vec::new();
-        for statement in &program.statements {
-            let Stmt::ImportDecl { source, span } = statement else {
+        for item in &program.items {
+            let Item::Import(import) = item else {
                 continue;
             };
             imports.extend(
-                self.resolve_import(source, *span, &path)
+                self.resolve_import(&import.source, import.span, &path)
                     .with_context(|| format!("while resolving import in {}", path.display()))?,
             );
         }
@@ -186,8 +230,11 @@ impl CompilerSession {
             .iter()
             .map(|(module_id, module)| (module_id.clone(), module.interface.clone()))
             .collect();
-        let CheckedModule { program, interface } =
-            TypeChecker::new(path.clone()).check_module(program, &imports, &interfaces)?;
+        let CheckedModule {
+            program,
+            interface,
+            constants,
+        } = TypeChecker::new(path.clone()).check_module(program, &imports, &interfaces)?;
 
         self.modules.insert(
             id.clone(),
@@ -197,6 +244,7 @@ impl CompilerSession {
                 program: program.program,
                 imports,
                 interface,
+                constants,
             },
         );
         Ok(())
@@ -212,113 +260,21 @@ impl CompilerSession {
 
     fn validate_import_placement(&self, program: &Program, path: &Path) -> Result<()> {
         let mut seen_non_import = false;
-        for statement in &program.statements {
-            match statement {
-                Stmt::ImportDecl { .. } if !seen_non_import => {}
-                Stmt::ImportDecl { span, .. } => {
+        for item in &program.items {
+            match item {
+                Item::Import(_) if !seen_non_import => {}
+                Item::Import(import) => {
                     bail!(
                         "import at {}:{} must appear before declarations and statements in '{}'",
-                        span.start.line,
-                        span.start.col,
+                        import.span.start.line,
+                        import.span.start.col,
                         path.display()
                     );
                 }
                 _ => seen_non_import = true,
             }
-            self.validate_no_nested_imports(statement, path)?;
         }
         Ok(())
-    }
-
-    fn validate_no_nested_imports(&self, statement: &Stmt, path: &Path) -> Result<()> {
-        match statement {
-            Stmt::ImportDecl { .. } => Ok(()),
-            Stmt::Expr(expression) | Stmt::Return(expression) | Stmt::Yield(expression) => {
-                self.validate_expr_imports(expression, path)
-            }
-            Stmt::Bind { value, .. } => self.validate_expr_imports(value, path),
-            Stmt::Assignment { target, value } => {
-                self.validate_expr_imports(target, path)?;
-                self.validate_expr_imports(value, path)
-            }
-            Stmt::FunDecl { body, .. } => self.validate_block_imports(body, path),
-        }
-    }
-
-    fn validate_block_imports(&self, block: &Block, path: &Path) -> Result<()> {
-        for statement in &block.statements {
-            if let Stmt::ImportDecl { span, .. } = statement {
-                bail!(
-                    "import at {}:{} is only allowed at the top level of '{}'",
-                    span.start.line,
-                    span.start.col,
-                    path.display()
-                );
-            }
-            self.validate_no_nested_imports(statement, path)?;
-        }
-        Ok(())
-    }
-
-    fn validate_expr_imports(&self, expression: &Expr, path: &Path) -> Result<()> {
-        match &expression.kind {
-            ExprKind::Block(block) => self.validate_block_imports(block, path),
-            ExprKind::Tuple(items) | ExprKind::Array(items) => {
-                for item in items {
-                    self.validate_expr_imports(item, path)?;
-                }
-                Ok(())
-            }
-            ExprKind::Unary { operand, .. } => self.validate_expr_imports(operand, path),
-            ExprKind::Binary { lhs, rhs, .. } => {
-                self.validate_expr_imports(lhs, path)?;
-                self.validate_expr_imports(rhs, path)
-            }
-            ExprKind::Call { callee, args } => {
-                self.validate_expr_imports(callee, path)?;
-                for argument in args {
-                    self.validate_expr_imports(&argument.value, path)?;
-                }
-                Ok(())
-            }
-            ExprKind::If {
-                condition,
-                then_branch,
-                else_branch,
-            } => {
-                self.validate_expr_imports(condition, path)?;
-                self.validate_expr_imports(then_branch, path)?;
-                if let Some(else_branch) = else_branch {
-                    self.validate_expr_imports(else_branch, path)?;
-                }
-                Ok(())
-            }
-            ExprKind::While { condition, block } => {
-                self.validate_expr_imports(condition, path)?;
-                self.validate_block_imports(block, path)
-            }
-            ExprKind::For {
-                binding,
-                iterable,
-                block,
-            } => {
-                self.validate_expr_imports(binding, path)?;
-                self.validate_expr_imports(iterable, path)?;
-                self.validate_block_imports(block, path)
-            }
-            ExprKind::Lambda { body, .. } => self.validate_expr_imports(body, path),
-            ExprKind::Index { target, index } => {
-                self.validate_expr_imports(target, path)?;
-                self.validate_expr_imports(index, path)
-            }
-            ExprKind::Int(_)
-            | ExprKind::Float(_)
-            | ExprKind::String(_)
-            | ExprKind::Bool(_)
-            | ExprKind::Ident(_)
-            | ExprKind::Path(_)
-            | ExprKind::Unit => Ok(()),
-        }
     }
 
     fn resolve_import(
@@ -523,8 +479,17 @@ impl RuntimeModules {
         interpreter: &mut Interpreter<W>,
     ) -> Result<Value> {
         let root = self.root.clone();
-        let (_, value) = self.initialize(&root, interpreter)?;
-        Ok(value)
+        let (instance, _) = self.initialize(&root, interpreter)?;
+        let module = self
+            .modules
+            .get(&root)
+            .expect("the root module remains in the compilation")
+            .clone();
+        let (previous_env, previous_path) =
+            interpreter.replace_context(Env::from_ref(instance.env.clone()), module.path);
+        let result = interpreter.run_main();
+        interpreter.restore_context(previous_env, previous_path);
+        result.map_err(Into::into)
     }
 
     fn initialize<W: std::io::Write>(
@@ -622,12 +587,12 @@ impl RuntimeModules {
             exports: module.interface.exports.keys().cloned().collect(),
         });
         let (previous_env, previous_path) = interpreter.replace_context(env, module.path.clone());
-        let eval_result = interpreter.eval_program(module.program.clone());
+        let eval_result = interpreter.load_module(&module.program, &module.constants);
         interpreter.restore_context(previous_env, previous_path);
-        let value = eval_result.map_err(|error: Box<RuntimeError>| anyhow!(error))?;
+        eval_result.map_err(|error: Box<RuntimeError>| anyhow!(error))?;
 
         self.instances.insert(module.id, instance.clone());
-        Ok((instance, value))
+        Ok((instance, Value::Unit))
     }
 }
 
@@ -667,7 +632,7 @@ mod tests {
     }
 
     #[test]
-    fn module_instances_are_cached_and_share_state() {
+    fn module_instances_are_cached_and_share_declarative_constants() {
         let path = fixture("module_shared_state.fob");
         let compilation = CompilerSession::default().compile_file(&path).unwrap();
         assert_eq!(compilation.modules.len(), 4);
@@ -676,13 +641,13 @@ mod tests {
         RuntimeModules::new(compilation)
             .execute_root(&mut interpreter)
             .unwrap();
-        assert_eq!(interpreter.into_output_string(), "1\n2\n3\n");
+        assert_eq!(interpreter.into_output_string(), "1\n1\n1\n");
     }
 
     #[test]
     fn invalid_module_programs_produce_specific_errors() {
         for (name, expected) in [
-            ("module_private_error.fob", "unknown export 'count'"),
+            ("module_private_error.fob", "unknown export 'HIDDEN'"),
             (
                 "module_collision_error.fob",
                 "name 'first' is already defined",
@@ -690,15 +655,12 @@ mod tests {
             ("module_cycle_error.fob", "circular module import: "),
             (
                 "module_external_assignment_error.fob",
-                "cannot assign through module member path 'counter::count'",
+                "cannot assign through module member path 'counter::STEP'",
             ),
-            (
-                "module_late_import_error.fob",
-                "must appear before declarations and statements",
-            ),
+            ("module_late_import_error.fob", "expected a top-level item"),
             (
                 "module_nested_import_error.fob",
-                "is only allowed at the top level",
+                "unexpected token 'import'",
             ),
         ] {
             let path = fixture(name);

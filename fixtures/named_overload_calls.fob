@@ -1,3 +1,4 @@
+fun main(): () =
 fun describe(value: Int): String =
     return "int: " <> value
 end
@@ -8,3 +9,5 @@ end
 
 echo(describe(value = 10))
 echo(describe(value = "hello"))
+
+end

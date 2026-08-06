@@ -1,3 +1,4 @@
+fun main(): () =
 let x := 7
 let simple := if true 10 else 20
 let compared := if x > 5 "big" else "small"
@@ -10,3 +11,5 @@ end
 echo("simple: " <> simple)
 echo("compared: " <> compared)
 echo("block: " <> block)
+
+end

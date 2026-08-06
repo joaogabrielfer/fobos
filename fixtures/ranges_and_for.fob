@@ -1,3 +1,4 @@
+fun main(): () =
 let range_exclusive := 0..<3
 let range_inclusive := 0..=3
 
@@ -64,3 +65,5 @@ fun find(): Int =
 end
 
 echo("find: " <> find())
+
+end

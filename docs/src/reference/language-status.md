@@ -6,9 +6,9 @@ proposal.
 
 | Area | Status | Notes |
 | --- | --- | --- |
-| Lexer and parser | Implemented | Includes expressions, blocks, functions, calls, arrays, ranges, and import syntax |
-| Interpreter | Implemented for core | Dependencies initialize once with persistent shared module environments |
-| Type checker | Implemented for core | Imports and qualified member paths are checked through module interfaces |
+| Lexer and parser | Implemented | Modules contain imports, typed constants, and functions; expressions live in function bodies |
+| Interpreter | Implemented for core | Declarative modules install constants and functions, then run root `main` |
+| Type checker | Implemented for core | Imports and qualified paths are checked through module interfaces; constants are evaluated at compile time |
 | REPL | Implemented for core | Persistent typed session with multiline entries; imports require file execution |
 | Built-ins | Small core | `echo`, `range`, and `push` |
 | Modules | Implemented initial version | Relative and `std::` imports, aliases, groups, globs, visibility, caching, and cycle rejection |
@@ -16,7 +16,8 @@ proposal.
 | Named arguments | Implemented | Required named parameters remain planned |
 | Overloads | Implemented | Resolution uses parameter names and compatible types |
 | Structs, enums, interfaces, generics | Proposal | No runtime representation yet |
-| Macros and compile-time features | Proposal | Design notes only |
+| Compile-time constants | Implemented initial version | Explicitly typed `const` values support a restricted constant-expression subset; macros and type-level use remain planned |
+| Macros | Proposal | Design notes only |
 | Effects, streams, resource management | Proposal | See the design pages |
 
 Code examples in the language and reference sections should be runnable unless

@@ -11,11 +11,10 @@ use colored::Colorize;
 use rustyline::{DefaultEditor, error::ReadlineError};
 
 use crate::{
-    ast::Stmt,
     diagnostic::render_source_span_from_source,
     errors::{LexerError, ParserError, ParserErrorKind, RuntimeError, TypeError},
     interpreter::{Interpreter, values::Value},
-    lexer::Lexer,
+    lexer::{Lexer, TokenKind},
     parser::Parser,
     source::Span,
     typechecker::TypeChecker,
@@ -60,36 +59,34 @@ impl Session {
         let tokens = Lexer::new(&self.path, &source)
             .tokenize()
             .map_err(|error| SubmitError::Diagnostic(lexer_diagnostic(&error, &source)))?;
-        let program = match Parser::new(tokens, &self.path).parse_program() {
-            Ok(program) => program,
-            Err(error) if needs_more_input(&error) => return Err(SubmitError::Incomplete),
-            Err(error) => return Err(SubmitError::Diagnostic(parser_diagnostic(&error, &source))),
-        };
-
-        if let Some(statement) = program
-            .statements
+        if let Some(token) = tokens
             .iter()
-            .find(|statement| matches!(statement, Stmt::ImportDecl { .. }))
+            .find(|token| matches!(&token.kind, TokenKind::Import))
         {
             return Err(SubmitError::Diagnostic(diagnostic(
                 &"imports are not supported in the REPL; run a .fob file to use modules",
-                statement.span(),
+                token.span,
                 &source,
             )));
         }
+        let statements = match Parser::new(tokens, &self.path).parse_repl_submission() {
+            Ok(statements) => statements,
+            Err(error) if needs_more_input(&error) => return Err(SubmitError::Incomplete),
+            Err(error) => return Err(SubmitError::Diagnostic(parser_diagnostic(&error, &source))),
+        };
 
         // Type checking is staged so a rejected entry does not introduce type
         // bindings that the interpreter never received.
         let mut next_type_checker = self.type_checker.clone();
         if self.check_types {
             next_type_checker
-                .check_program(program.clone())
+                .check_repl_statements(&statements)
                 .map_err(|error| SubmitError::Diagnostic(type_diagnostic(&error, &source)))?;
         }
 
         let value = self
             .interpreter
-            .eval_program(program)
+            .eval_repl_statements(statements)
             .map_err(|error| SubmitError::Diagnostic(runtime_diagnostic(&error, &source)))?;
         let output = self.interpreter.take_output_string();
         self.type_checker = next_type_checker;

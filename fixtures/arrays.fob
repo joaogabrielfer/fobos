@@ -1,3 +1,4 @@
+fun main(): () =
 let empty := []
 let nums := [10, 20, 30]
 let nested := [[1, 2], [3, 4], [5, 6]]
@@ -62,3 +63,5 @@ let array_for_without_yield := for x in [1, 2, 3] do
 end
 
 echo("array_for_without_yield: " <> array_for_without_yield)
+
+end

@@ -1,3 +1,4 @@
+fun main(): () =
 let sum := do
     let left := 10
     let right := 20
@@ -21,3 +22,5 @@ end
 echo("sum: " <> sum)
 echo("selected: " <> selected)
 echo("first_even: " <> first_even)
+
+end

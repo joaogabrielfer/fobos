@@ -1,3 +1,4 @@
+fun main(): () =
 fun add(x: Int, y: Int): Int =
     return x + y
 end
@@ -15,3 +16,5 @@ echo("first: " <> first)
 echo("second: " <> second)
 echo("nested: " <> nested)
 echo("arithmetic: " <> arithmetic)
+
+end

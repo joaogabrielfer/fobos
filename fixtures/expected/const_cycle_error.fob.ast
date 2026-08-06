@@ -1,0 +1,106 @@
+Program {
+    items: [
+        Const(
+            ConstDecl {
+                public: false,
+                name: "FIRST",
+                type_annotation: Named(
+                    "Int",
+                ),
+                value: Expr {
+                    kind: Ident(
+                        "SECOND",
+                    ),
+                    span: Span {
+                        start: SrcPos {
+                            line: 1,
+                            col: 20,
+                            idx: 19,
+                        },
+                        end: SrcPos {
+                            line: 2,
+                            col: 1,
+                            idx: 26,
+                        },
+                    },
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 1,
+                        col: 1,
+                        idx: 0,
+                    },
+                    end: SrcPos {
+                        line: 2,
+                        col: 1,
+                        idx: 26,
+                    },
+                },
+            },
+        ),
+        Const(
+            ConstDecl {
+                public: false,
+                name: "SECOND",
+                type_annotation: Named(
+                    "Int",
+                ),
+                value: Expr {
+                    kind: Ident(
+                        "FIRST",
+                    ),
+                    span: Span {
+                        start: SrcPos {
+                            line: 2,
+                            col: 21,
+                            idx: 46,
+                        },
+                        end: SrcPos {
+                            line: 3,
+                            col: 1,
+                            idx: 52,
+                        },
+                    },
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 2,
+                        col: 1,
+                        idx: 26,
+                    },
+                    end: SrcPos {
+                        line: 3,
+                        col: 1,
+                        idx: 52,
+                    },
+                },
+            },
+        ),
+        Function(
+            FunctionDecl {
+                public: false,
+                name: "main",
+                generics: [],
+                parameters: [],
+                return_type: Explicit(
+                    Unit,
+                ),
+                body: Block {
+                    statements: [],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 4,
+                        col: 1,
+                        idx: 53,
+                    },
+                    end: SrcPos {
+                        line: 4,
+                        col: 17,
+                        idx: 69,
+                    },
+                },
+            },
+        ),
+    ],
+}

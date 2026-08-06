@@ -1,33 +1,79 @@
 Program {
-    statements: [
-        ImportDecl {
-            source: Relative {
-                path: "modules/counter.fob",
-                mode: Namespace {
-                    alias: "counter",
+    items: [
+        Import(
+            ImportDecl {
+                source: Relative {
+                    path: "modules/counter.fob",
+                    mode: Namespace {
+                        alias: "counter",
+                    },
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 1,
+                        col: 1,
+                        idx: 0,
+                    },
+                    end: SrcPos {
+                        line: 2,
+                        col: 1,
+                        idx: 40,
+                    },
                 },
             },
-            span: Span {
-                start: SrcPos {
-                    line: 1,
-                    col: 1,
-                    idx: 0,
-                },
-                end: SrcPos {
-                    line: 2,
-                    col: 1,
-                    idx: 40,
-                },
-            },
-        },
-        Assignment {
-            target: Expr {
-                kind: Path(
-                    [
-                        "counter",
-                        "count",
-                    ],
+        ),
+        Function(
+            FunctionDecl {
+                public: false,
+                name: "main",
+                generics: [],
+                parameters: [],
+                return_type: Explicit(
+                    Unit,
                 ),
+                body: Block {
+                    statements: [
+                        Assignment {
+                            target: Expr {
+                                kind: Path(
+                                    [
+                                        "counter",
+                                        "STEP",
+                                    ],
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 4,
+                                        col: 5,
+                                        idx: 62,
+                                    },
+                                    end: SrcPos {
+                                        line: 4,
+                                        col: 20,
+                                        idx: 77,
+                                    },
+                                },
+                            },
+                            value: Expr {
+                                kind: Int(
+                                    10,
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 4,
+                                        col: 21,
+                                        idx: 78,
+                                    },
+                                    end: SrcPos {
+                                        line: 5,
+                                        col: 1,
+                                        idx: 81,
+                                    },
+                                },
+                            },
+                        },
+                    ],
+                },
                 span: Span {
                     start: SrcPos {
                         line: 3,
@@ -41,23 +87,6 @@ Program {
                     },
                 },
             },
-            value: Expr {
-                kind: Int(
-                    10,
-                ),
-                span: Span {
-                    start: SrcPos {
-                        line: 3,
-                        col: 18,
-                        idx: 58,
-                    },
-                    end: SrcPos {
-                        line: 4,
-                        col: 1,
-                        idx: 61,
-                    },
-                },
-            },
-        },
+        ),
     ],
 }

@@ -1,3 +1,4 @@
+fun main(): () =
 // signatures with generics
 // fun [A, B] map(arr: Arr<A>, fn: (A) -> B): Arr<B> =
 
@@ -34,3 +35,5 @@ end
 
 echo("foo(5) = " <> foo(5))
 echo("foo(6, 7) = " <> foo(6, 7))
+
+end

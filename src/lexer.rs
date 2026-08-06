@@ -76,6 +76,7 @@ pub enum TokenKind<'a> {
     End,
     Var,
     Let,
+    Const,
     For,
     While,
     In,
@@ -138,6 +139,7 @@ impl<'a> TokenKind<'a> {
             TokenKind::End => TokenTag::End,
             TokenKind::Var => TokenTag::Var,
             TokenKind::Let => TokenTag::Let,
+            TokenKind::Const => TokenTag::Const,
             TokenKind::For => TokenTag::For,
             TokenKind::While => TokenTag::While,
             TokenKind::In => TokenTag::In,
@@ -201,6 +203,7 @@ pub enum TokenTag {
     End,
     Var,
     Let,
+    Const,
     For,
     While,
     In,
@@ -284,6 +287,7 @@ impl std::fmt::Display for TokenTag {
             TokenTag::End => "end",
             TokenTag::Var => "var",
             TokenTag::Let => "let",
+            TokenTag::Const => "const",
             TokenTag::For => "for",
             TokenTag::While => "while",
             TokenTag::In => "in",
@@ -463,6 +467,7 @@ impl<'a> Lexer<'a> {
                     "end" => Ok(self.new_token(TokenKind::End, "end")),
                     "var" => Ok(self.new_token(TokenKind::Var, "var")),
                     "let" => Ok(self.new_token(TokenKind::Let, "let")),
+                    "const" => Ok(self.new_token(TokenKind::Const, "const")),
                     "for" => Ok(self.new_token(TokenKind::For, "for")),
                     "while" => Ok(self.new_token(TokenKind::While, "while")),
                     "in" => Ok(self.new_token(TokenKind::In, "in")),
@@ -642,12 +647,12 @@ mod tests {
             {
                 let content = read_to_string(&current_file_path).unwrap();
                 let tokens = Lexer::new(&current_file_path, &content).tokenize();
-                let tokens_str = format!("{tokens:#?}");
+                let tokens_str = crate::dump::normalize_snapshot_paths(&format!("{tokens:#?}"));
 
                 let token_expected_path =
                     create_expected_by_ext(&current_file_path, ".tokens").unwrap();
                 let expected_tokens = match read_to_string(token_expected_path.clone()) {
-                    Ok(s) => s,
+                    Ok(s) => crate::dump::normalize_snapshot_paths(&s),
                     Err(_) => {
                         println!(
                             "Expected tokens file {token_expected_path:?} not found. Skipping it"

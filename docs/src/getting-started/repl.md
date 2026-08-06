@@ -18,4 +18,6 @@ history is stored in the platform state directory.
 Diagnostics render against the in-memory REPL source as `<repl>`. File imports
 are intentionally unavailable in the REPL because imports require a canonical
 module file and the dependency pipeline. Use `cargo run -- run <path>` for a
-program that imports modules.
+program that imports modules. The REPL is an interactive exception to the
+file-level item rules: its submissions may be expressions and local
+declarations, but they are not module top-level code and cannot use `const`.

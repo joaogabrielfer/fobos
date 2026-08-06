@@ -1,18 +1,18 @@
-RuntimeError {
+TypeError {
     kind: NotIterable {
-        found: "Int '123'",
+        found: "Int",
     },
     span: Span {
         start: SrcPos {
-            line: 1,
+            line: 2,
             col: 10,
-            idx: 9,
+            idx: 26,
         },
         end: SrcPos {
-            line: 1,
+            line: 2,
             col: 16,
-            idx: 15,
+            idx: 32,
         },
     },
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/not_iterable.fob",
+    file_path: "$FIXTURE_PATH",
 }

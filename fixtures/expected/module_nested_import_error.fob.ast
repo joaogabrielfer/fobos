@@ -1,49 +1,18 @@
-Program {
-    statements: [
-        FunDecl {
-            public: false,
-            name: "invalid",
-            generics: [],
-            parameters: [],
-            return_type: Explicit(
-                Unit,
-            ),
-            body: Block {
-                statements: [
-                    ImportDecl {
-                        source: Relative {
-                            path: "modules/counter.fob",
-                            mode: Namespace {
-                                alias: "counter",
-                            },
-                        },
-                        span: Span {
-                            start: SrcPos {
-                                line: 2,
-                                col: 5,
-                                idx: 24,
-                            },
-                            end: SrcPos {
-                                line: 3,
-                                col: 1,
-                                idx: 64,
-                            },
-                        },
-                    },
-                ],
-            },
-            span: Span {
-                start: SrcPos {
-                    line: 1,
-                    col: 1,
-                    idx: 0,
-                },
-                end: SrcPos {
-                    line: 1,
-                    col: 20,
-                    idx: 19,
-                },
-            },
+ParserError {
+    kind: UnexpectedToken {
+        found: "import",
+    },
+    file_path: "$FIXTURE_PATH",
+    pos: Span {
+        start: SrcPos {
+            line: 2,
+            col: 5,
+            idx: 24,
         },
-    ],
+        end: SrcPos {
+            line: 2,
+            col: 11,
+            idx: 30,
+        },
+    },
 }

@@ -1,0 +1,7 @@
+import std::foo as foo
+
+const COUNT: Int = foo::DEFAULT_COUNT * 2
+
+fun main(): () =
+    echo(COUNT)
+end

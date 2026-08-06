@@ -1,113 +1,137 @@
 Program {
-    statements: [
-        Bind {
-            public: false,
-            mutable: false,
-            name: "foo",
-            type_annotation: Inferred,
-            value: Expr {
-                kind: Int(
-                    10,
+    items: [
+        Function(
+            FunctionDecl {
+                public: false,
+                name: "main",
+                generics: [],
+                parameters: [],
+                return_type: Explicit(
+                    Unit,
                 ),
+                body: Block {
+                    statements: [
+                        Bind {
+                            mutable: false,
+                            name: "foo",
+                            type_annotation: Inferred,
+                            value: Expr {
+                                kind: Int(
+                                    10,
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 2,
+                                        col: 12,
+                                        idx: 28,
+                                    },
+                                    end: SrcPos {
+                                        line: 3,
+                                        col: 1,
+                                        idx: 31,
+                                    },
+                                },
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 2,
+                                    col: 1,
+                                    idx: 17,
+                                },
+                                end: SrcPos {
+                                    line: 3,
+                                    col: 1,
+                                    idx: 31,
+                                },
+                            },
+                        },
+                        Bind {
+                            mutable: true,
+                            name: "bar",
+                            type_annotation: Explicit(
+                                Named(
+                                    "String",
+                                ),
+                            ),
+                            value: Expr {
+                                kind: String(
+                                    "baz",
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 3,
+                                        col: 19,
+                                        idx: 49,
+                                    },
+                                    end: SrcPos {
+                                        line: 4,
+                                        col: 1,
+                                        idx: 55,
+                                    },
+                                },
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 3,
+                                    col: 1,
+                                    idx: 31,
+                                },
+                                end: SrcPos {
+                                    line: 4,
+                                    col: 1,
+                                    idx: 55,
+                                },
+                            },
+                        },
+                        Bind {
+                            mutable: false,
+                            name: "baz",
+                            type_annotation: Inferred,
+                            value: Expr {
+                                kind: Bool(
+                                    true,
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 4,
+                                        col: 12,
+                                        idx: 66,
+                                    },
+                                    end: SrcPos {
+                                        line: 5,
+                                        col: 1,
+                                        idx: 71,
+                                    },
+                                },
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 4,
+                                    col: 1,
+                                    idx: 55,
+                                },
+                                end: SrcPos {
+                                    line: 5,
+                                    col: 1,
+                                    idx: 71,
+                                },
+                            },
+                        },
+                    ],
+                },
                 span: Span {
                     start: SrcPos {
                         line: 1,
-                        col: 12,
-                        idx: 11,
+                        col: 1,
+                        idx: 0,
                     },
                     end: SrcPos {
-                        line: 2,
-                        col: 1,
-                        idx: 14,
+                        line: 1,
+                        col: 17,
+                        idx: 16,
                     },
                 },
             },
-            span: Span {
-                start: SrcPos {
-                    line: 1,
-                    col: 1,
-                    idx: 0,
-                },
-                end: SrcPos {
-                    line: 2,
-                    col: 1,
-                    idx: 14,
-                },
-            },
-        },
-        Bind {
-            public: false,
-            mutable: true,
-            name: "bar",
-            type_annotation: Explicit(
-                Named(
-                    "String",
-                ),
-            ),
-            value: Expr {
-                kind: String(
-                    "baz",
-                ),
-                span: Span {
-                    start: SrcPos {
-                        line: 2,
-                        col: 19,
-                        idx: 32,
-                    },
-                    end: SrcPos {
-                        line: 3,
-                        col: 1,
-                        idx: 38,
-                    },
-                },
-            },
-            span: Span {
-                start: SrcPos {
-                    line: 2,
-                    col: 1,
-                    idx: 14,
-                },
-                end: SrcPos {
-                    line: 3,
-                    col: 1,
-                    idx: 38,
-                },
-            },
-        },
-        Bind {
-            public: false,
-            mutable: false,
-            name: "baz",
-            type_annotation: Inferred,
-            value: Expr {
-                kind: Bool(
-                    true,
-                ),
-                span: Span {
-                    start: SrcPos {
-                        line: 3,
-                        col: 12,
-                        idx: 49,
-                    },
-                    end: SrcPos {
-                        line: 4,
-                        col: 1,
-                        idx: 54,
-                    },
-                },
-            },
-            span: Span {
-                start: SrcPos {
-                    line: 3,
-                    col: 1,
-                    idx: 38,
-                },
-                end: SrcPos {
-                    line: 4,
-                    col: 1,
-                    idx: 54,
-                },
-            },
-        },
+        ),
     ],
 }

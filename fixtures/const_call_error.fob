@@ -1,0 +1,8 @@
+fun value(): Int =
+    return 1
+end
+
+const VALUE: Int = value()
+
+fun main(): () =
+end

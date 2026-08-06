@@ -1,69 +1,133 @@
 Program {
-    statements: [
-        ImportDecl {
-            source: Relative {
-                path: "modules/first.fob",
-                mode: Namespace {
-                    alias: "first",
-                },
-            },
-            span: Span {
-                start: SrcPos {
-                    line: 1,
-                    col: 1,
-                    idx: 0,
-                },
-                end: SrcPos {
-                    line: 2,
-                    col: 1,
-                    idx: 36,
-                },
-            },
-        },
-        ImportDecl {
-            source: Relative {
-                path: "modules/second.fob",
-                mode: Namespace {
-                    alias: "first",
-                },
-            },
-            span: Span {
-                start: SrcPos {
-                    line: 2,
-                    col: 1,
-                    idx: 36,
-                },
-                end: SrcPos {
-                    line: 3,
-                    col: 1,
-                    idx: 73,
-                },
-            },
-        },
-        Expr(
-            Expr {
-                kind: Call {
-                    callee: Expr {
-                        kind: Path(
-                            [
-                                "first",
-                                "next",
-                            ],
-                        ),
-                        span: Span {
-                            start: SrcPos {
-                                line: 4,
-                                col: 1,
-                                idx: 74,
-                            },
-                            end: SrcPos {
-                                line: 4,
-                                col: 13,
-                                idx: 86,
-                            },
-                        },
+    items: [
+        Import(
+            ImportDecl {
+                source: Relative {
+                    path: "modules/first.fob",
+                    mode: Namespace {
+                        alias: "first",
                     },
-                    args: [],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 1,
+                        col: 1,
+                        idx: 0,
+                    },
+                    end: SrcPos {
+                        line: 2,
+                        col: 1,
+                        idx: 36,
+                    },
+                },
+            },
+        ),
+        Import(
+            ImportDecl {
+                source: Relative {
+                    path: "modules/second.fob",
+                    mode: Namespace {
+                        alias: "first",
+                    },
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 2,
+                        col: 1,
+                        idx: 36,
+                    },
+                    end: SrcPos {
+                        line: 3,
+                        col: 1,
+                        idx: 73,
+                    },
+                },
+            },
+        ),
+        Function(
+            FunctionDecl {
+                public: false,
+                name: "main",
+                generics: [],
+                parameters: [],
+                return_type: Explicit(
+                    Unit,
+                ),
+                body: Block {
+                    statements: [
+                        Expr(
+                            Expr {
+                                kind: Call {
+                                    callee: Expr {
+                                        kind: Path(
+                                            [
+                                                "first",
+                                                "next",
+                                            ],
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 5,
+                                                col: 5,
+                                                idx: 95,
+                                            },
+                                            end: SrcPos {
+                                                line: 5,
+                                                col: 17,
+                                                idx: 107,
+                                            },
+                                        },
+                                    },
+                                    args: [
+                                        CallArgument {
+                                            name: None,
+                                            value: Expr {
+                                                kind: Int(
+                                                    0,
+                                                ),
+                                                span: Span {
+                                                    start: SrcPos {
+                                                        line: 5,
+                                                        col: 17,
+                                                        idx: 107,
+                                                    },
+                                                    end: SrcPos {
+                                                        line: 5,
+                                                        col: 19,
+                                                        idx: 109,
+                                                    },
+                                                },
+                                            },
+                                            span: Span {
+                                                start: SrcPos {
+                                                    line: 5,
+                                                    col: 17,
+                                                    idx: 107,
+                                                },
+                                                end: SrcPos {
+                                                    line: 5,
+                                                    col: 19,
+                                                    idx: 109,
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 5,
+                                        col: 5,
+                                        idx: 95,
+                                    },
+                                    end: SrcPos {
+                                        line: 6,
+                                        col: 1,
+                                        idx: 110,
+                                    },
+                                },
+                            },
+                        ),
+                    ],
                 },
                 span: Span {
                     start: SrcPos {
@@ -72,9 +136,9 @@ Program {
                         idx: 74,
                     },
                     end: SrcPos {
-                        line: 5,
-                        col: 1,
-                        idx: 88,
+                        line: 4,
+                        col: 17,
+                        idx: 90,
                     },
                 },
             },

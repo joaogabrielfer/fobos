@@ -4,6 +4,7 @@ use anyhow::Result;
 use clap::{Parser, Subcommand};
 
 use fobos::{
+    ast::Item,
     dump::dump_expected,
     interpreter::Interpreter,
     lexer::Lexer,
@@ -99,6 +100,15 @@ fn run_file(path: &PathBuf, no_check: bool) -> Result<()> {
         let content = read_to_string(path)?;
         let tokens = Lexer::new(path, &content).tokenize()?;
         let program = FobosParser::new(tokens, path).parse_program()?;
+        if program
+            .items
+            .iter()
+            .any(|item| matches!(item, Item::Import(_) | Item::Const(_)))
+        {
+            anyhow::bail!(
+                "--no-check only supports a function-only entry file; imports and compile-time constants require the module compiler"
+            );
+        }
         Interpreter::new(path, stdout.lock()).eval_program(program)?;
     } else {
         let compilation = CompilerSession::default().compile_file(path)?;

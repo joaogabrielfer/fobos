@@ -1,0 +1,104 @@
+Ok(
+    [
+        Token {
+            kind: Ident(
+                "echo",
+            ),
+            origin: "echo",
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 1,
+                    idx: 0,
+                },
+                end: SrcPos {
+                    line: 1,
+                    col: 5,
+                    idx: 4,
+                },
+            },
+        },
+        Token {
+            kind: LParen,
+            origin: "(",
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 5,
+                    idx: 4,
+                },
+                end: SrcPos {
+                    line: 1,
+                    col: 6,
+                    idx: 5,
+                },
+            },
+        },
+        Token {
+            kind: String(
+                "not an item",
+            ),
+            origin: "\"not an item\"",
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 6,
+                    idx: 5,
+                },
+                end: SrcPos {
+                    line: 1,
+                    col: 19,
+                    idx: 18,
+                },
+            },
+        },
+        Token {
+            kind: RParen,
+            origin: ")",
+            span: Span {
+                start: SrcPos {
+                    line: 1,
+                    col: 19,
+                    idx: 18,
+                },
+                end: SrcPos {
+                    line: 1,
+                    col: 20,
+                    idx: 19,
+                },
+            },
+        },
+        Token {
+            kind: NewLine,
+            origin: "\n",
+            span: Span {
+                start: SrcPos {
+                    line: 2,
+                    col: 0,
+                    idx: 19,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 20,
+                },
+            },
+        },
+        Token {
+            kind: Eof,
+            origin: "EOF",
+            span: Span {
+                start: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 20,
+                },
+                end: SrcPos {
+                    line: 2,
+                    col: 1,
+                    idx: 20,
+                },
+            },
+        },
+    ],
+)

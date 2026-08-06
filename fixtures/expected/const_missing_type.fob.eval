@@ -1,0 +1,16 @@
+ParserError {
+    kind: ConstRequiresType,
+    file_path: "$FIXTURE_PATH",
+    pos: Span {
+        start: SrcPos {
+            line: 1,
+            col: 14,
+            idx: 13,
+        },
+        end: SrcPos {
+            line: 1,
+            col: 15,
+            idx: 14,
+        },
+    },
+}

@@ -1,4 +1,18 @@
-result:
-String(
-    "foo",
-)
+ParserError {
+    kind: ExpectedTopLevelItem {
+        found: "return",
+    },
+    file_path: "$FIXTURE_PATH",
+    pos: Span {
+        start: SrcPos {
+            line: 1,
+            col: 1,
+            idx: 0,
+        },
+        end: SrcPos {
+            line: 1,
+            col: 7,
+            idx: 6,
+        },
+    },
+}

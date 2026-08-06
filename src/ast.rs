@@ -4,7 +4,50 @@ use crate::{interpreter::values::Value, source::Span, typechecker::ty::Type};
 
 #[derive(Debug, Clone)]
 pub struct Program {
-    pub statements: Vec<Stmt>,
+    pub items: Vec<Item>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Item {
+    Import(ImportDecl),
+    Const(ConstDecl),
+    Function(FunctionDecl),
+}
+
+impl Item {
+    pub fn span(&self) -> Span {
+        match self {
+            Self::Import(decl) => decl.span,
+            Self::Const(decl) => decl.span,
+            Self::Function(decl) => decl.span,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct ConstDecl {
+    pub public: bool,
+    pub name: String,
+    pub type_annotation: TypeExpr,
+    pub value: Expr,
+    pub span: Span,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct FunctionDecl {
+    pub public: bool,
+    pub name: String,
+    pub generics: Vec<String>,
+    pub parameters: Vec<Parameter>,
+    pub return_type: TypeAnnotation,
+    pub body: Block,
+    pub span: Span,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct ImportDecl {
+    pub source: ImportSource,
+    pub span: Span,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -14,7 +57,6 @@ pub enum Stmt {
     Yield(Expr),
 
     Bind {
-        public: bool,
         mutable: bool,
         name: String,
         type_annotation: TypeAnnotation,
@@ -27,20 +69,7 @@ pub enum Stmt {
         value: Expr,
     },
 
-    FunDecl {
-        public: bool,
-        name: String,
-        generics: Vec<String>,
-        parameters: Vec<Parameter>,
-        return_type: TypeAnnotation,
-        body: Block,
-        span: Span,
-    },
-
-    ImportDecl {
-        source: ImportSource,
-        span: Span,
-    },
+    Function(FunctionDecl),
 }
 
 impl Stmt {
@@ -54,8 +83,7 @@ impl Stmt {
                 start: target.span.start,
                 end: value.span.end,
             },
-            Stmt::FunDecl { span, .. } => *span,
-            Stmt::ImportDecl { span, .. } => *span,
+            Stmt::Function(decl) => decl.span,
         }
     }
 }

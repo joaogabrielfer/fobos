@@ -4,7 +4,7 @@ use anyhow::Result;
 
 use crate::{
     ast::{
-        BinaryOp, Block, Expr, ExprArgument, ExprKind, Program,
+        BinaryOp, Block, Expr, ExprArgument, ExprKind, FunctionDecl, Item, Program,
         Stmt::{self},
         TypeAnnotation, UnaryOp, ValueArgument,
     },
@@ -45,23 +45,71 @@ macro_rules! value_or_flow {
 
 impl<W: std::io::Write> Interpreter<W> {
     pub fn eval_program(&mut self, program: Program) -> Result<Value, Box<RuntimeError>> {
+        self.load_module(&program, &std::collections::HashMap::new())?;
+        self.run_main()
+    }
+
+    /// Evaluate an interactive submission without treating it as a module.
+    ///
+    /// The REPL is intentionally the one context that accepts expressions and
+    /// local declarations outside a function body.
+    pub fn eval_repl_statements(
+        &mut self,
+        statements: Vec<Stmt>,
+    ) -> Result<Value, Box<RuntimeError>> {
         let mut last_value = Value::Unit;
 
-        for stmt in program.statements {
-            match self.eval_statement(stmt)? {
+        for statement in statements {
+            match self.eval_statement(statement)? {
                 EvalFlow::Continue(value) => last_value = value,
-
                 EvalFlow::Yield { span, .. } => {
                     return Err(self.error_at(span, RuntimeErrorKind::YieldOutsideHandler));
                 }
-
-                EvalFlow::Return { value, span: _ } => {
-                    return Ok(value);
-                }
+                EvalFlow::Return { value, .. } => return Ok(value),
             }
         }
-
         Ok(last_value)
+    }
+
+    pub fn load_module(
+        &mut self,
+        program: &Program,
+        constants: &std::collections::HashMap<String, Value>,
+    ) -> Result<(), Box<RuntimeError>> {
+        for item in &program.items {
+            if let Item::Const(decl) = item {
+                let value = constants
+                    .get(&decl.name)
+                    .expect("checked module constants are evaluated")
+                    .clone();
+                self.env.define(decl.name.clone(), false, value);
+            }
+        }
+        for item in &program.items {
+            if let Item::Function(decl) = item {
+                self.define_function(decl.clone())?;
+            }
+        }
+        Ok(())
+    }
+
+    pub fn run_main(&mut self) -> Result<Value, Box<RuntimeError>> {
+        let value = self
+            .env
+            .get("main")
+            .map_err(|kind| self.error_at(Span::dummy(), kind))?;
+        let Value::Function(function) = value else {
+            return Err(self.error_at(
+                Span::dummy(),
+                RuntimeErrorKind::NotCallable(value.type_name()),
+            ));
+        };
+        match self.call_function(function, vec![], Span::dummy())? {
+            EvalFlow::Continue(value) | EvalFlow::Return { value, .. } => Ok(value),
+            EvalFlow::Yield { span, .. } => {
+                Err(self.error_at(span, RuntimeErrorKind::YieldOutsideHandler))
+            }
+        }
     }
 
     fn eval_statement(&mut self, statement: Stmt) -> Result<EvalFlow, Box<RuntimeError>> {
@@ -179,64 +227,68 @@ impl<W: std::io::Write> Interpreter<W> {
                     )),
                 }
             }
-            Stmt::FunDecl {
-                public: _,
-                name,
-                generics: _,
-                parameters,
-                return_type,
-                body,
-                span,
-            } => {
-                let fun = if let Ok(Value::Function(mut fun)) = self.env.get(&name) {
-                    if fun.return_type == return_type {
-                        let mut repeated = false;
-                        for p in &fun.overload_variants {
-                            if p.parameters == parameters {
-                                repeated = true;
-                            }
-                        }
-                        let overload_variants = if repeated {
-                            fun.overload_variants
-                        } else {
-                            fun.overload_variants.push(OverloadFunctionVariant {
-                                parameters,
-                                body: FunctionBody::Block(body),
-                                captured_env: self.env.current_ref(),
-                            });
-                            fun.overload_variants
-                        };
-                        Value::Function(FunctionValue {
-                            name: Some(name.clone()),
-                            overload_variants,
-                            return_type,
-                        })
-                    } else {
-                        return Err(self.error_at(
-                            span,
-                            RuntimeErrorKind::MismatchedReturnTypes {
-                                expected: fun.return_type.resolve_type_annotation().to_string(),
-                                found: return_type.resolve_type_annotation().to_string(),
-                            },
-                        ));
-                    }
-                } else {
-                    Value::Function(FunctionValue {
-                        name: Some(name.clone()),
-                        overload_variants: vec![OverloadFunctionVariant {
-                            parameters,
-                            body: FunctionBody::Block(body),
-                            captured_env: self.env.current_ref(),
-                        }],
-                        return_type,
-                    })
-                };
-
-                self.env.define(name, false, fun);
+            Stmt::Function(decl) => {
+                self.define_function(decl)?;
                 Ok(EvalFlow::Continue(Value::Unit))
             }
-            Stmt::ImportDecl { .. } => Ok(EvalFlow::Continue(Value::Unit)),
         }
+    }
+
+    fn define_function(&mut self, decl: FunctionDecl) -> Result<(), Box<RuntimeError>> {
+        let FunctionDecl {
+            name,
+            parameters,
+            return_type,
+            body,
+            span,
+            ..
+        } = decl;
+        let fun = if let Ok(Value::Function(mut fun)) = self.env.get(&name) {
+            if fun.return_type == return_type {
+                let mut repeated = false;
+                for p in &fun.overload_variants {
+                    if p.parameters == parameters {
+                        repeated = true;
+                    }
+                }
+                let overload_variants = if repeated {
+                    fun.overload_variants
+                } else {
+                    fun.overload_variants.push(OverloadFunctionVariant {
+                        parameters,
+                        body: FunctionBody::Block(body),
+                        captured_env: self.env.current_ref(),
+                    });
+                    fun.overload_variants
+                };
+                Value::Function(FunctionValue {
+                    name: Some(name.clone()),
+                    overload_variants,
+                    return_type,
+                })
+            } else {
+                return Err(self.error_at(
+                    span,
+                    RuntimeErrorKind::MismatchedReturnTypes {
+                        expected: fun.return_type.resolve_type_annotation().to_string(),
+                        found: return_type.resolve_type_annotation().to_string(),
+                    },
+                ));
+            }
+        } else {
+            Value::Function(FunctionValue {
+                name: Some(name.clone()),
+                overload_variants: vec![OverloadFunctionVariant {
+                    parameters,
+                    body: FunctionBody::Block(body),
+                    captured_env: self.env.current_ref(),
+                }],
+                return_type,
+            })
+        };
+
+        self.env.define(name, false, fun);
+        Ok(())
     }
 
     pub fn eval_expr(
@@ -1014,8 +1066,7 @@ mod tests {
     };
 
     use crate::{
-        ast::Stmt,
-        dump::create_expected_by_ext,
+        dump::{create_expected_by_ext, normalize_snapshot_paths},
         interpreter::Interpreter,
         module::{CompilerSession, RuntimeModules},
         parser,
@@ -1036,7 +1087,7 @@ mod tests {
                     create_expected_by_ext(&current_file_path, ".eval").unwrap();
 
                 let expected_eval = match read_to_string(eval_expected_path.clone()) {
-                    Ok(s) => s,
+                    Ok(s) => normalize_snapshot_paths(&s),
                     Err(_) => {
                         eprintln!(
                             "Expected eval file {eval_expected_path:?} not found. Skipping it"
@@ -1053,22 +1104,14 @@ mod tests {
                         let ast = parser::Parser::new(tokens, &current_file_path).parse_program();
 
                         match ast {
-                            Ok(program) => {
+                            Ok(_) => {
                                 let mut interpreter = Interpreter::new_buffered(&current_file_path);
-                                let has_imports = program
-                                    .statements
-                                    .iter()
-                                    .any(|statement| matches!(statement, Stmt::ImportDecl { .. }));
-                                let eval_result = if has_imports {
-                                    CompilerSession::default()
-                                        .compile_file(&current_file_path)
-                                        .and_then(|compilation| {
-                                            RuntimeModules::new(compilation)
-                                                .execute_root(&mut interpreter)
-                                        })
-                                } else {
-                                    interpreter.eval_program(program).map_err(Into::into)
-                                };
+                                let eval_result = CompilerSession::default()
+                                    .compile_file(&current_file_path)
+                                    .and_then(|compilation| {
+                                        RuntimeModules::new(compilation)
+                                            .execute_root(&mut interpreter)
+                                    });
                                 let output = interpreter.into_output_string();
 
                                 match eval_result {
@@ -1079,13 +1122,13 @@ mod tests {
                                             format!("output:\n{output}\nresult:\n{value:#?}\n")
                                         }
                                     }
-                                    Err(e) => format!("{e:#?}"),
+                                    Err(e) => normalize_snapshot_paths(&format!("{e:#?}")),
                                 }
                             }
-                            Err(e) => format!("{e:#?}"),
+                            Err(e) => normalize_snapshot_paths(&format!("{e:#?}")),
                         }
                     }
-                    Err(e) => format!("{e:#?}"),
+                    Err(e) => normalize_snapshot_paths(&format!("{e:#?}")),
                 };
 
                 for (ev, ex) in eval_str

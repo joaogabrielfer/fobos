@@ -1,18 +1,18 @@
-RuntimeError {
-    kind: InvalidIndex(
-        "foo",
+TypeError {
+    kind: InvalidIndexType(
+        "String",
     ),
     span: Span {
         start: SrcPos {
-            line: 2,
-            col: 1,
-            idx: 25,
+            line: 3,
+            col: 6,
+            idx: 47,
         },
         end: SrcPos {
-            line: 2,
-            col: 6,
-            idx: 30,
+            line: 3,
+            col: 12,
+            idx: 53,
         },
     },
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/array_index_not_int.fob",
+    file_path: "$FIXTURE_PATH",
 }

@@ -1,4 +1,4 @@
-RuntimeError {
+TypeError {
     kind: ArgumentError {
         e: ArgumentError {
             kind: UnknownName {
@@ -7,14 +7,14 @@ RuntimeError {
             span: Some(
                 Span {
                     start: SrcPos {
-                        line: 5,
+                        line: 6,
                         col: 10,
-                        idx: 75,
+                        idx: 92,
                     },
                     end: SrcPos {
-                        line: 5,
+                        line: 6,
                         col: 14,
-                        idx: 79,
+                        idx: 96,
                     },
                 },
             ),
@@ -22,15 +22,15 @@ RuntimeError {
     },
     span: Span {
         start: SrcPos {
-            line: 5,
+            line: 6,
             col: 10,
-            idx: 75,
+            idx: 92,
         },
         end: SrcPos {
-            line: 5,
+            line: 6,
             col: 14,
-            idx: 79,
+            idx: 96,
         },
     },
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/named_unknown_name.fob",
+    file_path: "$FIXTURE_PATH",
 }

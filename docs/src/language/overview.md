@@ -1,12 +1,16 @@
 # Language overview
 
-Fobos is expression-oriented. A program is a sequence of statements, and
-blocks can themselves be expressions. Statements include bindings, function
-declarations, assignments, calls, `yield`, and `return`.
+Fobos is expression-oriented inside function bodies. A file itself is a module:
+its top level contains only `import`, `const`, and named `fun` declarations.
+The root file must declare one `fun main(): ()` entry point, which is executed
+after its imports, constants, and functions have been installed.
 
 ```fob
-let greeting := "hello"
-echo(greeting <> " Fobos")
+const GREETING: String = "hello"
+
+fun main(): () =
+    echo(GREETING <> " Fobos")
+end
 ```
 
 The language uses indentation for readability but block structure is delimited
@@ -16,10 +20,10 @@ implicit end.
 
 The implemented core currently includes:
 
-- immutable and mutable bindings;
+- immutable and mutable local bindings, plus typed top-level constants;
 - integers, floats, booleans, strings, unit, tuples, arrays, and ranges;
 - functions, lambdas, closures, piping with `.`, and overloads;
-- relative and standard module imports with public exports;
+- relative and standard module imports with public functions and constants;
 - `if`, `while`, and `for` expressions;
 - explicit `yield` and `return` flow;
 - a small type checker and the `echo`, `range`, and `push` built-ins.

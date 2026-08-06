@@ -1,0 +1,202 @@
+Program {
+    items: [
+        Import(
+            ImportDecl {
+                source: Module {
+                    tree: Path {
+                        segments: [
+                            "std",
+                            "foo",
+                        ],
+                        alias: Some(
+                            "foo",
+                        ),
+                    },
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 1,
+                        col: 1,
+                        idx: 0,
+                    },
+                    end: SrcPos {
+                        line: 2,
+                        col: 1,
+                        idx: 23,
+                    },
+                },
+            },
+        ),
+        Const(
+            ConstDecl {
+                public: false,
+                name: "COUNT",
+                type_annotation: Named(
+                    "Int",
+                ),
+                value: Expr {
+                    kind: Binary {
+                        lhs: Expr {
+                            kind: Path(
+                                [
+                                    "foo",
+                                    "DEFAULT_COUNT",
+                                ],
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 3,
+                                    col: 20,
+                                    idx: 43,
+                                },
+                                end: SrcPos {
+                                    line: 3,
+                                    col: 40,
+                                    idx: 63,
+                                },
+                            },
+                        },
+                        op: Mul,
+                        rhs: Expr {
+                            kind: Int(
+                                2,
+                            ),
+                            span: Span {
+                                start: SrcPos {
+                                    line: 3,
+                                    col: 41,
+                                    idx: 64,
+                                },
+                                end: SrcPos {
+                                    line: 4,
+                                    col: 1,
+                                    idx: 66,
+                                },
+                            },
+                        },
+                    },
+                    span: Span {
+                        start: SrcPos {
+                            line: 3,
+                            col: 20,
+                            idx: 43,
+                        },
+                        end: SrcPos {
+                            line: 4,
+                            col: 1,
+                            idx: 66,
+                        },
+                    },
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 3,
+                        col: 1,
+                        idx: 24,
+                    },
+                    end: SrcPos {
+                        line: 4,
+                        col: 1,
+                        idx: 66,
+                    },
+                },
+            },
+        ),
+        Function(
+            FunctionDecl {
+                public: false,
+                name: "main",
+                generics: [],
+                parameters: [],
+                return_type: Explicit(
+                    Unit,
+                ),
+                body: Block {
+                    statements: [
+                        Expr(
+                            Expr {
+                                kind: Call {
+                                    callee: Expr {
+                                        kind: Ident(
+                                            "echo",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 6,
+                                                col: 5,
+                                                idx: 88,
+                                            },
+                                            end: SrcPos {
+                                                line: 6,
+                                                col: 10,
+                                                idx: 93,
+                                            },
+                                        },
+                                    },
+                                    args: [
+                                        CallArgument {
+                                            name: None,
+                                            value: Expr {
+                                                kind: Ident(
+                                                    "COUNT",
+                                                ),
+                                                span: Span {
+                                                    start: SrcPos {
+                                                        line: 6,
+                                                        col: 10,
+                                                        idx: 93,
+                                                    },
+                                                    end: SrcPos {
+                                                        line: 6,
+                                                        col: 16,
+                                                        idx: 99,
+                                                    },
+                                                },
+                                            },
+                                            span: Span {
+                                                start: SrcPos {
+                                                    line: 6,
+                                                    col: 10,
+                                                    idx: 93,
+                                                },
+                                                end: SrcPos {
+                                                    line: 6,
+                                                    col: 16,
+                                                    idx: 99,
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 6,
+                                        col: 5,
+                                        idx: 88,
+                                    },
+                                    end: SrcPos {
+                                        line: 7,
+                                        col: 1,
+                                        idx: 100,
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+                span: Span {
+                    start: SrcPos {
+                        line: 5,
+                        col: 1,
+                        idx: 67,
+                    },
+                    end: SrcPos {
+                        line: 5,
+                        col: 17,
+                        idx: 83,
+                    },
+                },
+            },
+        ),
+    ],
+}

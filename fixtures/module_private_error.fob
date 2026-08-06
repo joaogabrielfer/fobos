@@ -1,3 +1,5 @@
 import "modules/counter.fob" as counter
 
-echo(counter::count)
+fun main(): () =
+    echo(counter::HIDDEN)
+end

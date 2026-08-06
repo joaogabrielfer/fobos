@@ -5,7 +5,6 @@ use std::{
 };
 
 use crate::{
-    ast::Stmt,
     interpreter::Interpreter,
     lexer::Lexer,
     module::{CompilerSession, RuntimeModules},
@@ -48,7 +47,7 @@ pub fn dump_expected() -> anyhow::Result<()> {
 
         let tokens = Lexer::new(&current_file_path, &content).tokenize();
 
-        let tokens_str = format!("{tokens:#?}");
+        let tokens_str = normalize_snapshot_paths(&format!("{tokens:#?}"));
 
         let (ast_str, eval_str) = match tokens {
             Ok(tokens) => {
@@ -56,22 +55,14 @@ pub fn dump_expected() -> anyhow::Result<()> {
 
                 match ast {
                     Ok(program) => {
-                        let ast_str = format!("{program:#?}");
+                        let ast_str = normalize_snapshot_paths(&format!("{program:#?}"));
 
-                        let has_imports = program
-                            .statements
-                            .iter()
-                            .any(|statement| matches!(statement, Stmt::ImportDecl { .. }));
                         let mut interpreter = Interpreter::new_buffered(&current_file_path);
-                        let eval_result = if has_imports {
-                            CompilerSession::default()
-                                .compile_file(&current_file_path)
-                                .and_then(|compilation| {
-                                    RuntimeModules::new(compilation).execute_root(&mut interpreter)
-                                })
-                        } else {
-                            interpreter.eval_program(program).map_err(Into::into)
-                        };
+                        let eval_result = CompilerSession::default()
+                            .compile_file(&current_file_path)
+                            .and_then(|compilation| {
+                                RuntimeModules::new(compilation).execute_root(&mut interpreter)
+                            });
                         let output = interpreter.into_output_string();
 
                         let eval_str = match eval_result {
@@ -89,7 +80,7 @@ pub fn dump_expected() -> anyhow::Result<()> {
                                     e
                                 );
 
-                                format!("{e:#?}")
+                                normalize_snapshot_paths(&format!("{e:#?}"))
                             }
                         };
 
@@ -99,7 +90,7 @@ pub fn dump_expected() -> anyhow::Result<()> {
                     Err(e) => {
                         eprintln!("Parse error in '{}':\n{}", current_file_path.display(), e);
 
-                        let err = format!("{e:#?}");
+                        let err = normalize_snapshot_paths(&format!("{e:#?}"));
 
                         // AST is the parser error. Eval cannot run, so eval also stores the error.
                         (err.clone(), err)
@@ -110,7 +101,7 @@ pub fn dump_expected() -> anyhow::Result<()> {
             Err(e) => {
                 eprintln!("Lexer error in '{}':\n{}", current_file_path.display(), e);
 
-                let err = format!("{e:#?}");
+                let err = normalize_snapshot_paths(&format!("{e:#?}"));
 
                 // Tokens are the lexer error. AST/eval cannot run.
                 (err.clone(), err)
@@ -171,6 +162,28 @@ pub fn dump_expected() -> anyhow::Result<()> {
     }
 
     Ok(())
+}
+
+pub fn normalize_snapshot_paths(snapshot: &str) -> String {
+    let snapshot = snapshot.replace(env!("CARGO_MANIFEST_DIR"), "$FIXTURE_PATH");
+    snapshot
+        .lines()
+        .map(|line| {
+            let Some(start) = line.find("file_path: \"") else {
+                return line.to_string();
+            };
+            let prefix_end = start + "file_path: \"".len();
+            let Some(end) = line[prefix_end..].find('"') else {
+                return line.to_string();
+            };
+            format!(
+                "{}$FIXTURE_PATH{}",
+                &line[..prefix_end],
+                &line[prefix_end + end..]
+            )
+        })
+        .collect::<Vec<_>>()
+        .join("\n")
 }
 
 pub fn create_expected_by_ext(file_path: &Path, extension: &str) -> anyhow::Result<PathBuf> {

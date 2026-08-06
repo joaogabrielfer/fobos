@@ -15,5 +15,7 @@ The binary is invoked through Cargo during development: `cargo run -- <command>`
 Errors are rendered with the source path, line, column, and a source excerpt
 when the span can be resolved.
 
-`--no-check` (also available as `--disable-checker`) runs a single parsed file directly and therefore does not
-provide module loading. Use the normal `run` command for programs with imports.
+`--no-check` (also available as `--disable-checker`) runs a single parsed
+function-only entry file directly. It does not provide module loading or
+compile-time constant evaluation, so use the normal `run` command for any
+program with imports or `const` declarations.

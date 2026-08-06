@@ -1,3 +1,4 @@
+fun main(): () =
 let a := 1
 var b := 10
 b = 29
@@ -5,4 +6,6 @@ b = 29
 if true do
 	let result := a + b
 	echo("result: " <> result)
+end
+
 end

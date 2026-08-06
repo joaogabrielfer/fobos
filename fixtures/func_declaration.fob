@@ -1,3 +1,4 @@
+fun main(): () =
 fun add(x: Int, y: Int): Int =
     return x + y
 end
@@ -28,3 +29,5 @@ echo(identity(7))
 echo(greet())
 echo(unit_value())
 echo(inferred_return(9))
+
+end

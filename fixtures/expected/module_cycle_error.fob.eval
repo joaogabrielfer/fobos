@@ -1,10 +1,10 @@
 Error {
-    context: "while resolving import in /home/joaogabriel/personal/programming/projects/fobos/fixtures/module_cycle_error.fob",
+    context: "while resolving import in $FIXTURE_PATH/fixtures/module_cycle_error.fob",
     source: Error {
-        context: "while resolving import in /home/joaogabriel/personal/programming/projects/fobos/fixtures/modules/cycle_a.fob",
+        context: "while resolving import in $FIXTURE_PATH/fixtures/modules/cycle_a.fob",
         source: Error {
-            context: "while resolving import in /home/joaogabriel/personal/programming/projects/fobos/fixtures/modules/cycle_b.fob",
-            source: "circular module import: /home/joaogabriel/personal/programming/projects/fobos/fixtures/modules/cycle_a.fob -> /home/joaogabriel/personal/programming/projects/fobos/fixtures/modules/cycle_b.fob -> /home/joaogabriel/personal/programming/projects/fobos/fixtures/modules/cycle_a.fob",
+            context: "while resolving import in $FIXTURE_PATH/fixtures/modules/cycle_b.fob",
+            source: "circular module import: $FIXTURE_PATH/fixtures/modules/cycle_a.fob -> $FIXTURE_PATH/fixtures/modules/cycle_b.fob -> $FIXTURE_PATH/fixtures/modules/cycle_a.fob",
         },
     },
 }

@@ -1,674 +1,697 @@
 Program {
-    statements: [
-        Bind {
-            public: false,
-            mutable: true,
-            name: "t0",
-            type_annotation: Inferred,
-            value: Expr {
-                kind: Unit,
+    items: [
+        Function(
+            FunctionDecl {
+                public: false,
+                name: "main",
+                generics: [],
+                parameters: [],
+                return_type: Explicit(
+                    Unit,
+                ),
+                body: Block {
+                    statements: [
+                        Bind {
+                            mutable: true,
+                            name: "t0",
+                            type_annotation: Inferred,
+                            value: Expr {
+                                kind: Unit,
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 2,
+                                        col: 11,
+                                        idx: 27,
+                                    },
+                                    end: SrcPos {
+                                        line: 3,
+                                        col: 1,
+                                        idx: 30,
+                                    },
+                                },
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 2,
+                                    col: 1,
+                                    idx: 17,
+                                },
+                                end: SrcPos {
+                                    line: 3,
+                                    col: 1,
+                                    idx: 30,
+                                },
+                            },
+                        },
+                        Bind {
+                            mutable: true,
+                            name: "t1",
+                            type_annotation: Inferred,
+                            value: Expr {
+                                kind: Int(
+                                    10,
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 3,
+                                        col: 12,
+                                        idx: 41,
+                                    },
+                                    end: SrcPos {
+                                        line: 3,
+                                        col: 15,
+                                        idx: 44,
+                                    },
+                                },
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 3,
+                                    col: 1,
+                                    idx: 30,
+                                },
+                                end: SrcPos {
+                                    line: 3,
+                                    col: 15,
+                                    idx: 44,
+                                },
+                            },
+                        },
+                        Bind {
+                            mutable: true,
+                            name: "t2",
+                            type_annotation: Inferred,
+                            value: Expr {
+                                kind: Tuple(
+                                    [
+                                        Expr {
+                                            kind: Tuple(
+                                                [
+                                                    Expr {
+                                                        kind: Int(
+                                                            10,
+                                                        ),
+                                                        span: Span {
+                                                            start: SrcPos {
+                                                                line: 4,
+                                                                col: 13,
+                                                                idx: 57,
+                                                            },
+                                                            end: SrcPos {
+                                                                line: 4,
+                                                                col: 16,
+                                                                idx: 60,
+                                                            },
+                                                        },
+                                                    },
+                                                    Expr {
+                                                        kind: Int(
+                                                            2,
+                                                        ),
+                                                        span: Span {
+                                                            start: SrcPos {
+                                                                line: 4,
+                                                                col: 17,
+                                                                idx: 61,
+                                                            },
+                                                            end: SrcPos {
+                                                                line: 4,
+                                                                col: 19,
+                                                                idx: 63,
+                                                            },
+                                                        },
+                                                    },
+                                                ],
+                                            ),
+                                            span: Span {
+                                                start: SrcPos {
+                                                    line: 4,
+                                                    col: 12,
+                                                    idx: 56,
+                                                },
+                                                end: SrcPos {
+                                                    line: 4,
+                                                    col: 20,
+                                                    idx: 64,
+                                                },
+                                            },
+                                        },
+                                    ],
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 4,
+                                        col: 11,
+                                        idx: 55,
+                                    },
+                                    end: SrcPos {
+                                        line: 5,
+                                        col: 1,
+                                        idx: 65,
+                                    },
+                                },
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 4,
+                                    col: 1,
+                                    idx: 45,
+                                },
+                                end: SrcPos {
+                                    line: 5,
+                                    col: 1,
+                                    idx: 65,
+                                },
+                            },
+                        },
+                        Bind {
+                            mutable: true,
+                            name: "t3",
+                            type_annotation: Inferred,
+                            value: Expr {
+                                kind: Tuple(
+                                    [
+                                        Expr {
+                                            kind: Tuple(
+                                                [
+                                                    Expr {
+                                                        kind: Int(
+                                                            10,
+                                                        ),
+                                                        span: Span {
+                                                            start: SrcPos {
+                                                                line: 5,
+                                                                col: 13,
+                                                                idx: 77,
+                                                            },
+                                                            end: SrcPos {
+                                                                line: 5,
+                                                                col: 16,
+                                                                idx: 80,
+                                                            },
+                                                        },
+                                                    },
+                                                    Expr {
+                                                        kind: Int(
+                                                            2,
+                                                        ),
+                                                        span: Span {
+                                                            start: SrcPos {
+                                                                line: 5,
+                                                                col: 17,
+                                                                idx: 81,
+                                                            },
+                                                            end: SrcPos {
+                                                                line: 5,
+                                                                col: 19,
+                                                                idx: 83,
+                                                            },
+                                                        },
+                                                    },
+                                                ],
+                                            ),
+                                            span: Span {
+                                                start: SrcPos {
+                                                    line: 5,
+                                                    col: 12,
+                                                    idx: 76,
+                                                },
+                                                end: SrcPos {
+                                                    line: 5,
+                                                    col: 20,
+                                                    idx: 84,
+                                                },
+                                            },
+                                        },
+                                        Expr {
+                                            kind: Int(
+                                                3,
+                                            ),
+                                            span: Span {
+                                                start: SrcPos {
+                                                    line: 5,
+                                                    col: 21,
+                                                    idx: 85,
+                                                },
+                                                end: SrcPos {
+                                                    line: 5,
+                                                    col: 23,
+                                                    idx: 87,
+                                                },
+                                            },
+                                        },
+                                    ],
+                                ),
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 5,
+                                        col: 11,
+                                        idx: 75,
+                                    },
+                                    end: SrcPos {
+                                        line: 6,
+                                        col: 1,
+                                        idx: 88,
+                                    },
+                                },
+                            },
+                            span: Span {
+                                start: SrcPos {
+                                    line: 5,
+                                    col: 1,
+                                    idx: 65,
+                                },
+                                end: SrcPos {
+                                    line: 6,
+                                    col: 1,
+                                    idx: 88,
+                                },
+                            },
+                        },
+                        Expr(
+                            Expr {
+                                kind: Call {
+                                    callee: Expr {
+                                        kind: Ident(
+                                            "echo",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 7,
+                                                col: 1,
+                                                idx: 89,
+                                            },
+                                            end: SrcPos {
+                                                line: 7,
+                                                col: 6,
+                                                idx: 94,
+                                            },
+                                        },
+                                    },
+                                    args: [
+                                        CallArgument {
+                                            name: None,
+                                            value: Expr {
+                                                kind: Binary {
+                                                    lhs: Expr {
+                                                        kind: String(
+                                                            "t0: ",
+                                                        ),
+                                                        span: Span {
+                                                            start: SrcPos {
+                                                                line: 7,
+                                                                col: 6,
+                                                                idx: 94,
+                                                            },
+                                                            end: SrcPos {
+                                                                line: 7,
+                                                                col: 15,
+                                                                idx: 103,
+                                                            },
+                                                        },
+                                                    },
+                                                    op: Combine,
+                                                    rhs: Expr {
+                                                        kind: Ident(
+                                                            "t0",
+                                                        ),
+                                                        span: Span {
+                                                            start: SrcPos {
+                                                                line: 7,
+                                                                col: 16,
+                                                                idx: 104,
+                                                            },
+                                                            end: SrcPos {
+                                                                line: 7,
+                                                                col: 19,
+                                                                idx: 107,
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                                span: Span {
+                                                    start: SrcPos {
+                                                        line: 7,
+                                                        col: 6,
+                                                        idx: 94,
+                                                    },
+                                                    end: SrcPos {
+                                                        line: 7,
+                                                        col: 19,
+                                                        idx: 107,
+                                                    },
+                                                },
+                                            },
+                                            span: Span {
+                                                start: SrcPos {
+                                                    line: 7,
+                                                    col: 6,
+                                                    idx: 94,
+                                                },
+                                                end: SrcPos {
+                                                    line: 7,
+                                                    col: 19,
+                                                    idx: 107,
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 7,
+                                        col: 1,
+                                        idx: 89,
+                                    },
+                                    end: SrcPos {
+                                        line: 8,
+                                        col: 1,
+                                        idx: 108,
+                                    },
+                                },
+                            },
+                        ),
+                        Expr(
+                            Expr {
+                                kind: Call {
+                                    callee: Expr {
+                                        kind: Ident(
+                                            "echo",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 8,
+                                                col: 1,
+                                                idx: 108,
+                                            },
+                                            end: SrcPos {
+                                                line: 8,
+                                                col: 6,
+                                                idx: 113,
+                                            },
+                                        },
+                                    },
+                                    args: [
+                                        CallArgument {
+                                            name: None,
+                                            value: Expr {
+                                                kind: Binary {
+                                                    lhs: Expr {
+                                                        kind: String(
+                                                            "t1: ",
+                                                        ),
+                                                        span: Span {
+                                                            start: SrcPos {
+                                                                line: 8,
+                                                                col: 6,
+                                                                idx: 113,
+                                                            },
+                                                            end: SrcPos {
+                                                                line: 8,
+                                                                col: 15,
+                                                                idx: 122,
+                                                            },
+                                                        },
+                                                    },
+                                                    op: Combine,
+                                                    rhs: Expr {
+                                                        kind: Ident(
+                                                            "t1",
+                                                        ),
+                                                        span: Span {
+                                                            start: SrcPos {
+                                                                line: 8,
+                                                                col: 16,
+                                                                idx: 123,
+                                                            },
+                                                            end: SrcPos {
+                                                                line: 8,
+                                                                col: 19,
+                                                                idx: 126,
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                                span: Span {
+                                                    start: SrcPos {
+                                                        line: 8,
+                                                        col: 6,
+                                                        idx: 113,
+                                                    },
+                                                    end: SrcPos {
+                                                        line: 8,
+                                                        col: 19,
+                                                        idx: 126,
+                                                    },
+                                                },
+                                            },
+                                            span: Span {
+                                                start: SrcPos {
+                                                    line: 8,
+                                                    col: 6,
+                                                    idx: 113,
+                                                },
+                                                end: SrcPos {
+                                                    line: 8,
+                                                    col: 19,
+                                                    idx: 126,
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 8,
+                                        col: 1,
+                                        idx: 108,
+                                    },
+                                    end: SrcPos {
+                                        line: 9,
+                                        col: 1,
+                                        idx: 127,
+                                    },
+                                },
+                            },
+                        ),
+                        Expr(
+                            Expr {
+                                kind: Call {
+                                    callee: Expr {
+                                        kind: Ident(
+                                            "echo",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 9,
+                                                col: 1,
+                                                idx: 127,
+                                            },
+                                            end: SrcPos {
+                                                line: 9,
+                                                col: 6,
+                                                idx: 132,
+                                            },
+                                        },
+                                    },
+                                    args: [
+                                        CallArgument {
+                                            name: None,
+                                            value: Expr {
+                                                kind: Binary {
+                                                    lhs: Expr {
+                                                        kind: String(
+                                                            "t2: ",
+                                                        ),
+                                                        span: Span {
+                                                            start: SrcPos {
+                                                                line: 9,
+                                                                col: 6,
+                                                                idx: 132,
+                                                            },
+                                                            end: SrcPos {
+                                                                line: 9,
+                                                                col: 15,
+                                                                idx: 141,
+                                                            },
+                                                        },
+                                                    },
+                                                    op: Combine,
+                                                    rhs: Expr {
+                                                        kind: Ident(
+                                                            "t2",
+                                                        ),
+                                                        span: Span {
+                                                            start: SrcPos {
+                                                                line: 9,
+                                                                col: 16,
+                                                                idx: 142,
+                                                            },
+                                                            end: SrcPos {
+                                                                line: 9,
+                                                                col: 19,
+                                                                idx: 145,
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                                span: Span {
+                                                    start: SrcPos {
+                                                        line: 9,
+                                                        col: 6,
+                                                        idx: 132,
+                                                    },
+                                                    end: SrcPos {
+                                                        line: 9,
+                                                        col: 19,
+                                                        idx: 145,
+                                                    },
+                                                },
+                                            },
+                                            span: Span {
+                                                start: SrcPos {
+                                                    line: 9,
+                                                    col: 6,
+                                                    idx: 132,
+                                                },
+                                                end: SrcPos {
+                                                    line: 9,
+                                                    col: 19,
+                                                    idx: 145,
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 9,
+                                        col: 1,
+                                        idx: 127,
+                                    },
+                                    end: SrcPos {
+                                        line: 10,
+                                        col: 1,
+                                        idx: 146,
+                                    },
+                                },
+                            },
+                        ),
+                        Expr(
+                            Expr {
+                                kind: Call {
+                                    callee: Expr {
+                                        kind: Ident(
+                                            "echo",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 10,
+                                                col: 1,
+                                                idx: 146,
+                                            },
+                                            end: SrcPos {
+                                                line: 10,
+                                                col: 6,
+                                                idx: 151,
+                                            },
+                                        },
+                                    },
+                                    args: [
+                                        CallArgument {
+                                            name: None,
+                                            value: Expr {
+                                                kind: Binary {
+                                                    lhs: Expr {
+                                                        kind: String(
+                                                            "t3: ",
+                                                        ),
+                                                        span: Span {
+                                                            start: SrcPos {
+                                                                line: 10,
+                                                                col: 6,
+                                                                idx: 151,
+                                                            },
+                                                            end: SrcPos {
+                                                                line: 10,
+                                                                col: 15,
+                                                                idx: 160,
+                                                            },
+                                                        },
+                                                    },
+                                                    op: Combine,
+                                                    rhs: Expr {
+                                                        kind: Ident(
+                                                            "t3",
+                                                        ),
+                                                        span: Span {
+                                                            start: SrcPos {
+                                                                line: 10,
+                                                                col: 16,
+                                                                idx: 161,
+                                                            },
+                                                            end: SrcPos {
+                                                                line: 10,
+                                                                col: 19,
+                                                                idx: 164,
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                                span: Span {
+                                                    start: SrcPos {
+                                                        line: 10,
+                                                        col: 6,
+                                                        idx: 151,
+                                                    },
+                                                    end: SrcPos {
+                                                        line: 10,
+                                                        col: 19,
+                                                        idx: 164,
+                                                    },
+                                                },
+                                            },
+                                            span: Span {
+                                                start: SrcPos {
+                                                    line: 10,
+                                                    col: 6,
+                                                    idx: 151,
+                                                },
+                                                end: SrcPos {
+                                                    line: 10,
+                                                    col: 19,
+                                                    idx: 164,
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 10,
+                                        col: 1,
+                                        idx: 146,
+                                    },
+                                    end: SrcPos {
+                                        line: 11,
+                                        col: 1,
+                                        idx: 165,
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
                 span: Span {
                     start: SrcPos {
                         line: 1,
-                        col: 11,
-                        idx: 10,
+                        col: 1,
+                        idx: 0,
                     },
                     end: SrcPos {
-                        line: 2,
-                        col: 1,
-                        idx: 13,
-                    },
-                },
-            },
-            span: Span {
-                start: SrcPos {
-                    line: 1,
-                    col: 1,
-                    idx: 0,
-                },
-                end: SrcPos {
-                    line: 2,
-                    col: 1,
-                    idx: 13,
-                },
-            },
-        },
-        Bind {
-            public: false,
-            mutable: true,
-            name: "t1",
-            type_annotation: Inferred,
-            value: Expr {
-                kind: Int(
-                    10,
-                ),
-                span: Span {
-                    start: SrcPos {
-                        line: 2,
-                        col: 12,
-                        idx: 24,
-                    },
-                    end: SrcPos {
-                        line: 2,
-                        col: 15,
-                        idx: 27,
-                    },
-                },
-            },
-            span: Span {
-                start: SrcPos {
-                    line: 2,
-                    col: 1,
-                    idx: 13,
-                },
-                end: SrcPos {
-                    line: 2,
-                    col: 15,
-                    idx: 27,
-                },
-            },
-        },
-        Bind {
-            public: false,
-            mutable: true,
-            name: "t2",
-            type_annotation: Inferred,
-            value: Expr {
-                kind: Tuple(
-                    [
-                        Expr {
-                            kind: Tuple(
-                                [
-                                    Expr {
-                                        kind: Int(
-                                            10,
-                                        ),
-                                        span: Span {
-                                            start: SrcPos {
-                                                line: 3,
-                                                col: 13,
-                                                idx: 40,
-                                            },
-                                            end: SrcPos {
-                                                line: 3,
-                                                col: 16,
-                                                idx: 43,
-                                            },
-                                        },
-                                    },
-                                    Expr {
-                                        kind: Int(
-                                            2,
-                                        ),
-                                        span: Span {
-                                            start: SrcPos {
-                                                line: 3,
-                                                col: 17,
-                                                idx: 44,
-                                            },
-                                            end: SrcPos {
-                                                line: 3,
-                                                col: 19,
-                                                idx: 46,
-                                            },
-                                        },
-                                    },
-                                ],
-                            ),
-                            span: Span {
-                                start: SrcPos {
-                                    line: 3,
-                                    col: 12,
-                                    idx: 39,
-                                },
-                                end: SrcPos {
-                                    line: 3,
-                                    col: 20,
-                                    idx: 47,
-                                },
-                            },
-                        },
-                    ],
-                ),
-                span: Span {
-                    start: SrcPos {
-                        line: 3,
-                        col: 11,
-                        idx: 38,
-                    },
-                    end: SrcPos {
-                        line: 4,
-                        col: 1,
-                        idx: 48,
-                    },
-                },
-            },
-            span: Span {
-                start: SrcPos {
-                    line: 3,
-                    col: 1,
-                    idx: 28,
-                },
-                end: SrcPos {
-                    line: 4,
-                    col: 1,
-                    idx: 48,
-                },
-            },
-        },
-        Bind {
-            public: false,
-            mutable: true,
-            name: "t3",
-            type_annotation: Inferred,
-            value: Expr {
-                kind: Tuple(
-                    [
-                        Expr {
-                            kind: Tuple(
-                                [
-                                    Expr {
-                                        kind: Int(
-                                            10,
-                                        ),
-                                        span: Span {
-                                            start: SrcPos {
-                                                line: 4,
-                                                col: 13,
-                                                idx: 60,
-                                            },
-                                            end: SrcPos {
-                                                line: 4,
-                                                col: 16,
-                                                idx: 63,
-                                            },
-                                        },
-                                    },
-                                    Expr {
-                                        kind: Int(
-                                            2,
-                                        ),
-                                        span: Span {
-                                            start: SrcPos {
-                                                line: 4,
-                                                col: 17,
-                                                idx: 64,
-                                            },
-                                            end: SrcPos {
-                                                line: 4,
-                                                col: 19,
-                                                idx: 66,
-                                            },
-                                        },
-                                    },
-                                ],
-                            ),
-                            span: Span {
-                                start: SrcPos {
-                                    line: 4,
-                                    col: 12,
-                                    idx: 59,
-                                },
-                                end: SrcPos {
-                                    line: 4,
-                                    col: 20,
-                                    idx: 67,
-                                },
-                            },
-                        },
-                        Expr {
-                            kind: Int(
-                                3,
-                            ),
-                            span: Span {
-                                start: SrcPos {
-                                    line: 4,
-                                    col: 21,
-                                    idx: 68,
-                                },
-                                end: SrcPos {
-                                    line: 4,
-                                    col: 23,
-                                    idx: 70,
-                                },
-                            },
-                        },
-                    ],
-                ),
-                span: Span {
-                    start: SrcPos {
-                        line: 4,
-                        col: 11,
-                        idx: 58,
-                    },
-                    end: SrcPos {
-                        line: 5,
-                        col: 1,
-                        idx: 71,
-                    },
-                },
-            },
-            span: Span {
-                start: SrcPos {
-                    line: 4,
-                    col: 1,
-                    idx: 48,
-                },
-                end: SrcPos {
-                    line: 5,
-                    col: 1,
-                    idx: 71,
-                },
-            },
-        },
-        Expr(
-            Expr {
-                kind: Call {
-                    callee: Expr {
-                        kind: Ident(
-                            "echo",
-                        ),
-                        span: Span {
-                            start: SrcPos {
-                                line: 6,
-                                col: 1,
-                                idx: 72,
-                            },
-                            end: SrcPos {
-                                line: 6,
-                                col: 6,
-                                idx: 77,
-                            },
-                        },
-                    },
-                    args: [
-                        CallArgument {
-                            name: None,
-                            value: Expr {
-                                kind: Binary {
-                                    lhs: Expr {
-                                        kind: String(
-                                            "t0: ",
-                                        ),
-                                        span: Span {
-                                            start: SrcPos {
-                                                line: 6,
-                                                col: 6,
-                                                idx: 77,
-                                            },
-                                            end: SrcPos {
-                                                line: 6,
-                                                col: 15,
-                                                idx: 86,
-                                            },
-                                        },
-                                    },
-                                    op: Combine,
-                                    rhs: Expr {
-                                        kind: Ident(
-                                            "t0",
-                                        ),
-                                        span: Span {
-                                            start: SrcPos {
-                                                line: 6,
-                                                col: 16,
-                                                idx: 87,
-                                            },
-                                            end: SrcPos {
-                                                line: 6,
-                                                col: 19,
-                                                idx: 90,
-                                            },
-                                        },
-                                    },
-                                },
-                                span: Span {
-                                    start: SrcPos {
-                                        line: 6,
-                                        col: 6,
-                                        idx: 77,
-                                    },
-                                    end: SrcPos {
-                                        line: 6,
-                                        col: 19,
-                                        idx: 90,
-                                    },
-                                },
-                            },
-                            span: Span {
-                                start: SrcPos {
-                                    line: 6,
-                                    col: 6,
-                                    idx: 77,
-                                },
-                                end: SrcPos {
-                                    line: 6,
-                                    col: 19,
-                                    idx: 90,
-                                },
-                            },
-                        },
-                    ],
-                },
-                span: Span {
-                    start: SrcPos {
-                        line: 6,
-                        col: 1,
-                        idx: 72,
-                    },
-                    end: SrcPos {
-                        line: 7,
-                        col: 1,
-                        idx: 91,
-                    },
-                },
-            },
-        ),
-        Expr(
-            Expr {
-                kind: Call {
-                    callee: Expr {
-                        kind: Ident(
-                            "echo",
-                        ),
-                        span: Span {
-                            start: SrcPos {
-                                line: 7,
-                                col: 1,
-                                idx: 91,
-                            },
-                            end: SrcPos {
-                                line: 7,
-                                col: 6,
-                                idx: 96,
-                            },
-                        },
-                    },
-                    args: [
-                        CallArgument {
-                            name: None,
-                            value: Expr {
-                                kind: Binary {
-                                    lhs: Expr {
-                                        kind: String(
-                                            "t1: ",
-                                        ),
-                                        span: Span {
-                                            start: SrcPos {
-                                                line: 7,
-                                                col: 6,
-                                                idx: 96,
-                                            },
-                                            end: SrcPos {
-                                                line: 7,
-                                                col: 15,
-                                                idx: 105,
-                                            },
-                                        },
-                                    },
-                                    op: Combine,
-                                    rhs: Expr {
-                                        kind: Ident(
-                                            "t1",
-                                        ),
-                                        span: Span {
-                                            start: SrcPos {
-                                                line: 7,
-                                                col: 16,
-                                                idx: 106,
-                                            },
-                                            end: SrcPos {
-                                                line: 7,
-                                                col: 19,
-                                                idx: 109,
-                                            },
-                                        },
-                                    },
-                                },
-                                span: Span {
-                                    start: SrcPos {
-                                        line: 7,
-                                        col: 6,
-                                        idx: 96,
-                                    },
-                                    end: SrcPos {
-                                        line: 7,
-                                        col: 19,
-                                        idx: 109,
-                                    },
-                                },
-                            },
-                            span: Span {
-                                start: SrcPos {
-                                    line: 7,
-                                    col: 6,
-                                    idx: 96,
-                                },
-                                end: SrcPos {
-                                    line: 7,
-                                    col: 19,
-                                    idx: 109,
-                                },
-                            },
-                        },
-                    ],
-                },
-                span: Span {
-                    start: SrcPos {
-                        line: 7,
-                        col: 1,
-                        idx: 91,
-                    },
-                    end: SrcPos {
-                        line: 8,
-                        col: 1,
-                        idx: 110,
-                    },
-                },
-            },
-        ),
-        Expr(
-            Expr {
-                kind: Call {
-                    callee: Expr {
-                        kind: Ident(
-                            "echo",
-                        ),
-                        span: Span {
-                            start: SrcPos {
-                                line: 8,
-                                col: 1,
-                                idx: 110,
-                            },
-                            end: SrcPos {
-                                line: 8,
-                                col: 6,
-                                idx: 115,
-                            },
-                        },
-                    },
-                    args: [
-                        CallArgument {
-                            name: None,
-                            value: Expr {
-                                kind: Binary {
-                                    lhs: Expr {
-                                        kind: String(
-                                            "t2: ",
-                                        ),
-                                        span: Span {
-                                            start: SrcPos {
-                                                line: 8,
-                                                col: 6,
-                                                idx: 115,
-                                            },
-                                            end: SrcPos {
-                                                line: 8,
-                                                col: 15,
-                                                idx: 124,
-                                            },
-                                        },
-                                    },
-                                    op: Combine,
-                                    rhs: Expr {
-                                        kind: Ident(
-                                            "t2",
-                                        ),
-                                        span: Span {
-                                            start: SrcPos {
-                                                line: 8,
-                                                col: 16,
-                                                idx: 125,
-                                            },
-                                            end: SrcPos {
-                                                line: 8,
-                                                col: 19,
-                                                idx: 128,
-                                            },
-                                        },
-                                    },
-                                },
-                                span: Span {
-                                    start: SrcPos {
-                                        line: 8,
-                                        col: 6,
-                                        idx: 115,
-                                    },
-                                    end: SrcPos {
-                                        line: 8,
-                                        col: 19,
-                                        idx: 128,
-                                    },
-                                },
-                            },
-                            span: Span {
-                                start: SrcPos {
-                                    line: 8,
-                                    col: 6,
-                                    idx: 115,
-                                },
-                                end: SrcPos {
-                                    line: 8,
-                                    col: 19,
-                                    idx: 128,
-                                },
-                            },
-                        },
-                    ],
-                },
-                span: Span {
-                    start: SrcPos {
-                        line: 8,
-                        col: 1,
-                        idx: 110,
-                    },
-                    end: SrcPos {
-                        line: 9,
-                        col: 1,
-                        idx: 129,
-                    },
-                },
-            },
-        ),
-        Expr(
-            Expr {
-                kind: Call {
-                    callee: Expr {
-                        kind: Ident(
-                            "echo",
-                        ),
-                        span: Span {
-                            start: SrcPos {
-                                line: 9,
-                                col: 1,
-                                idx: 129,
-                            },
-                            end: SrcPos {
-                                line: 9,
-                                col: 6,
-                                idx: 134,
-                            },
-                        },
-                    },
-                    args: [
-                        CallArgument {
-                            name: None,
-                            value: Expr {
-                                kind: Binary {
-                                    lhs: Expr {
-                                        kind: String(
-                                            "t3: ",
-                                        ),
-                                        span: Span {
-                                            start: SrcPos {
-                                                line: 9,
-                                                col: 6,
-                                                idx: 134,
-                                            },
-                                            end: SrcPos {
-                                                line: 9,
-                                                col: 15,
-                                                idx: 143,
-                                            },
-                                        },
-                                    },
-                                    op: Combine,
-                                    rhs: Expr {
-                                        kind: Ident(
-                                            "t3",
-                                        ),
-                                        span: Span {
-                                            start: SrcPos {
-                                                line: 9,
-                                                col: 16,
-                                                idx: 144,
-                                            },
-                                            end: SrcPos {
-                                                line: 9,
-                                                col: 19,
-                                                idx: 147,
-                                            },
-                                        },
-                                    },
-                                },
-                                span: Span {
-                                    start: SrcPos {
-                                        line: 9,
-                                        col: 6,
-                                        idx: 134,
-                                    },
-                                    end: SrcPos {
-                                        line: 9,
-                                        col: 19,
-                                        idx: 147,
-                                    },
-                                },
-                            },
-                            span: Span {
-                                start: SrcPos {
-                                    line: 9,
-                                    col: 6,
-                                    idx: 134,
-                                },
-                                end: SrcPos {
-                                    line: 9,
-                                    col: 19,
-                                    idx: 147,
-                                },
-                            },
-                        },
-                    ],
-                },
-                span: Span {
-                    start: SrcPos {
-                        line: 9,
-                        col: 1,
-                        idx: 129,
-                    },
-                    end: SrcPos {
-                        line: 10,
-                        col: 1,
-                        idx: 148,
+                        line: 1,
+                        col: 17,
+                        idx: 16,
                     },
                 },
             },

@@ -1,3 +1,4 @@
+fun main(): () =
 fun add(x: Int, y: Int) :=
 	return x + y
 end
@@ -8,3 +9,5 @@ let make_adder := x -> y -> x + y
 let inc := make_adder(1)
 
 echo("inc(10) = " <> inc(10))
+
+end

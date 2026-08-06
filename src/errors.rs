@@ -190,6 +190,10 @@ pub enum ParserErrorKind {
     InvalidImport { found: String },
     #[error("{found} is not a valid part of a module path")]
     InvalidModulePath { found: String },
+    #[error("expected a top-level item (`import`, `const`, or `fun`), found '{found}'")]
+    ExpectedTopLevelItem { found: String },
+    #[error("constant declarations require an explicit type")]
+    ConstRequiresType,
 }
 
 #[derive(Debug, Error)]
@@ -348,6 +352,14 @@ pub enum TypeErrorKind {
     ReturnOutsideFunction,
     #[error("yield used outside of an effect handler")]
     YieldOutsideHandler,
+    #[error("'{0}' is not a compile-time constant")]
+    NotAConstant(String),
+    #[error("{0} is not allowed in a constant expression")]
+    ConstExpressionNotAllowed(String),
+    #[error("constant dependency cycle: {0}")]
+    ConstantCycle(String),
+    #[error("constant evaluation failed: {0}")]
+    ConstantEvaluation(String),
 }
 
 #[derive(Debug, Error, Clone)]

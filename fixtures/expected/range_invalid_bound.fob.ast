@@ -1,73 +1,99 @@
 Program {
-    statements: [
-        Bind {
-            public: false,
-            mutable: false,
-            name: "r",
-            type_annotation: Inferred,
-            value: Expr {
-                kind: Binary {
-                    lhs: Expr {
-                        kind: String(
-                            "a",
-                        ),
-                        span: Span {
-                            start: SrcPos {
-                                line: 1,
-                                col: 10,
-                                idx: 9,
+    items: [
+        Function(
+            FunctionDecl {
+                public: false,
+                name: "main",
+                generics: [],
+                parameters: [],
+                return_type: Explicit(
+                    Unit,
+                ),
+                body: Block {
+                    statements: [
+                        Bind {
+                            mutable: false,
+                            name: "r",
+                            type_annotation: Inferred,
+                            value: Expr {
+                                kind: Binary {
+                                    lhs: Expr {
+                                        kind: String(
+                                            "a",
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 2,
+                                                col: 10,
+                                                idx: 26,
+                                            },
+                                            end: SrcPos {
+                                                line: 2,
+                                                col: 16,
+                                                idx: 32,
+                                            },
+                                        },
+                                    },
+                                    op: ExclusiveRange,
+                                    rhs: Expr {
+                                        kind: Int(
+                                            10,
+                                        ),
+                                        span: Span {
+                                            start: SrcPos {
+                                                line: 2,
+                                                col: 16,
+                                                idx: 32,
+                                            },
+                                            end: SrcPos {
+                                                line: 3,
+                                                col: 1,
+                                                idx: 35,
+                                            },
+                                        },
+                                    },
+                                },
+                                span: Span {
+                                    start: SrcPos {
+                                        line: 2,
+                                        col: 10,
+                                        idx: 26,
+                                    },
+                                    end: SrcPos {
+                                        line: 3,
+                                        col: 1,
+                                        idx: 35,
+                                    },
+                                },
                             },
-                            end: SrcPos {
-                                line: 1,
-                                col: 16,
-                                idx: 15,
+                            span: Span {
+                                start: SrcPos {
+                                    line: 2,
+                                    col: 1,
+                                    idx: 17,
+                                },
+                                end: SrcPos {
+                                    line: 3,
+                                    col: 1,
+                                    idx: 35,
+                                },
                             },
                         },
-                    },
-                    op: ExclusiveRange,
-                    rhs: Expr {
-                        kind: Int(
-                            10,
-                        ),
-                        span: Span {
-                            start: SrcPos {
-                                line: 1,
-                                col: 16,
-                                idx: 15,
-                            },
-                            end: SrcPos {
-                                line: 2,
-                                col: 1,
-                                idx: 18,
-                            },
-                        },
-                    },
+                    ],
                 },
                 span: Span {
                     start: SrcPos {
                         line: 1,
-                        col: 10,
-                        idx: 9,
+                        col: 1,
+                        idx: 0,
                     },
                     end: SrcPos {
-                        line: 2,
-                        col: 1,
-                        idx: 18,
+                        line: 1,
+                        col: 17,
+                        idx: 16,
                     },
                 },
             },
-            span: Span {
-                start: SrcPos {
-                    line: 1,
-                    col: 1,
-                    idx: 0,
-                },
-                end: SrcPos {
-                    line: 2,
-                    col: 1,
-                    idx: 18,
-                },
-            },
-        },
+        ),
     ],
 }

@@ -62,8 +62,9 @@ architecture. Preserve these invariants:
 - Direct assignment through `module::member` is rejected.
 - Standard modules are currently file-backed under `std/`.
 
-`--disable-checker` evaluates one parsed file directly and does not provide the
-module compilation pipeline.
+`--disable-checker` evaluates one function-only entry file directly. It does
+not provide the module compilation pipeline or compile-time constant
+evaluation.
 
 ## Built-ins and errors
 
@@ -98,7 +99,7 @@ cargo test
 
 Module dependency fixtures belong under `fixtures/modules/`; top-level fixture
 programs and generated snapshots belong under `fixtures/` and
-`fixtures/expected/`. Run `cargo run -- generate-expected` only after the user
+`fixtures/expected/`. Run `cargo run -- debug generate-expected` only after the user
 approves regenerating intentional snapshot changes.
 
 After documentation changes, run:

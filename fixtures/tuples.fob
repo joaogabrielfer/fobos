@@ -1,3 +1,4 @@
+fun main(): () =
 var t0 := ()
 var t1 := (10)
 var t2 := ((10, 2))
@@ -7,3 +8,5 @@ echo("t0: " <> t0)
 echo("t1: " <> t1)
 echo("t2: " <> t2)
 echo("t3: " <> t3)
+
+end

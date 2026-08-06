@@ -4,15 +4,15 @@ RuntimeError {
     },
     span: Span {
         start: SrcPos {
-            line: 1,
+            line: 2,
             col: 10,
-            idx: 9,
+            idx: 26,
         },
         end: SrcPos {
-            line: 2,
+            line: 3,
             col: 1,
-            idx: 25,
+            idx: 42,
         },
     },
-    file_path: "/home/joaogabriel/personal/programming/projects/fobos/fixtures/range_zero_step.fob",
+    file_path: "$FIXTURE_PATH",
 }

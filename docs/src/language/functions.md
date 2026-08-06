@@ -1,13 +1,25 @@
 # Functions and calls
 
 Named functions use `fun`, parameters, an optional return annotation, and a
-block body:
+block body. At module scope they are declarations; local function declarations
+are also supported inside function bodies:
 
 ```fob
 fun add(x: Int, y: Int): Int =
     return x + y
 end
 ```
+
+Every root program has one entry declaration with exactly this shape:
+
+```fob
+fun main(): () =
+    echo(add(10, 20))
+end
+```
+
+`main` cannot take parameters, be generic, or return another type. Imported
+modules do not declare an entry point.
 
 Functions are values. Lambdas use `->`:
 

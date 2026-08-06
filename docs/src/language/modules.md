@@ -1,8 +1,8 @@
 # Modules and imports
 
-Every `.fob` file is a module. Imports must appear at the beginning of a file,
-before declarations and executable statements. Imported modules are parsed,
-type-checked, and initialized once per program.
+Every `.fob` file is a module. Its top level contains only imports, constants,
+and named functions. Imports must come before all other top-level items.
+Imported modules are parsed, type-checked, and initialized once per program.
 
 ## Relative modules
 
@@ -12,7 +12,9 @@ Without an alias, all public exports are brought into the current module:
 ```fob
 import "math.fob"
 
-echo(add(10, 20))
+fun main(): () =
+    echo(add(10, 20))
+end
 ```
 
 An alias keeps the exports behind a namespace:
@@ -20,7 +22,9 @@ An alias keeps the exports behind a namespace:
 ```fob
 import "math.fob" as math
 
-echo(math::add(10, 20))
+fun main(): () =
+    echo(math::add(10, 20))
+end
 ```
 
 Relative paths must name a `.fob` file. Paths are canonicalized, so imports
@@ -34,7 +38,9 @@ segment as a namespace:
 ```fob
 import std::foo
 
-foo::bar()
+fun main(): () =
+    foo::bar()
+end
 ```
 
 The namespace can be renamed:
@@ -71,14 +77,13 @@ namespace is wanted.
 
 ## Visibility
 
-Only top-level declarations marked `pub` are exported:
+Only top-level functions and constants marked `pub` are exported:
 
 ```fob
-var count: Int = 0
+pub const STEP: Int = 1
 
-pub fun next(): Int =
-    count = count + 1
-    return count
+pub fun next(value: Int): Int =
+    return value + STEP
 end
 ```
 
@@ -90,12 +95,14 @@ different modules are not merged automatically; importing two entities under
 the same local name is a collision. Local top-level declarations and glob
 imports follow the same hard-collision rule.
 
-## Initialization and state
+## Initialization and constants
 
-A canonical module has one persistent runtime environment. Functions capture
-that exact environment, and every importer observes the same mutable state.
-Dependencies initialize before their importers, and importing the same module
-through multiple canonical-equivalent paths does not run it again.
+Modules are declarative: compilation evaluates their constants, then runtime
+initialization installs imported names, those constant values, and function
+declarations. Dependencies initialize before their importers, and importing
+the same module through multiple canonical-equivalent paths does not run it
+again. Functions capture the module environment, but mutable top-level state
+is deliberately not part of the language.
 
 Circular imports are rejected with the full import chain. Runtime and
 type-checking failures retain the dependency's original file and source span,
