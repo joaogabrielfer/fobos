@@ -20,7 +20,7 @@ The modules map to that pipeline:
 - `src/interpreter/` evaluates the AST, manages lexical environments, values,
   control-flow signals, and built-ins.
 - `src/diagnostic.rs` and `src/errors.rs` render source-aware failures.
-- `src/main.rs` owns the Clap CLI and the REPL.
+- `src/main.rs` owns the Clap CLI; `src/repl.rs` owns the stateful interactive session.
 - `src/dump.rs` regenerates fixture expectations.
 
 The type checker stores module namespaces and imported members as explicit

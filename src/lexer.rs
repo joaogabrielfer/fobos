@@ -660,11 +660,20 @@ mod tests {
                     tokens_str.lines().zip(expected_tokens.lines()).enumerate()
                 {
                     assert_eq!(
-                        my_line, expected_line,
+                        snapshot_line(my_line),
+                        snapshot_line(expected_line),
                         "failed to match at line '{i}' in file {token_expected_path:?}: "
                     )
                 }
             }
+        }
+    }
+
+    fn snapshot_line(line: &str) -> &str {
+        if line.trim_start().starts_with("file_path:") {
+            "file_path: <fixture path>"
+        } else {
+            line
         }
     }
 }

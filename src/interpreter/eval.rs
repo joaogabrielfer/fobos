@@ -45,9 +45,11 @@ macro_rules! value_or_flow {
 
 impl<W: std::io::Write> Interpreter<W> {
     pub fn eval_program(&mut self, program: Program) -> Result<Value, Box<RuntimeError>> {
+        let mut last_value = Value::Unit;
+
         for stmt in program.statements {
             match self.eval_statement(stmt)? {
-                EvalFlow::Continue(_value) => {}
+                EvalFlow::Continue(value) => last_value = value,
 
                 EvalFlow::Yield { span, .. } => {
                     return Err(self.error_at(span, RuntimeErrorKind::YieldOutsideHandler));
@@ -59,7 +61,7 @@ impl<W: std::io::Write> Interpreter<W> {
             }
         }
 
-        Ok(Value::Unit)
+        Ok(last_value)
     }
 
     fn eval_statement(&mut self, statement: Stmt) -> Result<EvalFlow, Box<RuntimeError>> {
@@ -711,6 +713,9 @@ impl<W: std::io::Write> Interpreter<W> {
                     )),
                 },
                 BinaryOp::Div => match (lhs, rhs) {
+                    (Value::Int(_), Value::Int(0)) | (Value::Float(_), Value::Float(0.0)) => {
+                        Err(self.error_at(span, RuntimeErrorKind::DivisionByZero))
+                    }
                     (Value::Int(i1), Value::Int(i2)) => Ok(EvalFlow::Continue(Value::Int(i1 / i2))),
                     (Value::Float(f1), Value::Float(f2)) => {
                         Ok(EvalFlow::Continue(Value::Float(f1 / f2)))
@@ -1089,11 +1094,20 @@ mod tests {
                     .zip(expected_eval.trim_end().lines())
                 {
                     assert_eq!(
-                        ev, ex,
+                        snapshot_line(ev),
+                        snapshot_line(ex),
                         "failed to match ast output in file {eval_expected_path:?}"
                     );
                 }
             }
+        }
+    }
+
+    fn snapshot_line(line: &str) -> &str {
+        if line.trim_start().starts_with("file_path:") {
+            "file_path: <fixture path>"
+        } else {
+            line
         }
     }
 }

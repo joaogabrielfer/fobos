@@ -9,7 +9,7 @@ proposal.
 | Lexer and parser | Implemented | Includes expressions, blocks, functions, calls, arrays, ranges, and import syntax |
 | Interpreter | Implemented for core | Dependencies initialize once with persistent shared module environments |
 | Type checker | Implemented for core | Imports and qualified member paths are checked through module interfaces |
-| REPL | Experimental | Useful for exploration; file execution is the stable path |
+| REPL | Implemented for core | Persistent typed session with multiline entries; imports require file execution |
 | Built-ins | Small core | `echo`, `range`, and `push` |
 | Modules | Implemented initial version | Relative and `std::` imports, aliases, groups, globs, visibility, caching, and cycle rejection |
 | Standard library | Minimal | File-backed `std::` resolution exists; the bundled module set is intentionally small |

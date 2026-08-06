@@ -946,11 +946,20 @@ mod tests {
                     .zip(expected_ast.trim_end().lines())
                 {
                     assert_eq!(
-                        a, e,
+                        snapshot_line(a),
+                        snapshot_line(e),
                         "failed to match ast output in file {ast_expected_path:?}"
                     );
                 }
             }
+        }
+    }
+
+    fn snapshot_line(line: &str) -> &str {
+        if line.trim_start().starts_with("file_path:") {
+            "file_path: <fixture path>"
+        } else {
+            line
         }
     }
 }

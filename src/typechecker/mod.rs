@@ -20,6 +20,7 @@ pub struct CheckedModule {
     pub interface: ModuleInterface,
 }
 
+#[derive(Clone)]
 pub struct TypeChecker {
     file_path: PathBuf,
     env: TypeEnv,

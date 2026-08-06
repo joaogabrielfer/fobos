@@ -21,17 +21,19 @@ cargo run -- run examples/fib.fob
 Inspect tokens or the parsed AST:
 
 ```console
-cargo run -- tokens examples/fib.fob
-cargo run -- ast examples/fib.fob
+cargo run -- debug tokens examples/fib.fob
+cargo run -- debug ast examples/fib.fob
 ```
 
-Run the REPL with no subcommand. It is currently experimental.
+Start the REPL with `cargo run -- repl` (or omit the subcommand). It keeps
+definitions between entries, supports multiline blocks, and provides `:help`,
+`:reset`, and `:quit` commands.
 
 ## Development
 
 ```console
 cargo test
-cargo run -- generate-expected
+cargo run -- debug generate-expected
 ```
 
 See [testing](docs/src/contributors/testing.md) for the fixture workflow and

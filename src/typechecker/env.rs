@@ -22,7 +22,7 @@ impl TypeBinding {
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct TypeEnv {
     scopes: Vec<HashMap<String, TypeBinding>>,
 }
